@@ -1,0 +1,16 @@
+
+using UnityEngine;
+using System.Collections;
+
+/// <summary>
+/// IPassive.cs
+/// クラス説明
+///
+///
+/// 作成日: 9/2
+/// 作成者: 山田智哉
+/// </summary>
+public interface IPassive
+{
+    void Passive();
+};
