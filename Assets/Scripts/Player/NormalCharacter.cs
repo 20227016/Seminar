@@ -11,11 +11,15 @@ public class NormalCharacter : CharacterBase, IPassive, ISkill
 {
     public void Passive()
     {
+
+
         
     }
 
     public void Skill()
     {
+
+
         
     }
 }
