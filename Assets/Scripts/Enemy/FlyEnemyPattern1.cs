@@ -3,14 +3,14 @@ using UnityEngine;
 using System.Collections;
 
 /// <summary>
-/// IEnemyAttackPattern.cs
+/// FlyEnemyPattern1.cs
 /// クラス説明
 ///
 ///
 /// 作成日: /
 /// 作成者: 
 /// </summary>
-public class IEnemyAttackPattern : MonoBehaviour
+public class FlyEnemyPattern1 : MonoBehaviour
 {
 
      /// <summary>

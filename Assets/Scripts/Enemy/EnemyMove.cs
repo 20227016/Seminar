@@ -3,14 +3,14 @@ using UnityEngine;
 using System.Collections;
 
 /// <summary>
-/// IEnemyAction.cs
+/// EnemyMove.cs
 /// クラス説明
 ///
 ///
 /// 作成日: /
 /// 作成者: 
 /// </summary>
-public class IEnemyAction : MonoBehaviour
+public class EnemyMove : MonoBehaviour,IEnemyMove
 {
 
      /// <summary>
