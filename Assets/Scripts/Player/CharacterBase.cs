@@ -3,6 +3,7 @@ using UnityEngine;
 using Fusion;
 using System.Collections;
 using UnityEngine.InputSystem;
+using UniRx;
 
 /// <summary>
 /// CharacterBase.cs
@@ -24,11 +25,17 @@ public class CharacterBase : MonoBehaviour, IMove, IAvoidance, IComboCounter, ID
     // PlayerInputコンポーネントへの参照
     private PlayerInput _playerInput = default;
 
+    // 現在のステート
+    private CharacterStateEnum _currentState = default;
+
     /// <summary>
     /// 起動時処理
     /// </summary>
     private void Awake()
     {
+        // 初期化
+        _currentState = CharacterStateEnum.IDLE;
+
         // PlayerInputコンポーネントを取得
         _playerInput = GetComponent<PlayerInput>();
 
@@ -54,7 +61,6 @@ public class CharacterBase : MonoBehaviour, IMove, IAvoidance, IComboCounter, ID
     /// <summary>
     /// 移動入力
     /// </summary>
-    /// <param name="context"></param>
     public void OnMove(InputAction.CallbackContext context)
     {
         // 移動入力を更新
@@ -67,7 +73,6 @@ public class CharacterBase : MonoBehaviour, IMove, IAvoidance, IComboCounter, ID
     /// <summary>
     /// 攻撃入力
     /// </summary>
-    /// <param name="context"></param>
     public void OnAttack(InputAction.CallbackContext context)
     {
         // Attackメソッドを呼び出す
@@ -77,7 +82,6 @@ public class CharacterBase : MonoBehaviour, IMove, IAvoidance, IComboCounter, ID
     /// <summary>
     /// 回避入力
     /// </summary>
-    /// <param name="context"></param>
     public void OnAvoidance(InputAction.CallbackContext context)
     {
         // Avoidanceメソッドを呼び出す
