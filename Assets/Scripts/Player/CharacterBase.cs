@@ -102,6 +102,11 @@ public class CharacterBase : MonoBehaviour, IMove, IAvoidance, IComboCounter, ID
 
     public void Move(Vector2 moveDirection)
     {
+        if (moveDirection.sqrMagnitude < 0.01f)
+        {
+            // 入力がごく小さい場合は処理を行わない
+            return;
+        }
 
         // カメラの正面方向を取得
         Vector3 cameraForward = _camera.transform.forward;
@@ -113,6 +118,10 @@ public class CharacterBase : MonoBehaviour, IMove, IAvoidance, IComboCounter, ID
 
         // 移動ベクトルを計算
         move *= _characterStatusStruct._moveSpeed * Time.deltaTime;
+
+        // プレイヤーを移動方向に向ける
+        Quaternion targetRotation = Quaternion.LookRotation(move);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10 * Time.deltaTime);
 
         // transformを使って移動
         transform.position += move;

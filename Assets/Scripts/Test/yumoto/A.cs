@@ -17,7 +17,7 @@ public class A : MonoBehaviour
     private bool _isAll = true;
 
     [SerializeField,Header("無視するレイヤー")]
-    private LayerMask igeonLayer = default;
+    private LayerMask ignoreLayer = default;
 
     /// <summary>
     /// 更新処理
@@ -33,7 +33,7 @@ public class A : MonoBehaviour
         boxCastStruct._size -= Vector3.one / 100;
         boxCastStruct._direction = transform.forward;
         boxCastStruct._distance = 5f;
-        boxCastStruct._layerMask = ~igeonLayer;
+        boxCastStruct._layerMask = ~ignoreLayer;
         if (Input.GetKeyDown(KeyCode.A))
         {
 

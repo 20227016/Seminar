@@ -5,9 +5,11 @@ public struct CharacterStatusStruct
     // 体力
     public int _hp;
     // 移動速度
-    public int _moveSpeed;
+    public float _moveSpeed;
+    // 攻撃倍率
+    public float _attackMultipiler;
     // 防御力
-    public int _defensePower;
+    public float _defensePower;
     // スキルタイム
     public float _skillTime;
     // スキルクールタイム
