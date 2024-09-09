@@ -2,18 +2,32 @@
 [System.Serializable]
 public struct CharacterStatusStruct
 {
-    // 体力
+    /// <summary>
+    /// 体力
+    /// </summary>
     public int _hp;
-    // 移動速度
+    /// <summary>
+    /// 移動速度
+    /// </summary>
     public float _moveSpeed;
-    // 攻撃倍率
+    /// <summary>
+    /// 攻撃倍率
+    /// </summary>
     public float _attackMultipiler;
-    // 防御力
+    /// <summary>
+    /// 防御力
+    /// </summary>
     public float _defensePower;
-    // スキルタイム
+    /// <summary>
+    /// スキルタイム
+    /// </summary>
     public float _skillTime;
-    // スキルクールタイム
+    /// <summary>
+    /// スキルクールタイム
+    /// </summary>
     public float _skillCoolTime;
-    // カウンタータイム
+    /// <summary>
+    /// カウンタータイム
+    /// </summary>
     public float _counterTime;
 }
