@@ -13,7 +13,7 @@ using UniRx;
 /// 作成日: 9/2
 /// 作成者: 山田智哉
 /// </summary>
-public class CharacterBase : MonoBehaviour, IMove, IAvoidance, IComboCounter, IDamage, ITarget
+public class CharacterBase : MonoBehaviour, IMove, IAvoidance, IComboCounter, ReceiveDamage, ITarget
 {
     // ステータス
     [SerializeField]
@@ -146,7 +146,7 @@ public class CharacterBase : MonoBehaviour, IMove, IAvoidance, IComboCounter, ID
         // コンボカウンター処理を実装
     }
 
-    public void Damage()
+    public void ReceiveDamage()
     {
         // ダメージ処理を実装
     }
