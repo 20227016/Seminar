@@ -15,6 +15,24 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "Dash",
+                    "type": "Button",
+                    "id": "b219e708-8a87-40f0-962e-6ad31b77911f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Avoidance",
+                    "type": "Button",
+                    "id": "5f6416e7-240a-40f7-9dfe-ff1eb03b44c4",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "AttackLight",
                     "type": "Button",
                     "id": "7229318e-b892-4e16-9358-acd2c7370613",
@@ -27,15 +45,6 @@
                     "name": "AttackStrong",
                     "type": "Button",
                     "id": "69abe23f-7b26-4c9b-ae85-e210393ffc05",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Avoidance",
-                    "type": "Button",
-                    "id": "5f6416e7-240a-40f7-9dfe-ff1eb03b44c4",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -250,17 +259,6 @@
                 },
                 {
                     "name": "",
-                    "id": "461543ff-7267-4e26-ae50-bcac44e1cb02",
-                    "path": "<Keyboard>/space",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Avoidance",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "c14dfcbe-43f8-4f36-afe5-3d51712fd374",
                     "path": "<Mouse>/middleButton",
                     "interactions": "",
@@ -289,6 +287,28 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "AttackStrong",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "83658b54-111e-44d6-8dd1-63998a237220",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "461543ff-7267-4e26-ae50-bcac44e1cb02",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Avoidance",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

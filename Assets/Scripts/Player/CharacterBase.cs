@@ -29,23 +29,19 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, 
     // 現在のステート
     private CharacterStateEnum _currentState = default;
 
-    // 移動方向
-    private Vector2 _moveDirection = Vector2.zero;
-
-    // カメラ
-    private Camera _camera = default;
-
     // 現在HP量
     private ReactiveProperty<float> _currentHP = new ReactiveProperty<float>();
 
     // 現在スタミナ量
     private ReactiveProperty<float> _currentStamina = new ReactiveProperty<float>();
 
+    #region プロパティ
+
     public IReadOnlyReactiveProperty<float> CurrentHP => _currentHP;
 
     public IReadOnlyReactiveProperty<float> CurrentStamina => _currentStamina;
 
-
+    #endregion
 
     /// <summary>
     /// 起動時処理
@@ -55,106 +51,82 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, 
         // 初期化
         _currentState = CharacterStateEnum.IDLE;
 
+        // ラッパークラスをインスタンス化
+        _characterStatusStruct._playerStatus = new WrapperPlayerStatus();
+
         // 最大HPと最大スタミナをリアクティブプロパティとして設定
-        //_currentHP.Value = _characterStatusStruct._playerStatus.MaxHp;
-        //_currentStamina.Value = _characterStatusStruct._playerStatus.MaxStamina;
+        _currentHP.Value = _characterStatusStruct._playerStatus.MaxHp;
+        _currentStamina.Value = _characterStatusStruct._playerStatus.MaxStamina;
 
         // PlayerInputコンポーネントを取得
         _playerInput = GetComponent<PlayerInput>();
 
-        // カメラを取得
-        _camera = Camera.main;
-
-        // 各アクションにコールバックを登録
-        _playerInput.actions["Move"].performed += OnMove;
-        _playerInput.actions["Move"].canceled += OnMove;
-        _playerInput.actions["AttackLight"].performed += OnAttackLight;
-        _playerInput.actions["AttackStrong"].performed += OnAttackStrong;
-        _playerInput.actions["Avoidance"].performed += OnAvoidance;
-
+        // 入力アクションを一元管理
+        RegisterInputActions(true);
     }
 
-    /// <summary>
-    /// 非アクティブ時処理
-    /// </summary>
     private void OnDisable()
     {
-        // 各アクションのコールバックを解除
-        _playerInput.actions["Move"].performed -= OnMove;
-        _playerInput.actions["Move"].canceled -= OnMove;
-        _playerInput.actions["AttackLight"].performed -= OnAttackLight;
-        _playerInput.actions["AttackStrong"].performed -= OnAttackStrong;
-        _playerInput.actions["Avoidance"].performed -= OnAvoidance;
+        // アクション解除
+        RegisterInputActions(false);
     }
 
     /// <summary>
-    /// 移動入力
+    /// 入力アクションを一元管理して登録/解除する
     /// </summary>
-    public void OnMove(InputAction.CallbackContext context)
+    private void RegisterInputActions(bool isRegister)
     {
-        // 移動入力を更新
-        _moveDirection = context.ReadValue<Vector2>();
+        // コールバック登録
+        if (isRegister)
+        {
+            foreach (InputAction action in _playerInput.actions)
+            {
+                action.performed += context => HandleInput(context);
+            }
+        }
+        // コールバック解除
+        else
+        {
+            foreach (InputAction action in _playerInput.actions)
+            {
+                action.performed -= HandleInput;
+            }
+        }
     }
 
     /// <summary>
-    /// 攻撃入力
+    /// 入力ハンドラー
     /// </summary>
-    public void OnAttackLight(InputAction.CallbackContext context)
+    private void HandleInput(InputAction.CallbackContext context)
     {
-        // Attackメソッドを呼び出す
-        AttackLight();
-    }
+        // アクション名で入力処理を分岐
+        switch (context.action.name)
+        {
+            case "Move":
+                Move(context.ReadValue<Vector2>());
+                break;
 
-    /// <summary>
-    /// 攻撃入力
-    /// </summary>
-    public void OnAttackStrong(InputAction.CallbackContext context)
-    {
-        // Attackメソッドを呼び出す
-        AttackStrong();
-        _currentHP.Value -= 10f;
-    }
+            case "AttackLight":
+                AttackLight();
+                break;
 
-    /// <summary>
-    /// 回避入力
-    /// </summary>
-    public void OnAvoidance(InputAction.CallbackContext context)
-    {
-        // Avoidanceメソッドを呼び出す
-        Avoidance();
-    }
+            case "AttackStrong":
+                AttackStrong();
+                break;
 
-    private void Update()
-    {
-        // 移動処理を毎フレーム実行
-        Move(_moveDirection);
+            case "Avoidance":
+                Avoidance();
+                break;
+
+            default:
+                Debug.LogWarning("未定義のアクション: " + context.action.name);
+                break;
+        }
     }
 
     public void Move(Vector2 moveDirection)
     {
-
-        // カメラの正面方向を取得
-        Vector3 cameraForward = _camera.transform.forward;
-
-        // Y軸方向の移動は無視する
-        cameraForward.y = 0;
-
-        // 正規化
-        cameraForward.Normalize();
-
-        // 移動方向をカメラの正面方向に変換
-        Vector3 move = cameraForward * moveDirection.y + _camera.transform.right * moveDirection.x;
-
-        // 移動ベクトルを計算
-        move *= _characterStatusStruct._moveSpeed * Time.deltaTime;
-
-        // プレイヤーを移動方向に向ける
-        Quaternion targetRotation = Quaternion.LookRotation(move);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10 * Time.deltaTime);
-
-        // transformを使って移動
-        transform.position += move;
-
+        print(moveDirection);
     }
 
     public void AttackLight()

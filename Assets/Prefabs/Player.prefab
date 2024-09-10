@@ -118,11 +118,13 @@ GameObject:
   - component: {fileID: 1182622252027192888}
   - component: {fileID: 5133914463434778228}
   - component: {fileID: -2333695426159160743}
-  - component: {fileID: 914290153814850568}
   - component: {fileID: 706681087299733268}
+  - component: {fileID: 914290153814850568}
+  - component: {fileID: 4891854164367117026}
+  - component: {fileID: 5454373434163990991}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -241,26 +243,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &914290153814850568
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5795316055546989042}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3863f3908b78d1343a67887a1f96742d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _characterStatusStruct:
-    _hp: 0
-    _moveSpeed: 10
-    _attackMultipiler: 0
-    _defensePower: 0
-    _skillTime: 0
-    _skillCoolTime: 0
-    _counterTime: 0
 --- !u!114 &706681087299733268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -290,10 +272,6 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 8247d37e-5d6a-40c3-a52a-499119b2b18f
     m_ActionName: Player/Move[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 65e37965-fc0a-40ec-97d1-2e39a48a5d29
-    m_ActionName: Player/Look[/Mouse/delta]
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 7229318e-b892-4e16-9358-acd2c7370613
@@ -338,8 +316,67 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 541f6492-1b5a-4af0-b59a-46221ced15db
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 69abe23f-7b26-4c9b-ae85-e210393ffc05
+    m_ActionName: Player/AttackStrong[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 5f6416e7-240a-40f7-9dfe-ff1eb03b44c4
+    m_ActionName: Player/Avoidance[/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: a48e5bcf-5499-4027-8828-87e42b23e93c
+    m_ActionName: Player/Target[/Mouse/middleButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f60e6a53-f9d6-430c-9841-e582cbfea7c1
+    m_ActionName: Player/Skill
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &914290153814850568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5795316055546989042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3863f3908b78d1343a67887a1f96742d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _characterStatusStruct:
+    _moveSpeed: 10
+    _attackMultipiler: 0
+    _defensePower: 0
+    _skillTime: 0
+    _skillCoolTime: 0
+    _counterTime: 0
+--- !u!114 &4891854164367117026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5795316055546989042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4b0c2fe151518644b94efd5a1c595e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5454373434163990991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5795316055546989042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16b262d1ce033074c9a8e8e7fe26bc19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
