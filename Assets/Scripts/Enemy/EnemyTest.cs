@@ -24,6 +24,7 @@ public class EnemyTest : MonoBehaviour
     [SerializeField, Tooltip("無視するレイヤー")]
     private LayerMask _ignoreLayer = default;
 
+    [SerializeField]
     private IEnemyAction _enemyAction = default;
 
  

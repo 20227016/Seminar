@@ -25,21 +25,30 @@ public class Editoraaaaa : Editor
 
         _target = (EnemyTest)target;
         _enemyAction = serializedObject.FindProperty("EnemyAction");
+        if (_enemyAction == null)
+        {
+            Debug.LogError("プロパティいない");
+            return;
+        }
+        else
+        {
+            Debug.LogError("プロパティいる");
+
+        }
 
     }
 
     public override void OnInspectorGUI()
     {
-        //aaaaaa
 
-        // 元のインスペクターGUIを描画
-        DrawDefaultInspector();
-        // オブジェクトフィールドの作成
-        MonoBehaviour newTarget = (MonoBehaviour)EditorGUILayout.ObjectField(
-            "Target", _target, typeof(MonoBehaviour), true);
-
-
-
+       
+        //// 元のインスペクターGUIを描画
+        //DrawDefaultInspector();
+        //serializedObject.Update();
+        //// オブジェクトフィールドの作成
+        //EditorGUILayout.PropertyField(_enemyAction);
+        
+        //serializedObject.ApplyModifiedProperties();
 
     }
 

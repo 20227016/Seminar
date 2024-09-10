@@ -10,7 +10,7 @@ using UnityEngine;
 /// 作成者: 高橋光栄
 /// </summary>
 [System.Serializable]
-public class GroundEnemyPattern1 : IEnemyAction
+public class GroundEnemyPattern1 : MonoBehaviour,IEnemyAction
 {
 
 
