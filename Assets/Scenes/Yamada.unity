@@ -857,6 +857,10 @@ PrefabInstance:
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 914290153814850568, guid: 1a6fff5c849cbe2419e00b5204f35434, type: 3}
+      propertyPath: _characterStatusStruct._runSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 914290153814850568, guid: 1a6fff5c849cbe2419e00b5204f35434, type: 3}
       propertyPath: _characterStatusStruct._moveSpeed
       value: 10
       objectReference: {fileID: 0}

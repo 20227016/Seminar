@@ -94,30 +94,32 @@ public class CharacterBase : MonoBehaviour, IMove, IAvoidance, IComboCounter, ID
         Avoidance();
     }
 
-    private void Update()
-    {
-        // 移動処理を毎フレーム実行
-        Move(_moveDirection);
-    }
+    //private void Update()
+    //{
+    //    // 移動処理を毎フレーム実行
+    //    Move(_moveDirection);
+    //}
 
     public void Move(Vector2 moveDirection)
     {
 
-        // カメラの正面方向を取得
-        Vector3 cameraForward = _camera.transform.forward;
-        cameraForward.y = 0; // Y軸方向の移動は無視する
-        cameraForward.Normalize();
+        //// カメラの正面方向を取得
+        //Vector3 cameraForward = _camera.transform.forward;
+        //cameraForward.y = 0; // Y軸方向の移動は無視する
+        //cameraForward.Normalize();
 
-        // 移動方向をカメラの正面方向に変換
-        Vector3 move = cameraForward * moveDirection.y + _camera.transform.right * moveDirection.x;
+        //// 移動方向をカメラの正面方向に変換
+        //Vector3 move = cameraForward * moveDirection.y + _camera.transform.right * moveDirection.x;
 
         // 移動ベクトルを計算
-        move *= _characterStatusStruct._moveSpeed * Time.deltaTime;
+        //move *= _characterStatusStruct._moveSpeed * Time.deltaTime;
 
-        // transformを使って移動
-        transform.position += move;
+        //// transformを使って移動
+        //transform.position += move;
 
-        //print("移動" + moveDirection.ToString());
+
+
+
     }
 
     public void Attack()

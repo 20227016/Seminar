@@ -9,6 +9,7 @@
 /// </summary>
 public class NormalCharacter : CharacterBase, IPassive, ISkill
 {
+
     public void Passive()
     {
 
