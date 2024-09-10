@@ -11,6 +11,5 @@ public class WrapperPlayerStatus
     private float _maxStamina = 100f;
 
     public float MaxHp { get => _maxHP; set => _maxHP = value; }
-
     public float MaxStamina { get => _maxStamina; set => _maxStamina = value; }
 }
