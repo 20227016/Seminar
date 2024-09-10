@@ -3,9 +3,9 @@
 public struct CharacterStatusStruct
 {
     /// <summary>
-    /// 体力
+    /// 最大HP、最大スタミナ
     /// </summary>
-    public int _hp;
+    public WrapperPlayerStatus _playerStatus;
     /// <summary>
     /// 移動速度
     /// </summary>

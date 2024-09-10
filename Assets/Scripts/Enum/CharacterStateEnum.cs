@@ -1,14 +1,24 @@
 
 public enum CharacterStateEnum
 {
-    // 待機
+    /// <summary>
+    /// 待機
+    /// </summary>
     IDLE,
-    // 移動
+    /// <summary>
+    /// 移動
+    /// </summary>
     MOVE,
-    // 回避
+    /// <summary>
+    /// 回避
+    /// </summary>
     AVOIDANCE,
-    // 攻撃
+    /// <summary>
+    /// 攻撃
+    /// </summary>
     ATTACK,
-    // スキル
+    /// <summary>
+    /// スキル
+    /// </summary>
     SKILL
 }
