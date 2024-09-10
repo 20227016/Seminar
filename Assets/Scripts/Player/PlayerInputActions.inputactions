@@ -15,9 +15,18 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Attack",
+                    "name": "AttackLight",
                     "type": "Button",
                     "id": "7229318e-b892-4e16-9358-acd2c7370613",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "AttackStrong",
+                    "type": "Button",
+                    "id": "69abe23f-7b26-4c9b-ae85-e210393ffc05",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -191,7 +200,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "Attack",
+                    "action": "AttackLight",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -202,7 +211,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "Attack",
+                    "action": "AttackLight",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -213,7 +222,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Touch",
-                    "action": "Attack",
+                    "action": "AttackLight",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -224,7 +233,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Joystick",
-                    "action": "Attack",
+                    "action": "AttackLight",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -235,7 +244,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "XR",
-                    "action": "Attack",
+                    "action": "AttackLight",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -269,6 +278,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Skill",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8577b22c-1774-4d71-827a-8745b719251e",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "AttackStrong",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

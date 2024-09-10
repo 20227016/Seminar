@@ -13,10 +13,11 @@ using UniRx;
 /// 作成日: 9/2
 /// 作成者: 山田智哉
 /// </summary>
-public class CharacterBase : MonoBehaviour, IMove, IAvoidance, IComboCounter, ReceiveDamage, ITarget
+public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, IAvoidance, IComboCounter, IReceiveDamage, ITarget
 {
+
     // ステータス
-    [SerializeField]
+    [SerializeField, Tooltip("ステータス値")]
     private CharacterStatusStruct _characterStatusStruct = default;
 
     // ステート
@@ -30,9 +31,21 @@ public class CharacterBase : MonoBehaviour, IMove, IAvoidance, IComboCounter, Re
 
     // 移動方向
     private Vector2 _moveDirection = Vector2.zero;
-    
+
     // カメラ
-    private Camera _camera;
+    private Camera _camera = default;
+
+    // 現在HP量
+    private ReactiveProperty<float> _currentHP = new ReactiveProperty<float>();
+
+    // 現在スタミナ量
+    private ReactiveProperty<float> _currentStamina = new ReactiveProperty<float>();
+
+    public IReadOnlyReactiveProperty<float> CurrentHP => _currentHP;
+
+    public IReadOnlyReactiveProperty<float> CurrentStamina => _currentStamina;
+
+
 
     /// <summary>
     /// 起動時処理
@@ -41,6 +54,10 @@ public class CharacterBase : MonoBehaviour, IMove, IAvoidance, IComboCounter, Re
     {
         // 初期化
         _currentState = CharacterStateEnum.IDLE;
+
+        // 最大HPと最大スタミナをリアクティブプロパティとして設定
+        //_currentHP.Value = _characterStatusStruct._playerStatus.MaxHp;
+        //_currentStamina.Value = _characterStatusStruct._playerStatus.MaxStamina;
 
         // PlayerInputコンポーネントを取得
         _playerInput = GetComponent<PlayerInput>();
@@ -51,8 +68,10 @@ public class CharacterBase : MonoBehaviour, IMove, IAvoidance, IComboCounter, Re
         // 各アクションにコールバックを登録
         _playerInput.actions["Move"].performed += OnMove;
         _playerInput.actions["Move"].canceled += OnMove;
-        _playerInput.actions["Attack"].performed += OnAttack;
+        _playerInput.actions["AttackLight"].performed += OnAttackLight;
+        _playerInput.actions["AttackStrong"].performed += OnAttackStrong;
         _playerInput.actions["Avoidance"].performed += OnAvoidance;
+
     }
 
     /// <summary>
@@ -63,7 +82,8 @@ public class CharacterBase : MonoBehaviour, IMove, IAvoidance, IComboCounter, Re
         // 各アクションのコールバックを解除
         _playerInput.actions["Move"].performed -= OnMove;
         _playerInput.actions["Move"].canceled -= OnMove;
-        _playerInput.actions["Attack"].performed -= OnAttack;
+        _playerInput.actions["AttackLight"].performed -= OnAttackLight;
+        _playerInput.actions["AttackStrong"].performed -= OnAttackStrong;
         _playerInput.actions["Avoidance"].performed -= OnAvoidance;
     }
 
@@ -79,10 +99,20 @@ public class CharacterBase : MonoBehaviour, IMove, IAvoidance, IComboCounter, Re
     /// <summary>
     /// 攻撃入力
     /// </summary>
-    public void OnAttack(InputAction.CallbackContext context)
+    public void OnAttackLight(InputAction.CallbackContext context)
     {
         // Attackメソッドを呼び出す
-        Attack();
+        AttackLight();
+    }
+
+    /// <summary>
+    /// 攻撃入力
+    /// </summary>
+    public void OnAttackStrong(InputAction.CallbackContext context)
+    {
+        // Attackメソッドを呼び出す
+        AttackStrong();
+        _currentHP.Value -= 10f;
     }
 
     /// <summary>
@@ -102,15 +132,14 @@ public class CharacterBase : MonoBehaviour, IMove, IAvoidance, IComboCounter, Re
 
     public void Move(Vector2 moveDirection)
     {
-        if (moveDirection.sqrMagnitude < 0.01f)
-        {
-            // 入力がごく小さい場合は処理を行わない
-            return;
-        }
 
         // カメラの正面方向を取得
         Vector3 cameraForward = _camera.transform.forward;
-        cameraForward.y = 0; // Y軸方向の移動は無視する
+
+        // Y軸方向の移動は無視する
+        cameraForward.y = 0;
+
+        // 正規化
         cameraForward.Normalize();
 
         // 移動方向をカメラの正面方向に変換
@@ -126,19 +155,21 @@ public class CharacterBase : MonoBehaviour, IMove, IAvoidance, IComboCounter, Re
         // transformを使って移動
         transform.position += move;
 
-        //print("移動" + moveDirection.ToString());
     }
 
-    public void Attack()
+    public void AttackLight()
     {
-        print("攻撃");
-        // 攻撃処理を実装
+        print("弱攻撃");
+    }
+
+    public void AttackStrong()
+    {
+        print("強攻撃");
     }
 
     public void Avoidance()
     {
         print("回避");
-        // 回避処理を実装
     }
 
     public void ComboCounter()
