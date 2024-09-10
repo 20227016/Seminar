@@ -10,7 +10,7 @@ using System.Collections;
 /// 作成日: /
 /// 作成者: 
 /// </summary>
-public class FlyEnemyPattern1 : MonoBehaviour
+public class FlyEnemyPattern1 : IEnemyAction
 {
 
      /// <summary>
