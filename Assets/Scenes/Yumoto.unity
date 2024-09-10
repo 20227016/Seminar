@@ -242,9 +242,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isAll: 1
-  igeonLayer:
+  ignoreLayer:
     serializedVersion: 2
-    m_Bits: 192
+    m_Bits: 0
 --- !u!1 &199424942
 GameObject:
   m_ObjectHideFlags: 0
@@ -257,6 +257,7 @@ GameObject:
   - component: {fileID: 199424945}
   - component: {fileID: 199424944}
   - component: {fileID: 199424943}
+  - component: {fileID: 199424947}
   m_Layer: 7
   m_Name: Enemy2
   m_TagString: Untagged
@@ -350,6 +351,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &199424947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 199424942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a74752561f061ef4b8eea50cecbbfa91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _player: {fileID: 150222639}
+  enemyStatusStruct:
+    _hp: 0
+    _attackPower: 0
+    _attackPowerSpeed: 0
+    _moveSpeed: 0
+    _diffencePower: 0
+    _attackCoolTime: 0
+  _ignoreLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &234670865
 GameObject:
   m_ObjectHideFlags: 0
@@ -758,6 +782,7 @@ GameObject:
   - component: {fileID: 1530852312}
   - component: {fileID: 1530852311}
   - component: {fileID: 1530852310}
+  - component: {fileID: 1530852314}
   m_Layer: 7
   m_Name: Enemy1
   m_TagString: Untagged
@@ -851,6 +876,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1530852314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1530852309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a74752561f061ef4b8eea50cecbbfa91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _player: {fileID: 150222639}
+  enemyStatusStruct:
+    _hp: 0
+    _attackPower: 0
+    _attackPowerSpeed: 0
+    _moveSpeed: 0
+    _diffencePower: 0
+    _attackCoolTime: 0
+  _ignoreLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &1805416293
 GameObject:
   m_ObjectHideFlags: 0
