@@ -14,10 +14,9 @@ using System.Collections;
 public class FlyEnemyPattern1 : PatternBase
 {
 
-    public override void ExecuteAction(EnemyStatusStruct enemyStatusStruct)
+    public override void Execute(EnemyStatusStruct enemyStatusStruct)
     {
 
-        Debug.Log(this);
 
     }
 
