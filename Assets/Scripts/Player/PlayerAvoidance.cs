@@ -12,9 +12,6 @@ using System;
 /// </summary>
 public class PlayerAvoidance : MonoBehaviour, IAvoidance
 {
-    // プレイヤー構造体
-    private CharacterStatusStruct _characterStatusStruct = default;
-
     private Rigidbody _rb = default;
 
     // 回避できるか
@@ -32,7 +29,7 @@ public class PlayerAvoidance : MonoBehaviour, IAvoidance
     /// <summary>
     /// 回避呼び出し処理
     /// </summary>
-    public void Avoidance(Vector2 avoidanceDirection)
+    public void Avoidance(Vector2 avoidanceDirection, float avoidanceDistance)
     {
         if (!_isAvoiding)
         {

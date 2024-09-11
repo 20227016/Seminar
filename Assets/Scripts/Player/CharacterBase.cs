@@ -13,7 +13,7 @@ using UniRx;
 /// 作成日: 9/2
 /// 作成者: 山田智哉
 /// </summary>
-public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IComboCounter, IReceiveDamage, ITarget
+public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, IAvoidance, IComboCounter, IReceiveDamage, ITarget
 {
 
     // ステータス
@@ -35,6 +35,12 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IComboC
     // 現在スタミナ量
     private ReactiveProperty<float> _currentStamina = new ReactiveProperty<float>();
 
+    private IMove _move;
+
+    private IAvoidance _avoidance;
+
+    private Vector2 _moveDirection = default;
+
     #region プロパティ
 
     public IReadOnlyReactiveProperty<float> CurrentHP => _currentHP;
@@ -50,6 +56,10 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IComboC
     {
         // 初期化
         _currentState = CharacterStateEnum.IDLE;
+
+        // 最初は歩く
+        _move = GetComponent<PlayerWalk>();
+        _avoidance = GetComponent<PlayerAvoidance>();
 
         // ラッパークラスをインスタンス化
         _characterStatusStruct._playerStatus = new WrapperPlayerStatus();
@@ -128,7 +138,7 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IComboC
                 break;
 
             case "Avoidance":
-                Avoidance();
+                Avoidance(_moveDirection, _characterStatusStruct._avoidanceDistance);
                 break;
 
             default:
@@ -139,6 +149,7 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IComboC
 
     public void Move(Vector2 moveDirection)
     {
+        _moveDirection = moveDirection;
         print(moveDirection);
     }
 
@@ -150,11 +161,6 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IComboC
     public void AttackStrong()
     {
         print("強攻撃");
-    }
-
-    public void Avoidance()
-    {
-        print("回避");
     }
 
     public void ComboCounter()
@@ -170,5 +176,10 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IComboC
     public void Target()
     {
         // ターゲット処理を実装
+    }
+
+    public void Avoidance(Vector2 avoidanceDirection, float avoidanceDistance)
+    {
+        _avoidance?.Avoidance(avoidanceDirection, avoidanceDistance);
     }
 }

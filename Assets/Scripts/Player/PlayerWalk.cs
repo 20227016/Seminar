@@ -11,12 +11,9 @@ using UnityEngine;
 /// </summary>
 public class PlayerWalk : MonoBehaviour,IMove
 {
-
-    // プレイヤー構造体
-    CharacterStatusStruct _characterStatusStruct = new CharacterStatusStruct();
-
     // rbの取得
     private Rigidbody _rb;
+
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>(); // Rigidbodyの取得

@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class B : MonoBehaviour,IMove,IAvoidance
+public class B : MonoBehaviour,IMove
 {
 
     private CharacterStatusStruct _characterStatusStruct;
@@ -41,13 +41,6 @@ public class B : MonoBehaviour,IMove,IAvoidance
             _move = GetComponent<PlayerWalk>();
         }
 
-        // スペースキーで回避
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Vector2 avoidanceDirection = moveDirection.normalized; // 回避方向は移動方向と同じ
-            _avoidance.Avoidance(avoidanceDirection);
-        }
-
         // null チェック
         if (_move != null)
         {
@@ -58,11 +51,6 @@ public class B : MonoBehaviour,IMove,IAvoidance
         {
             Debug.LogError("Moveコンポーネントが存在しません。");
         }
-    }
-
-    public void Avoidance(Vector2 avoidanceDirection)
-    {
-        _avoidance?.Avoidance(avoidanceDirection); // 回避の呼び出し
     }
 
     public void Move(Vector2 moveDirection)
