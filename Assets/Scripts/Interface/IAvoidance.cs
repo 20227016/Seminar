@@ -1,5 +1,7 @@
 
+using UnityEngine;
+
 public interface IAvoidance
 {
-    void Avoidance();
+    //void Avoidance(Vector2 avoidanceDirection);
 }
