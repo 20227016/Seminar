@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d28baf79c804e674b8c036453409a986, type: 3}
   m_Name: Ground Enemy Pattern 1
   m_EditorClassIdentifier: 
+  _enemyAttackBase: {fileID: 11400000, guid: d78abefaab8a3fe4b9705d5384e716ad, type: 2}
+  _enemyMoveBase: {fileID: 11400000, guid: fdd0dfa7bd58f074885817a78116798b, type: 2}
