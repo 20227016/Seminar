@@ -82,6 +82,12 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, 
             foreach (InputAction action in _playerInput.actions)
             {
                 action.performed += context => HandleInput(context);
+
+                // buttonタイプ以外の場合、キャンセル処理も登録
+                if (action.type != InputActionType.Button)
+                {
+                    action.canceled += context => HandleInput(context);
+                }
             }
         }
         // コールバック解除
@@ -90,15 +96,22 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, 
             foreach (InputAction action in _playerInput.actions)
             {
                 action.performed -= HandleInput;
+
+                // buttonタイプ以外の場合、キャンセル処理も解除
+                if (action.type != InputActionType.Button)
+                {
+                    action.canceled -= HandleInput;
+                }
             }
         }
     }
 
     /// <summary>
-    /// 入力ハンドラー
+    /// 入力管理
     /// </summary>
     private void HandleInput(InputAction.CallbackContext context)
     {
+
         // アクション名で入力処理を分岐
         switch (context.action.name)
         {
