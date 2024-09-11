@@ -244,7 +244,7 @@ MonoBehaviour:
   _isAll: 1
   ignoreLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 449
 --- !u!1 &199424942
 GameObject:
   m_ObjectHideFlags: 0
@@ -358,13 +358,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 199424942}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a74752561f061ef4b8eea50cecbbfa91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _player: {fileID: 150222639}
-  enemyStatusStruct:
+  _actionPatternBase: {fileID: 11400000, guid: 1443830c2ad26d74db7df8469e362920, type: 2}
+  _enemyStatusStruct:
     _hp: 0
     _attackPower: 0
     _attackPowerSpeed: 0
@@ -373,7 +374,7 @@ MonoBehaviour:
     _attackCoolTime: 0
   _ignoreLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 449
 --- !u!1 &234670865
 GameObject:
   m_ObjectHideFlags: 0
@@ -889,7 +890,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _player: {fileID: 150222639}
-  enemyStatusStruct:
+  _actionPatternBase: {fileID: 11400000, guid: e9cae1385a1b3d141a44a5ff70dbf14d, type: 2}
+  _enemyStatusStruct:
     _hp: 0
     _attackPower: 0
     _attackPowerSpeed: 0
@@ -898,7 +900,7 @@ MonoBehaviour:
     _attackCoolTime: 0
   _ignoreLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 449
 --- !u!1 &1805416293
 GameObject:
   m_ObjectHideFlags: 0

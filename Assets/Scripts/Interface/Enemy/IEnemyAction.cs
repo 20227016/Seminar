@@ -10,4 +10,6 @@
 public interface IEnemyAction
 {
 
+    void ExecuteAction(EnemyStatusStruct enemyStatusStruct);
+
 }

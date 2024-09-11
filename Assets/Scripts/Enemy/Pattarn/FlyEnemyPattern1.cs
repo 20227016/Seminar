@@ -5,36 +5,20 @@ using System.Collections;
 /// <summary>
 /// FlyEnemyPattern1.cs
 /// クラス説明
+/// 敵の行動パターン（飛ぶタイプ１）
 ///
-///
-/// 作成日: /
-/// 作成者: 
+/// 作成日: 9/11
+/// 作成者: 湯元＆高橋
 /// </summary>
-public class FlyEnemyPattern1 : IEnemyAction
+[CreateAssetMenu(menuName = "ScriptableObject/EnemyActionPattern/FlyEnemyPattern1")]
+public class FlyEnemyPattern1 : PatternBase
 {
 
-     /// <summary>
-     /// 初期化処理
-     /// </summary>
-     private void Awake()
-     {
+    public override void ExecuteAction(EnemyStatusStruct enemyStatusStruct)
+    {
 
-     }
+        Debug.Log(this);
 
-     /// <summary>
-     /// 更新前処理
-     /// </summary>
-     private void Start()
-     {
-
-     }
-
-     /// <summary>
-     /// 更新処理
-     /// </summary>
-     private void Update()
-     {
-
-     }
+    }
 
 }

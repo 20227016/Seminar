@@ -9,6 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4cff6fc3173f7e240a40f3bd61eedc98, type: 3}
-  m_Name: EnemyPattanSaveData
+  m_Script: {fileID: 11500000, guid: d28baf79c804e674b8c036453409a986, type: 3}
+  m_Name: Ground Enemy Pattern 1
   m_EditorClassIdentifier: 

@@ -14,20 +14,18 @@ using System.Collections;
 public class EnemyTest : MonoBehaviour 
 {
 
-    [SerializeField]
-    public IEnemyAction EnemyAction { get => _enemyAction; set => _enemyAction = value; }
-
+    
     [SerializeField, Tooltip("プレイヤーオブジェクト")]
     private GameObject _player = default;
+    [SerializeField,Tooltip("行動パターン")]
+    private PatternBase _actionPatternBase = default;
     [SerializeField, Tooltip("敵のステータス")]
-    private EnemyStatusStruct enemyStatusStruct = default;
+    private EnemyStatusStruct _enemyStatusStruct = default;
     [SerializeField, Tooltip("無視するレイヤー")]
     private LayerMask _ignoreLayer = default;
 
-    [SerializeField]
     private IEnemyAction _enemyAction = default;
-
- 
+   
 
 
     /// <summary>
@@ -35,6 +33,8 @@ public class EnemyTest : MonoBehaviour
     /// </summary>
     private void Awake()
     {
+
+       
 
     }
 
@@ -51,6 +51,15 @@ public class EnemyTest : MonoBehaviour
     /// </summary>
     private void Update()
     {
+      
+
+        if (Input.GetKey(KeyCode.A))
+        {
+
+            _enemyAction = _actionPatternBase;
+            _enemyAction.ExecuteAction(_enemyStatusStruct);
+
+        }
 
     }
 

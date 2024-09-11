@@ -38,18 +38,6 @@ public class A : MonoBehaviour
         {
 
             _isAll = !_isAll;
-            if (_isAll)
-            {
-
-                Debug.Log("----------複数----------");
-
-            }
-            else
-            {
-
-                Debug.Log("----------単体----------");
-
-            }
 
         }
         if (_isAll)
