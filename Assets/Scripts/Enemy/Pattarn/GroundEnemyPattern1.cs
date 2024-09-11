@@ -27,12 +27,7 @@ public class GroundEnemyPattern1 : PatternBase
     public override void Execute(EnemyStatusStruct enemyStatusStruct)
     {
 
-<<<<<<< HEAD
         Debug.Log(this);
-
-
-
-=======
         Debug.Log("GroundEnemyPattern1");
         _iEnemyAttack = _enemyAttackBase;
         _iEnemyMove = _enemyMoveBase;
@@ -51,7 +46,6 @@ public class GroundEnemyPattern1 : PatternBase
             _iEnemyMove.Execute(Vector2.one , 0f);
 
         }
->>>>>>> f5fce5cc48662e66ff2718473607be693682a0a6
         //// プレイヤーの位置を更新
         //_chasePos = _player.transform.position;
 
