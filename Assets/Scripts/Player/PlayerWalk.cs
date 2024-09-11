@@ -1,6 +1,5 @@
 
 using UnityEngine;
-using System.Collections;
 
 /// <summary>
 /// PlayerMove.cs
@@ -8,33 +7,25 @@ using System.Collections;
 /// プレイヤー歩行クラス
 ///
 /// 作成日: 9/10
-/// 作成者: 山田智哉
+/// 作成者: 山田智哉(高橋光栄)
 /// </summary>
-public class PlayerWalk : MonoBehaviour
+public class PlayerWalk : MonoBehaviour,IMove
 {
 
-    /// <summary>
-    /// 初期化処理
-    /// </summary>
-    private void Awake()
+    // プレイヤー構造体
+    CharacterStatusStruct _characterStatusStruct = new CharacterStatusStruct();
+
+    // rbの取得
+    private Rigidbody _rb;
+
+    // プレイヤーの移動方向
+    public void Move(Vector2 moveDirection)
     {
+        // 移動ロジック
+        Vector3 movement = new Vector3(moveDirection.x, 0, moveDirection.y) * 1 * Time.deltaTime;
+
+        // 動け、ゴラァ
+        _rb.MovePosition(_rb.position + movement);
 
     }
-
-    /// <summary>
-    /// 更新前処理
-    /// </summary>
-    private void Start()
-    {
-
-    }
-
-    /// <summary>
-    /// 更新処理
-    /// </summary>
-    private void Update()
-    {
-
-    }
-
 }
