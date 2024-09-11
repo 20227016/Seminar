@@ -13,18 +13,45 @@ using UnityEngine;
 public class GroundEnemyPattern1 : PatternBase
 {
 
+    [SerializeField]
+    private EnemyAttackBase _enemyAttackBase = default;
+    [SerializeField]
+    private EnemyMoveBase _enemyMoveBase= default;
 
+    private IEnemyAttack _iEnemyAttack= default;
+    private IEnemyMove _iEnemyMove = default;
 
     private Vector3 _chasePos = default;
 
 
-    public override void ExecuteAction(EnemyStatusStruct enemyStatusStruct)
+    public override void Execute(EnemyStatusStruct enemyStatusStruct)
     {
 
+<<<<<<< HEAD
         Debug.Log(this);
 
 
 
+=======
+        Debug.Log("GroundEnemyPattern1");
+        _iEnemyAttack = _enemyAttackBase;
+        _iEnemyMove = _enemyMoveBase;
+
+        if (Input.GetKey(KeyCode.A))
+        {
+
+            Debug.Log("A");
+            _iEnemyAttack.Execute();
+
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+
+            Debug.Log("B");
+            _iEnemyMove.Execute(Vector2.one , 0f);
+
+        }
+>>>>>>> f5fce5cc48662e66ff2718473607be693682a0a6
         //// プレイヤーの位置を更新
         //_chasePos = _player.transform.position;
 

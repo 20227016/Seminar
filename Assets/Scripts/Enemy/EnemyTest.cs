@@ -11,13 +11,13 @@ using System.Collections;
 /// 作成者: 
 /// </summary>
 [System.Serializable]
-public class EnemyTest : MonoBehaviour 
+public class EnemyTest : MonoBehaviour
 {
 
-    
+
     [SerializeField, Tooltip("プレイヤーオブジェクト")]
     private GameObject _player = default;
-    [SerializeField,Tooltip("行動パターン")]
+    [SerializeField, Tooltip("行動パターン")]
     private PatternBase _actionPatternBase = default;
     [SerializeField, Tooltip("敵のステータス")]
     private EnemyStatusStruct _enemyStatusStruct = default;
@@ -25,7 +25,7 @@ public class EnemyTest : MonoBehaviour
     private LayerMask _ignoreLayer = default;
 
     private IEnemyAction _enemyAction = default;
-   
+
 
 
     /// <summary>
@@ -34,7 +34,7 @@ public class EnemyTest : MonoBehaviour
     private void Awake()
     {
 
-       
+
 
     }
 
@@ -51,15 +51,9 @@ public class EnemyTest : MonoBehaviour
     /// </summary>
     private void Update()
     {
-      
 
-        if (Input.GetKey(KeyCode.A))
-        {
-
-            _enemyAction = _actionPatternBase;
-            _enemyAction.ExecuteAction(_enemyStatusStruct);
-
-        }
+        _enemyAction = _actionPatternBase;
+        _enemyAction.Execute(_enemyStatusStruct);
 
     }
 

@@ -81,12 +81,12 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IComboC
         {
             foreach (InputAction action in _playerInput.actions)
             {
-                action.performed += context => HandleInput(context);
+                action.performed += HandleInput;
 
                 // buttonタイプ以外の場合、キャンセル処理も登録
                 if (action.type != InputActionType.Button)
                 {
-                    action.canceled += context => HandleInput(context);
+                    action.canceled += HandleInput;
                 }
             }
         }
