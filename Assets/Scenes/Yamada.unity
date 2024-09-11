@@ -608,9 +608,9 @@ MonoBehaviour:
   m_LookaheadTime: 0
   m_LookaheadSmoothing: 0
   m_LookaheadIgnoreY: 0
-  m_XDamping: 0.5
-  m_YDamping: 0.5
-  m_ZDamping: 0.5
+  m_XDamping: 0
+  m_YDamping: 0
+  m_ZDamping: 0
   m_TargetMovementOnly: 1
   m_ScreenX: 0.5
   m_ScreenY: 0.70000005
@@ -1686,6 +1686,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 914290153814850568, guid: 1a6fff5c849cbe2419e00b5204f35434, type: 3}
+      propertyPath: _characterStatusStruct._runSpeed
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 914290153814850568, guid: 1a6fff5c849cbe2419e00b5204f35434, type: 3}
+      propertyPath: _characterStatusStruct._walkSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 914290153814850568, guid: 1a6fff5c849cbe2419e00b5204f35434, type: 3}
       propertyPath: _characterStatusStruct._avoidanceDistance
       value: 10
       objectReference: {fileID: 0}
@@ -1742,9 +1750,6 @@ PrefabInstance:
       addedObject: {fileID: 1432852670}
     - targetCorrespondingSourceObject: {fileID: 5795316055546989042, guid: 1a6fff5c849cbe2419e00b5204f35434, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1432852669}
-    - targetCorrespondingSourceObject: {fileID: 5795316055546989042, guid: 1a6fff5c849cbe2419e00b5204f35434, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 1432852668}
   m_SourcePrefab: {fileID: 100100000, guid: 1a6fff5c849cbe2419e00b5204f35434, type: 3}
 --- !u!4 &1432852666 stripped
@@ -1767,18 +1772,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2fb8926b40ee6db4f8a2dc5fc9799f87, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1432852669
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1432852667}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09ada70c39832e943a96ab1191c703a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &1432852670

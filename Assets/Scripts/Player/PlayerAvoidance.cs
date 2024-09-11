@@ -12,13 +12,14 @@ using System;
 /// </summary>
 public class PlayerAvoidance : MonoBehaviour, IAvoidance
 {
+
     private Rigidbody _rb = default;
 
     // 回避できるか
     private bool _isAvoiding = false;
 
     // 回避の持続時間
-    private float _avoidanceTime = 1f;
+    private float _avoidanceTime = 0.5f;
 
     private void Awake()
     {
@@ -51,7 +52,7 @@ public class PlayerAvoidance : MonoBehaviour, IAvoidance
 
         // 回避の移動処理
         Vector3 normalizedAvoidanceDirection = new Vector3(avoidanceDirection.x, 0, avoidanceDirection.y).normalized;
-        Vector3 avoidanceMovement = normalizedAvoidanceDirection * 10;
+        Vector3 avoidanceMovement = normalizedAvoidanceDirection * avoidanceDirection;
 
         // 回避の加速
         _rb.AddForce(avoidanceMovement, ForceMode.VelocityChange);

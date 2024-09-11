@@ -35,6 +35,7 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, 
     // 現在スタミナ量
     private ReactiveProperty<float> _currentStamina = new ReactiveProperty<float>();
 
+
     private IMove _move;
 
     private IAvoidance _avoidance;
@@ -58,7 +59,7 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, 
         _currentState = CharacterStateEnum.IDLE;
 
         // 最初は歩く
-        _move = GetComponent<PlayerWalk>();
+        _move = GetComponent<PlayerMove>();
         _avoidance = GetComponent<PlayerAvoidance>();
 
         // ラッパークラスをインスタンス化
@@ -92,12 +93,7 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, 
             foreach (InputAction action in _playerInput.actions)
             {
                 action.performed += HandleInput;
-
-                // buttonタイプ以外の場合、キャンセル処理も登録
-                if (action.type != InputActionType.Button)
-                {
-                    action.canceled += HandleInput;
-                }
+                action.canceled += HandleInput;
             }
         }
         // コールバック解除
@@ -106,12 +102,7 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, 
             foreach (InputAction action in _playerInput.actions)
             {
                 action.performed -= HandleInput;
-
-                // buttonタイプ以外の場合、キャンセル処理も解除
-                if (action.type != InputActionType.Button)
-                {
-                    action.canceled -= HandleInput;
-                }
+                action.canceled -= HandleInput;
             }
         }
     }
@@ -121,35 +112,53 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, 
     /// </summary>
     private void HandleInput(InputAction.CallbackContext context)
     {
-
         // アクション名で入力処理を分岐
         switch (context.action.name)
         {
             case "Move":
-                Move(context.ReadValue<Vector2>());
+                _moveDirection = context.ReadValue<Vector2>();
+                Move(_moveDirection, _characterStatusStruct._walkSpeed);
                 break;
+
+            case "Dash":
+                Debug.Log("走る");
+                Move(_moveDirection, _characterStatusStruct._runSpeed);
+                return;
 
             case "AttackLight":
+                if (context.canceled)
+                {
+                    return;
+                }
                 AttackLight();
-                break;
+                return;
 
             case "AttackStrong":
+                if (context.canceled)
+                {
+                    return;
+                }
                 AttackStrong();
-                break;
+                return;
 
             case "Avoidance":
+                if (context.canceled)
+                {
+                    return;
+                }
                 Avoidance(_moveDirection, _characterStatusStruct._avoidanceDistance);
-                break;
+                return;
 
             default:
                 Debug.LogWarning("未定義のアクション: " + context.action.name);
-                break;
+                return;
         }
     }
 
-    public void Move(Vector2 moveDirection)
+    public void Move(Vector2 moveDirection, float moveSpeed)
     {
         _moveDirection = moveDirection;
+        _move.Move(moveDirection, moveSpeed);
         print(moveDirection);
     }
 
@@ -180,6 +189,6 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, 
 
     public void Avoidance(Vector2 avoidanceDirection, float avoidanceDistance)
     {
-        _avoidance?.Avoidance(avoidanceDirection, avoidanceDistance);
+        _avoidance.Avoidance(avoidanceDirection, avoidanceDistance);
     }
 }
