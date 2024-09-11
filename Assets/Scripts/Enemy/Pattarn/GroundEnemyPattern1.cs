@@ -21,17 +21,18 @@ public class GroundEnemyPattern1 : PatternBase
     public override void ExecuteAction(EnemyStatusStruct enemyStatusStruct)
     {
 
-
         Debug.Log(this);
+
+
+
         //// プレイヤーの位置を更新
         //_chasePos = _player.transform.position;
 
         //// プレイヤーの方向を計算
-        //Vector3 direction = (_chasePos.normalized );
+        //Vector3 direction = (_chasePos.normalized);
         //print(direction);
 
         //// プレイヤーに向かって移動
         //transform.position += transform.forward * enemyStatusStruct._moveSpeed * Time.deltaTime;
-
     }
 }
