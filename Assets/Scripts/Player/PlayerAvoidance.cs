@@ -54,7 +54,7 @@ public class PlayerAvoidance : MonoBehaviour, IAvoidance
 
         // 回避の移動処理
         Vector3 normalizedAvoidanceDirection = new Vector3(avoidanceDirection.x, 0, avoidanceDirection.y).normalized;
-        Vector3 avoidanceMovement = normalizedAvoidanceDirection * 1;
+        Vector3 avoidanceMovement = normalizedAvoidanceDirection * 10;
 
         // 回避の加速
         _rb.AddForce(avoidanceMovement, ForceMode.VelocityChange);

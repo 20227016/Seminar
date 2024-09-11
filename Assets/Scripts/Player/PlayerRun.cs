@@ -17,12 +17,16 @@ public class PlayerRun : MonoBehaviour,IMove
 
     // rbの取得
     private Rigidbody _rb;
+    private void Awake()
+    {
+        _rb = GetComponent<Rigidbody>(); // Rigidbodyの取得
+    }
 
     // プレイヤーの移動方向
     public void Move(Vector2 moveDirection)
     {
         // 移動ロジック
-        Vector3 movement = new Vector3(moveDirection.x, 0, moveDirection.y) * 1 * Time.deltaTime;
+        Vector3 movement = new Vector3(moveDirection.x, 0, moveDirection.y) * 5 * Time.deltaTime;
 
         // 動け、ゴラァ
         _rb.MovePosition(_rb.position + movement);

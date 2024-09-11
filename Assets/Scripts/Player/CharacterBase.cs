@@ -13,7 +13,7 @@ using UniRx;
 /// 作成日: 9/2
 /// 作成者: 山田智哉
 /// </summary>
-public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, IAvoidance, IComboCounter, IReceiveDamage, ITarget
+public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IComboCounter, IReceiveDamage, ITarget
 {
 
     // ステータス
