@@ -13,7 +13,7 @@ using UniRx;
 /// 作成日: 9/2
 /// 作成者: 山田智哉
 /// </summary>
-public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, IAvoidance, IComboCounter, IReceiveDamage, ITarget
+public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IComboCounter, IReceiveDamage, ITarget
 {
 
     // ステータス
@@ -81,12 +81,12 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, 
         {
             foreach (InputAction action in _playerInput.actions)
             {
-                action.performed += context => HandleInput(context);
+                action.performed += HandleInput;
 
                 // buttonタイプ以外の場合、キャンセル処理も登録
                 if (action.type != InputActionType.Button)
                 {
-                    action.canceled += context => HandleInput(context);
+                    action.canceled += HandleInput;
                 }
             }
         }
