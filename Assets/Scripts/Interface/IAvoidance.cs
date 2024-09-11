@@ -3,5 +3,5 @@ using UnityEngine;
 
 public interface IAvoidance
 {
-    //void Avoidance(Vector2 avoidanceDirection);
+    void Avoidance(Vector2 avoidanceDirection);
 }

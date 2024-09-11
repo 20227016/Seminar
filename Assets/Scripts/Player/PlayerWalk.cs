@@ -17,6 +17,10 @@ public class PlayerWalk : MonoBehaviour,IMove
 
     // rbの取得
     private Rigidbody _rb;
+    private void Awake()
+    {
+        _rb = GetComponent<Rigidbody>(); // Rigidbodyの取得
+    }
 
     // プレイヤーの移動方向
     public void Move(Vector2 moveDirection)
