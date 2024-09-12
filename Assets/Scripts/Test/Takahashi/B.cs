@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class B : MonoBehaviour,IMove
+public class B : MonoBehaviour
 {
 
     private CharacterStatusStruct _characterStatusStruct;
@@ -12,7 +12,7 @@ public class B : MonoBehaviour,IMove
     private void Start()
     {
         // 最初は歩く
-        _move = GetComponent<PlayerWalk>();
+        _move = GetComponent<PlayerMove>();
         _avoidance = GetComponent<PlayerAvoidance>();
 
         // null チェック
@@ -31,30 +31,6 @@ public class B : MonoBehaviour,IMove
     {
         Vector2 moveDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
-        // "Shift"キーを押すと走る、それ以外は歩く
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            _move = GetComponent<PlayerRun>();
-        }
-        else
-        {
-            _move = GetComponent<PlayerWalk>();
-        }
 
-        // null チェック
-        if (_move != null)
-        {
-            // 移動処理の実行
-            _move.Move(moveDirection);
-        }
-        else
-        {
-            Debug.LogError("Moveコンポーネントが存在しません。");
-        }
-    }
-
-    public void Move(Vector2 moveDirection)
-    {
-        _move?.Move(moveDirection); // 移動の呼び出し
     }
 }

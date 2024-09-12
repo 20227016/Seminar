@@ -7,5 +7,5 @@ public interface IMove
     /// 移動処理
     /// </summary>
     /// <param name="moveDirection">移動方向</param>
-    void Move(Vector2 moveDirection);
+    void Move(Vector2 moveDirection, float moveSpeed);
 }
