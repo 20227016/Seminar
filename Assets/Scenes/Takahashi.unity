@@ -242,7 +242,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _player: {fileID: 2099091808}
-  _actionPatternBase: {fileID: 0}
+  _actionPatternBase: {fileID: 11400000, guid: 1443830c2ad26d74db7df8469e362920, type: 2}
   _enemyStatusStruct:
     _hp: 0
     _attackPower: 0

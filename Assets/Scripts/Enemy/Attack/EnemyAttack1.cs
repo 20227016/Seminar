@@ -10,7 +10,7 @@ using System.Collections;
 /// 作成日: 9/11
 /// 作成者: 湯元
 /// </summary>
-[CreateAssetMenu(menuName = "ScriptableObject/EnemyAttack/EnemyAttack1",fileName = "EnemyAttack1")]
+[CreateAssetMenu(menuName = "ScriptableObject/EnemyAttack/EnemyAttack1", fileName = "EnemyAttack1")]
 public class EnemyAttack1 : EnemyAttackBase
 {
 
