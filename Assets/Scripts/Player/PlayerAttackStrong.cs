@@ -12,34 +12,8 @@ using System.Collections;
 /// </summary>
 public class PlayerAttackStrong : MonoBehaviour, IAttackStrong
 {
-    
-    /// <summary>
-    /// 初期化処理
-    /// </summary>
-    private void Awake()
-    {
-
-    }
-
-    /// <summary>
-    /// 更新前処理
-    /// </summary>
-    private void Start()
-    {
-
-    }
-
-    /// <summary>
-    /// 更新処理
-    /// </summary>
-    private void Update()
-    {
-
-    }
-
     public void AttackStrong()
     {
-
+        Debug.Log("強攻撃");
     }
-
 }

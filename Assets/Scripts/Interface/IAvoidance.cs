@@ -3,5 +3,11 @@ using UnityEngine;
 
 public interface IAvoidance
 {
-    void Avoidance(Vector2 avoidanceDirection, float avoidanceDistance);
+    /// <summary>
+    /// ‰ñ”ğƒƒ\ƒbƒh
+    /// </summary>
+    /// <param name="avoidanceDirection">‰ñ”ğ•ûŒü</param>
+    /// <param name="avoidanceDistance">‰ñ”ğ‹——£</param>
+    /// <param name="avoidanceDuration">‰ñ”ğŠÔ</param>
+    void Avoidance(Vector2 avoidanceDirection, float avoidanceDistance, float avoidanceDuration);
 }

@@ -201,7 +201,6 @@ GameObject:
   m_Component:
   - component: {fileID: 175780899}
   - component: {fileID: 175780898}
-  - component: {fileID: 175780900}
   m_Layer: 0
   m_Name: Normal Camera
   m_TagString: Untagged
@@ -264,36 +263,6 @@ Transform:
   - {fileID: 423004983}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &175780900
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 175780897}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e501d18bb52cf8c40b1853ca4904654f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_CollideAgainst:
-    serializedVersion: 2
-    m_Bits: 1
-  m_IgnoreTag: 
-  m_TransparentLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_MinimumDistanceFromTarget: 0.1
-  m_AvoidObstacles: 1
-  m_DistanceLimit: 0
-  m_MinimumOcclusionTime: 0
-  m_CameraRadius: 0.1
-  m_Strategy: 1
-  m_MaximumEffort: 4
-  m_SmoothingTime: 0
-  m_Damping: 0
-  m_DampingWhenOccluded: 0
-  m_OptimalTargetDistance: 0
 --- !u!1 &253603600
 GameObject:
   m_ObjectHideFlags: 0
@@ -552,7 +521,7 @@ MonoBehaviour:
     m_InputAxisName: Mouse Y
     m_InputAxisValue: 0
     m_InvertInput: 1
-    m_MinValue: -40
+    m_MinValue: -20
     m_MaxValue: 60
     m_Wrap: 0
     m_Recentering:
@@ -1685,18 +1654,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 914290153814850568, guid: 1a6fff5c849cbe2419e00b5204f35434, type: 3}
-      propertyPath: _characterStatusStruct._runSpeed
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 914290153814850568, guid: 1a6fff5c849cbe2419e00b5204f35434, type: 3}
-      propertyPath: _characterStatusStruct._walkSpeed
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 914290153814850568, guid: 1a6fff5c849cbe2419e00b5204f35434, type: 3}
-      propertyPath: _characterStatusStruct._avoidanceDistance
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 4761668541326591854, guid: 1a6fff5c849cbe2419e00b5204f35434, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1744,48 +1701,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5795316055546989042, guid: 1a6fff5c849cbe2419e00b5204f35434, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1432852670}
-    - targetCorrespondingSourceObject: {fileID: 5795316055546989042, guid: 1a6fff5c849cbe2419e00b5204f35434, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1432852668}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a6fff5c849cbe2419e00b5204f35434, type: 3}
 --- !u!4 &1432852666 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4761668541326591854, guid: 1a6fff5c849cbe2419e00b5204f35434, type: 3}
   m_PrefabInstance: {fileID: 1432852665}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1432852667 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5795316055546989042, guid: 1a6fff5c849cbe2419e00b5204f35434, type: 3}
-  m_PrefabInstance: {fileID: 1432852665}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1432852668
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1432852667}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2fb8926b40ee6db4f8a2dc5fc9799f87, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1432852670
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1432852667}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 87ba32c893d751c4da0f6f0947a18a52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1514129769
 GameObject:
   m_ObjectHideFlags: 0
