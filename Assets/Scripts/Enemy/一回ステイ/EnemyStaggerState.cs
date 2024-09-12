@@ -12,7 +12,7 @@ using System.Collections;
 /// </summary>
 public class EnemyStaggerState : IEnemyState
 {
-    public void EnterState(Enemy enemy)
+    public void EnterState(OldEnemy enemy)
     {
         Debug.Log("のけぞりステートに移行しました");
     }
@@ -21,12 +21,12 @@ public class EnemyStaggerState : IEnemyState
     /// のけぞらせる(この間,行動停止) 
     /// </summary>
     /// <param name="enemy"></param>
-    public void UpdateState(Enemy enemy)
+    public void UpdateState(OldEnemy enemy)
     {
         enemy.HandleStagger();
     }
 
-    public void ExitState(Enemy enemy)
+    public void ExitState(OldEnemy enemy)
     {
        
     }

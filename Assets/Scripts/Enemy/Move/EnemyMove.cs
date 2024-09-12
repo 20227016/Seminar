@@ -3,14 +3,14 @@ using UnityEngine;
 using System.Collections;
 
 /// <summary>
-/// EnemyMoveBase.cs
+/// EnemyMove.cs
 /// クラス説明
-/// 敵の移動ベース
+/// 敵の移動
 ///
-/// 作成日: /
-/// 作成者: 
+/// 作成日: 9/12
+/// 作成者: 高橋光栄
 /// </summary>
-public abstract class EnemyMoveBase : ScriptableObject,IEnemyMove
+public class EnemyMove : IEnemyMove
 {
 
     /// <summary>
@@ -18,6 +18,9 @@ public abstract class EnemyMoveBase : ScriptableObject,IEnemyMove
     /// </summary>
     /// <param name="moveDirection">移動方向</param>
     /// <param name="speed">プレイヤーのステータス</param>
-    public abstract void Execute(Vector2 moveDirection, float speed);
+    public void Execute(Vector2 moveDirection, float speed)
+    {
+
+    }
 
 }

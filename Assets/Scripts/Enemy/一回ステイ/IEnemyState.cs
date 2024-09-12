@@ -9,9 +9,9 @@
 public interface IEnemyState
 {
     // ステートに入るときの処理
-    void EnterState(Enemy enemy);
+    void EnterState(OldEnemy enemy);
     // ステートがアクティブなときの処理
-    void UpdateState(Enemy enemy);
+    void UpdateState(OldEnemy enemy);
     // ステートから出るときの処理
-    void ExitState(Enemy enemy);
+    void ExitState(OldEnemy enemy);
 }
