@@ -9,32 +9,31 @@ using UniRx.Triggers;
 /// プレイヤー歩行クラス
 ///
 /// 作成日: 9/10
-/// 作成者: 山田智哉(高橋光栄)
+/// 作成者: 山田智哉
 /// </summary>
 public class PlayerMove : MonoBehaviour,IMove
 {
     // rbの取得
-    private Rigidbody _rb;
+    private Rigidbody _rigidBody = default;
 
-    private Vector3 movement = default;
+    private Vector3 _movement = default;
 
     private void Awake()
     {
-        _rb = GetComponent<Rigidbody>(); // Rigidbodyの取得
+        _rigidBody = GetComponent<Rigidbody>();
 
+        // FixedUpdateで移動
         this.FixedUpdateAsObservable()
+            .Where(_ => _movement != Vector3.zero)
             .Subscribe(_ =>
             {
-                // 動け、ゴラァ
-                _rb.MovePosition(_rb.position + movement * Time.deltaTime);
+                _rigidBody.MovePosition(_rigidBody.position + _movement);
+                transform.rotation = Quaternion.LookRotation(_movement);
             });
     }
 
-
-    // プレイヤーの移動方向
     public void Move(Vector2 moveDirection, float moveSpeed)
     {
-        // 移動ロジック
-        movement = new Vector3(moveDirection.x, 0, moveDirection.y) * moveSpeed;
+        _movement = new Vector3(moveDirection.x, 0, moveDirection.y) * moveSpeed * Time.deltaTime;
     }
 }

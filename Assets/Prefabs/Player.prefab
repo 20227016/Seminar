@@ -120,6 +120,8 @@ GameObject:
   - component: {fileID: -2333695426159160743}
   - component: {fileID: 706681087299733268}
   - component: {fileID: 914290153814850568}
+  - component: {fileID: 5372681815291998221}
+  - component: {fileID: 5444408624100485951}
   - component: {fileID: 4891854164367117026}
   - component: {fileID: 5454373434163990991}
   m_Layer: 0
@@ -350,12 +352,39 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterStatusStruct:
-    _moveSpeed: 10
+    _walkSpeed: 30
+    _runSpeed: 60
+    _avoidanceDistance: 20
+    _avoidanceDuration: 0.3
     _attackMultipiler: 0
     _defensePower: 0
     _skillTime: 0
     _skillCoolTime: 0
     _counterTime: 0
+--- !u!114 &5372681815291998221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5795316055546989042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87ba32c893d751c4da0f6f0947a18a52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5444408624100485951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5795316055546989042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fb8926b40ee6db4f8a2dc5fc9799f87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &4891854164367117026
 MonoBehaviour:
   m_ObjectHideFlags: 0

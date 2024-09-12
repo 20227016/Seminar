@@ -13,55 +13,48 @@ using System;
 public class PlayerAvoidance : MonoBehaviour, IAvoidance
 {
 
-    private Rigidbody _rb = default;
+    private Rigidbody _rigidBody = default;
 
     // 回避できるか
     private bool _isAvoiding = false;
 
-    // 回避の持続時間
-    private float _avoidanceTime = 0.5f;
-
     private void Awake()
     {
-        _rb = GetComponent<Rigidbody>();
+        _rigidBody = GetComponent<Rigidbody>();
     }
 
 
     /// <summary>
     /// 回避呼び出し処理
     /// </summary>
-    public void Avoidance(Vector2 avoidanceDirection, float avoidanceDistance)
+    public void Avoidance(Vector2 avoidanceDirection, float avoidanceDistance, float avoidanceDuration)
     {
         if (!_isAvoiding)
         {
+            Vector3 normalizedAvoidanceDirection = new Vector3(avoidanceDirection.x, 0, avoidanceDirection.y).normalized;
+            Vector3 avoidanceMovement = normalizedAvoidanceDirection * avoidanceDistance;
+
+            _rigidBody.AddForce(avoidanceMovement, ForceMode.VelocityChange);
+
             // 回避の実行処理
-            AvoidanceTime(avoidanceDirection).Forget();
+            AvoidanceTime(avoidanceDuration).Forget();
         }
     }
 
     /// <summary>
     /// 回避の処理
     /// </summary>
-    /// <returns></returns>
-    private async UniTaskVoid AvoidanceTime(Vector2 avoidanceDirection)
+    /// <returns>回避時間</returns>
+    private async UniTaskVoid AvoidanceTime(float avoidanceDuration)
     {
-
-        print("回避開始");
-
         _isAvoiding = true;
 
-        // 回避の移動処理
-        Vector3 normalizedAvoidanceDirection = new Vector3(avoidanceDirection.x, 0, avoidanceDirection.y).normalized;
-        Vector3 avoidanceMovement = normalizedAvoidanceDirection * avoidanceDirection;
-
-        // 回避の加速
-        _rb.AddForce(avoidanceMovement, ForceMode.VelocityChange);
-
         // 経過中、回避判定True
-        await UniTask.Delay(TimeSpan.FromSeconds(_avoidanceTime));
+        await UniTask.Delay(TimeSpan.FromSeconds(avoidanceDuration));
+
+        // 速度をゼロに
+        _rigidBody.velocity = Vector3.zero;
 
         _isAvoiding = false;
-
-        print("回避終了");
     }
 }

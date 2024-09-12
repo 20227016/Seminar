@@ -35,12 +35,20 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, 
     // 現在スタミナ量
     private ReactiveProperty<float> _currentStamina = new ReactiveProperty<float>();
 
+    // 各種インターフェース
+    private IMove _move = default;
+    private IAvoidance _avoidance = default;
+    private IAttackLight _playerAttackLight = default;
+    private IAttackStrong _playerAttackStrong = default;
 
-    private IMove _move;
-
-    private IAvoidance _avoidance;
-
+    // 移動方向
     private Vector2 _moveDirection = default;
+
+    // 走るフラグ
+    private bool _isRun = default;
+
+    // カメラのトランスフォーム
+    private Transform _cameraTransform;
 
     #region プロパティ
 
@@ -58,27 +66,28 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, 
         // 初期化
         _currentState = CharacterStateEnum.IDLE;
 
-        // 最初は歩く
+        // キャッシュ
+        _cameraTransform = Camera.main.transform;
+        _playerInput = GetComponent<PlayerInput>();
         _move = GetComponent<PlayerMove>();
+        _playerAttackLight = GetComponent<PlayerAttackLight>();
+        _playerAttackStrong = GetComponent<PlayerAttackStrong>();
         _avoidance = GetComponent<PlayerAvoidance>();
-
+        
         // ラッパークラスをインスタンス化
         _characterStatusStruct._playerStatus = new WrapperPlayerStatus();
 
-        // 最大HPと最大スタミナをリアクティブプロパティとして設定
+        // 最大HPと最大スタミナをリアクティブプロパティに設定
         _currentHP.Value = _characterStatusStruct._playerStatus.MaxHp;
         _currentStamina.Value = _characterStatusStruct._playerStatus.MaxStamina;
 
-        // PlayerInputコンポーネントを取得
-        _playerInput = GetComponent<PlayerInput>();
-
-        // 入力アクションを一元管理
+        // 入力アクションを登録
         RegisterInputActions(true);
     }
 
     private void OnDisable()
     {
-        // アクション解除
+        // 入力アクション解除
         RegisterInputActions(false);
     }
 
@@ -108,50 +117,44 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, 
     }
 
     /// <summary>
-    /// 入力管理
+    /// 入力アクション管理
     /// </summary>
     private void HandleInput(InputAction.CallbackContext context)
     {
-        // アクション名で入力処理を分岐
-        switch (context.action.name)
+        InputActionTypeEnum? actionType = InputActionManager.GetActionType(context.action.name);
+
+        if (actionType == null)
         {
-            case "Move":
-                _moveDirection = context.ReadValue<Vector2>();
-                Move(_moveDirection, _characterStatusStruct._walkSpeed);
+            Debug.LogWarning("未定義のアクション: " + context.action.name);
+            return;
+        }
+
+        switch (actionType.Value)
+        {
+            case InputActionTypeEnum.Move:
+                _moveDirection = GetCameraRelativeMoveDirection(context.ReadValue<Vector2>());
+                Move(_moveDirection, _isRun ? _characterStatusStruct._runSpeed : _characterStatusStruct._walkSpeed);
+                return;
+
+            case InputActionTypeEnum.Dash:
+                _isRun = !context.canceled;
+                Move(_moveDirection, _isRun ? _characterStatusStruct._runSpeed : _characterStatusStruct._walkSpeed);
                 break;
 
-            case "Dash":
-                Debug.Log("走る");
-                Move(_moveDirection, _characterStatusStruct._runSpeed);
-                return;
-
-            case "AttackLight":
-                if (context.canceled)
-                {
-                    return;
-                }
+            case InputActionTypeEnum.AttackLight:
+                if (context.canceled) return;
                 AttackLight();
-                return;
+                break;
 
-            case "AttackStrong":
-                if (context.canceled)
-                {
-                    return;
-                }
+            case InputActionTypeEnum.AttackStrong:
+                if (context.canceled) return;
                 AttackStrong();
-                return;
+                break;
 
-            case "Avoidance":
-                if (context.canceled)
-                {
-                    return;
-                }
-                Avoidance(_moveDirection, _characterStatusStruct._avoidanceDistance);
-                return;
-
-            default:
-                Debug.LogWarning("未定義のアクション: " + context.action.name);
-                return;
+            case InputActionTypeEnum.Avoidance:
+                if (context.canceled) return;
+                Avoidance(_moveDirection, _characterStatusStruct._avoidanceDistance, _characterStatusStruct._avoidanceDuration);
+                break;
         }
     }
 
@@ -159,17 +162,16 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, 
     {
         _moveDirection = moveDirection;
         _move.Move(moveDirection, moveSpeed);
-        print(moveDirection);
     }
 
     public void AttackLight()
     {
-        print("弱攻撃");
+        _playerAttackLight.AttackLight();
     }
 
     public void AttackStrong()
     {
-        print("強攻撃");
+        _playerAttackStrong.AttackStrong();
     }
 
     public void ComboCounter()
@@ -187,8 +189,27 @@ public class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, 
         // ターゲット処理を実装
     }
 
-    public void Avoidance(Vector2 avoidanceDirection, float avoidanceDistance)
+    public void Avoidance(Vector2 avoidanceDirection, float avoidanceDistance, float avoidanceDuration)
     {
-        _avoidance.Avoidance(avoidanceDirection, avoidanceDistance);
+        _avoidance.Avoidance(avoidanceDirection, avoidanceDistance, avoidanceDuration);
+    }
+
+    /// <summary>
+    ///  カメラ基準の移動方向を計算
+    /// </summary>
+    /// <param name="inputDirection">入力方向</param>
+    /// <returns><カメラ基準の移動方向/returns>
+    private Vector2 GetCameraRelativeMoveDirection(Vector2 inputDirection)
+    {
+        Vector3 forward = _cameraTransform.forward;
+        Vector3 right = _cameraTransform.right;
+
+        forward.Normalize();
+        right.Normalize();
+
+        // 入力された移動方向をカメラの向きに変換
+        Vector3 moveDirection = forward * inputDirection.y + right * inputDirection.x;
+
+        return new Vector2(moveDirection.x, moveDirection.z);
     }
 }
