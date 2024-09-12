@@ -26,13 +26,18 @@ public class A : MonoBehaviour
     {
 
         BoxCastStruct boxCastStruct = default;
-        //自分の目の前から
+        // 自分の目の前から
+        // 中心点
         boxCastStruct._originPos = this.transform.position + this.transform.localScale/2;
+        // 半径（直径ではない）
         boxCastStruct._size = (transform.localScale - Vector3.forward * transform.localScale.z);
         boxCastStruct._size += Vector3.right * boxCastStruct._size.x * 2;
         boxCastStruct._size -= Vector3.one / 100;
+        // 方向
         boxCastStruct._direction = transform.forward;
+        // 距離
         boxCastStruct._distance = 5f;
+        // 無視するレイヤー
         boxCastStruct._layerMask = ~ignoreLayer;
         if (Input.GetKeyDown(KeyCode.A))
         {

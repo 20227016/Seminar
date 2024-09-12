@@ -14,9 +14,14 @@ using System.Collections;
 public class FlyEnemyPattern1 : PatternBase
 {
 
+    BoxCastStruct _boxCastStruct = default;
+
+    [SerializeField, Header("無視するレイヤー")]
+    private LayerMask ignoreLayer = default;
+
     public override void Execute(EnemyStatusStruct enemyStatusStruct)
     {
-
+        
 
     }
 
