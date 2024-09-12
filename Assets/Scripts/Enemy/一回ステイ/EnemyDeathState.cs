@@ -13,18 +13,18 @@ using System.Collections;
 public class EnemyDeathState : IEnemyState
 {
     // エネミー死亡
-    public void EnterState(Enemy enemy)
+    public void EnterState(OldEnemy enemy)
     {
         Debug.Log("死亡ステートに移行しました");
         enemy.HandleDeath();
     }
 
-    public void UpdateState(Enemy enemy)
+    public void UpdateState(OldEnemy enemy)
     {
         // 死亡状態中に何かしたい場合は、ここに記述(処理の内容はEnemyに追加して)
     }
 
-    public void ExitState(Enemy enemy)
+    public void ExitState(OldEnemy enemy)
     {
         // 死亡ステートから出たときに何か処理したいときはここに記述(処理の内容はEnemyに追加して)
     }

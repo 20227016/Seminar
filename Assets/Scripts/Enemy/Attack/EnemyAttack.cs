@@ -10,11 +10,10 @@ using System.Collections;
 /// 作成日: 9/11
 /// 作成者: 湯元
 /// </summary>
-[CreateAssetMenu(menuName = "ScriptableObject/EnemyAttack/EnemyAttack1", fileName = "EnemyAttack1")]
-public class EnemyAttack1 : EnemyAttackBase
+public class EnemyAttack : IEnemyAttack
 {
 
-    public override void Execute()
+    public  void Execute()
     {
 
         Debug.Log("敵の攻撃");

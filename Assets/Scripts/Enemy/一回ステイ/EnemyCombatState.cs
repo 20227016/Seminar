@@ -12,17 +12,17 @@ using System.Collections;
 /// </summary>
 public class EnemyCombatState : IEnemyState
 {
-    public void EnterState(Enemy enemy)
+    public void EnterState(OldEnemy enemy)
     {
         Debug.Log("戦闘ステートに移行しました");
     }
 
-    public void UpdateState(Enemy enemy)
+    public void UpdateState(OldEnemy enemy)
     {
         enemy.HandleCombat();
     }
 
-    public void ExitState(Enemy enemy)
+    public void ExitState(OldEnemy enemy)
     {
        
     }
