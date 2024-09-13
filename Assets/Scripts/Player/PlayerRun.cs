@@ -1,6 +1,5 @@
 
 using UnityEngine;
-using System.Collections;
 using UniRx.Triggers;
 using UniRx;
 
@@ -38,14 +37,8 @@ public class PlayerRun : MonoBehaviour, IMove
             });
     }
 
-    private void FixedUpdate()
-    {
-        
-    }
-
     public void Move(Vector2 moveDirection, float moveSpeed)
     {
-        print("あ");
         // 再利用可能なVector3に変換結果を保存
         _cachedMoveDirection.Set(moveDirection.x, 0, moveDirection.y);
         _moveDirection = _cachedMoveDirection * moveSpeed * Time.deltaTime;
