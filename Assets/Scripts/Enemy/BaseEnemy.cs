@@ -49,17 +49,10 @@ public abstract class BaseEnemy : MonoBehaviour
     protected virtual void BasicRaycast()
     {
 
-        // 自分の目の前から
-        // 中心点
-        _boxCastStruct._originPos = this.transform.position + this.transform.localScale / 2;
-        // 半径（直径ではない）
-        _boxCastStruct._size = (transform.localScale - Vector3.forward * transform.localScale.z);
-        _boxCastStruct._size += Vector3.right * _boxCastStruct._size.x * 2;
-        _boxCastStruct._size -= Vector3.one / 100;
-        // 方向
-        _boxCastStruct._direction = transform.forward;
-        // 距離
-        _boxCastStruct._distance = 5f;
+        SetPostion();
+        SetSiz();
+        SetDirection();
+        SetDistance();
         if (_tags.Count != 0)
         {
             _boxCastStruct._tags = _tags.ToArray();
@@ -69,6 +62,40 @@ public abstract class BaseEnemy : MonoBehaviour
         _boxCastStruct._layerMask = ~ignoreLayer;
 
     }
+
+    protected virtual void SetPostion()
+    {
+
+        // 自分の目の前から
+        // 中心点
+        _boxCastStruct._originPos = this.transform.position + this.transform.localScale / 2;
+
+    }
+
+    protected virtual void SetSiz()
+    {
+
+        // 半径（直径ではない）
+        _boxCastStruct._size = (transform.localScale - Vector3.forward * transform.localScale.z);
+        _boxCastStruct._size += Vector3.right * _boxCastStruct._size.x * 2;
+        _boxCastStruct._size -= Vector3.one / 100;
+
+    }
+    protected virtual void SetDirection()
+    {
+
+        // 方向
+        _boxCastStruct._direction = transform.forward;
+
+    }
+    protected virtual void SetDistance()
+    {
+
+        // 距離
+        _boxCastStruct._distance = 5f;
+
+    }
+
 
 
 }
