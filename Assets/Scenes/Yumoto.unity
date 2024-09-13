@@ -694,6 +694,9 @@ MonoBehaviour:
     _diffencePower: 0
     _attackCoolTime: 0
   _tags: []
+  _myAnimator: {fileID: 0}
+  _playerTrans: {fileID: 150222643}
+  _searhDistance: 2
 --- !u!1001 &824762016
 PrefabInstance:
   m_ObjectHideFlags: 0
