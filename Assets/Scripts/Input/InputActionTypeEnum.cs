@@ -1,9 +1,32 @@
 
 public enum InputActionTypeEnum
 {
+    /// <summary>
+    /// 移動
+    /// </summary>
     Move,
+    /// <summary>
+    /// 走行
+    /// </summary>
     Dash,
+    /// <summary>
+    /// 弱攻撃
+    /// </summary>
     AttackLight,
+    /// <summary>
+    /// 強攻撃
+    /// </summary>
     AttackStrong,
-    Avoidance
+    /// <summary>
+    /// 回避
+    /// </summary>
+    Avoidance,
+    /// <summary>
+    /// ターゲット
+    /// </summary>
+    Target,
+    /// <summary>
+    /// スキル
+    /// </summary>
+    Skill
 }
