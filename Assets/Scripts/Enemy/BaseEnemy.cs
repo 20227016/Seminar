@@ -15,8 +15,8 @@ public abstract class BaseEnemy : MonoBehaviour
 
     [SerializeField, Header("無視するレイヤー")]
     protected LayerMask ignoreLayer = default;
-    [SerializeField,Header("キャラクターステータス")]
-    protected CharacterStatusStruct _characterStatusStruct = default;
+    [SerializeField, Header("キャラクターステータス")]
+    protected EnemyStatusStruct _enemyStatusStruct = default;
     [SerializeField, Header("無視するレイヤー")]
     protected List<string> _tags = new List<string>();
 
@@ -62,7 +62,6 @@ public abstract class BaseEnemy : MonoBehaviour
         _boxCastStruct._distance = 5f;
         if (_tags.Count != 0)
         {
-
             _boxCastStruct._tags = _tags.ToArray();
 
         }

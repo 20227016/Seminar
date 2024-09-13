@@ -767,7 +767,7 @@ GameObject:
   - component: {fileID: 871670616637043254}
   - component: {fileID: 871670616637043255}
   m_Layer: 0
-  m_Name: Enemy
+  m_Name: BeBeetle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -858,14 +858,15 @@ MonoBehaviour:
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 439
-  _player: {fileID: 2099091808}
   _enemyStatusStruct:
-    _hp: 0
-    _attackPower: 0
-    _attackPowerSpeed: 0
-    _moveSpeed: 0
-    _diffencePower: 0
-    _attackCoolTime: 0
+    _hp: 100
+    _attackPower: 1
+    _attackPowerSpeed: 1
+    _moveSpeed: 1
+    _diffencePower: 1
+    _attackCoolTime: 1
+  _tags: []
+  _player: {fileID: 2099091808}
 --- !u!4 &872841026336455066
 Transform:
   m_ObjectHideFlags: 0
