@@ -12,7 +12,7 @@ public class B : MonoBehaviour
     private void Start()
     {
         // 最初は歩く
-        _move = GetComponent<PlayerMove>();
+        _move = GetComponent<PlayerWalk>();
         _avoidance = GetComponent<PlayerAvoidance>();
 
         // null チェック

@@ -10,11 +10,16 @@ using System.Collections;
 /// 作成日: 9/10
 /// 作成者: 山田智哉
 /// </summary>
-public class PlayerAttackLight : MonoBehaviour, IAttackLight
+public class PlayerAttackLight : MonoBehaviour, IAttackLight, IComboCounter
 {
 
     public void AttackLight()
     {
         Debug.Log("弱攻撃");
+    }
+
+    public void ComboCounter()
+    {
+        
     }
 }
