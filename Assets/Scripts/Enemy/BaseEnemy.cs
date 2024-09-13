@@ -1,6 +1,6 @@
 
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 /// <summary>
 /// BaseEnemy.cs
@@ -14,42 +14,19 @@ public abstract class BaseEnemy : MonoBehaviour
 {
 
     [SerializeField, Header("無視するレイヤー")]
-    private LayerMask ignoreLayer = default;
+    protected LayerMask ignoreLayer = default;
+    [SerializeField,Header("キャラクターステータス")]
+    protected CharacterStatusStruct _characterStatusStruct = default;
+    [SerializeField, Header("無視するレイヤー")]
+    protected List<string> _tags = new List<string>();
 
-    private BoxCastStruct _boxCastStruct;
+    // 探索するときに使用する構造体
+    protected BoxCastStruct _boxCastStruct = default;
 
-    /// <summary>
-    /// 更新処理
-    /// </summary>
-    protected virtual void Update()
-    {
+    protected IEnemyAttack _attack = new EnemyAttack();
 
-        // 自分の目の前から
-        // 中心点
-        _boxCastStruct._originPos = this.transform.position + this.transform.localScale / 2;
-        // 半径（直径ではない）
-        _boxCastStruct._size = (transform.localScale - Vector3.forward * transform.localScale.z);
-        _boxCastStruct._size += Vector3.right * _boxCastStruct._size.x * 2;
-        _boxCastStruct._size -= Vector3.one / 100;
-        // 方向
-        _boxCastStruct._direction = transform.forward;
-        // 距離
-        _boxCastStruct._distance = 5f;
-        // 無視するレイヤー
-        _boxCastStruct._layerMask = ~ignoreLayer;
+    protected IEnemyMove _move = new EnemyMove();
 
-        RaycastHit hit = Search.BoxCast(_boxCastStruct);
-        if (hit.collider)
-        {
-            print(hit.collider);
-
-        }
-
-
-        // ここに移動の処理を書く
-        // レイキャストから距離(個別で決めれるようにする)を計測し、そこに到達したら止まる処理を書く
-        // そして、攻撃をさせる
-    }
 
     private void OnDrawGizmos()
     {
@@ -68,5 +45,31 @@ public abstract class BaseEnemy : MonoBehaviour
         Gizmos.DrawWireCube(_boxCastStruct._direction * _boxCastStruct._distance, _boxCastStruct._size);
 
     }
+
+    protected virtual void BasicRaycast()
+    {
+
+        // 自分の目の前から
+        // 中心点
+        _boxCastStruct._originPos = this.transform.position + this.transform.localScale / 2;
+        // 半径（直径ではない）
+        _boxCastStruct._size = (transform.localScale - Vector3.forward * transform.localScale.z);
+        _boxCastStruct._size += Vector3.right * _boxCastStruct._size.x * 2;
+        _boxCastStruct._size -= Vector3.one / 100;
+        // 方向
+        _boxCastStruct._direction = transform.forward;
+        // 距離
+        _boxCastStruct._distance = 5f;
+        if (_tags.Count != 0)
+        {
+
+            _boxCastStruct._tags = _tags.ToArray();
+
+        }
+        // 無視するレイヤー
+        _boxCastStruct._layerMask = ~ignoreLayer;
+
+    }
+
 
 }
