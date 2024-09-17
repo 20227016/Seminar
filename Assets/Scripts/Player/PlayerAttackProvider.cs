@@ -1,40 +1,27 @@
 
 using UnityEngine;
-using System.Collections;
 
 /// <summary>
 /// PlayerAttackProvider.cs
 /// クラス説明
+/// 攻撃インターフェースを渡すクラス
 ///
-///
-/// 作成日: /
-/// 作成者: 
+/// 作成日: 9/13
+/// 作成者: 山田智哉
 /// </summary>
-public class PlayerAttackProvider : MonoBehaviour
+public class PlayerAttackProvider : IAttackProvider
 {
+    public PlayerAttackLight _playerAttackLight = new PlayerAttackLight();
 
-    /// <summary>
-    /// 初期化処理
-    /// </summary>
-    private void Awake()
+    public PlayerAttackStrong _playerAttackStrong = new PlayerAttackStrong();
+
+    public IAttackLight GetAttackLight()
     {
-
+        return _playerAttackLight;
     }
 
-    /// <summary>
-    /// 更新前処理
-    /// </summary>
-    private void Start()
+    public IAttackStrong GetAttackStrong()
     {
-
+        return _playerAttackStrong;
     }
-
-    /// <summary>
-    /// 更新処理
-    /// </summary>
-    private void Update()
-    {
-
-    }
-
 }

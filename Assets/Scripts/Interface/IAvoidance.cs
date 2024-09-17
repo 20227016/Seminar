@@ -9,5 +9,5 @@ public interface IAvoidance
     /// <param name="avoidanceDirection">‰ñ”ð•ûŒü</param>
     /// <param name="avoidanceDistance">‰ñ”ð‹——£</param>
     /// <param name="avoidanceDuration">‰ñ”ðŽžŠÔ</param>
-    void Avoidance(Vector2 avoidanceDirection, float avoidanceDistance, float avoidanceDuration);
+    void Avoidance(Transform transform, Vector2 avoidanceDirection, float avoidanceDistance, float avoidanceDuration);
 }
