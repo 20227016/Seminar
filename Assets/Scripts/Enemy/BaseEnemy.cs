@@ -27,6 +27,7 @@ public abstract class BaseEnemy : MonoBehaviour
 
     protected IEnemyMove _move = new EnemyMove();
 
+    protected IEnemyAnimation _enemyAnimation = new EnemyAnimation();
 
     private void OnDrawGizmos()
     {
