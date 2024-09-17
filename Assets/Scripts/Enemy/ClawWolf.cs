@@ -17,12 +17,13 @@ public class ClawWolf : BaseEnemy
     private Animator _myAnimator = default;
     [SerializeField, Header("プレイヤーのトランスフォーム")]
     private Transform _playerTrans = default;
-    [SerializeField,Header("探索距離")]
+    [SerializeField, Header("探索距離")]
     private float _searhDistance = 2f;
 
     private EnemyMovementState _movementState = EnemyMovementState.IDLE;
     private EnemyActionState _actionState = EnemyActionState.SEARCHING;
 
+    private float _attackID = default;
 
     /// <summary>
     /// 初期化処理
@@ -33,6 +34,9 @@ public class ClawWolf : BaseEnemy
         //Raycastの基本設定
         BasicRaycast();
         _boxCastStruct._distance = _searhDistance;
+        _myAnimator.SetFloat("Attack1", _enemyStatusStruct._attackPowerSpeed);
+        _myAnimator.SetFloat("Attack2", _enemyStatusStruct._attackPowerSpeed);
+        _myAnimator.SetFloat("Attack3", _enemyStatusStruct._attackPowerSpeed);
 
     }
 
@@ -54,14 +58,20 @@ public class ClawWolf : BaseEnemy
 
         //Rayの位置更新
         SetPostion();
+        RaycastHit _hit = default;
         switch (_movementState)
         {
 
             // 待機
             case EnemyMovementState.IDLE:
-                print("攻撃");
-                Search.BoxCast(_boxCastStruct);
-                _enemyAnimation.Attack(_myAnimator, 1);
+
+                _hit = Search.BoxCast(_boxCastStruct);
+                if (_hit.collider)
+                {
+
+                    _enemyAnimation.Attack(_myAnimator, 1);
+
+                }
 
                 break;
             // 歩き
@@ -85,11 +95,17 @@ public class ClawWolf : BaseEnemy
 
                 break;
 
-
-
         }
 
+    }
 
+    private void OnTriggerExit(Collider other)
+    {
+
+        IReceiveDamage receiveDamage = other.GetComponent<IReceiveDamage>();
+        receiveDamage.ReceiveDamage(_enemyStatusStruct._attackPower);
+
+    
     }
 
 }

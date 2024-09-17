@@ -188,7 +188,7 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
         // コンボカウンター処理を実装
     }
 
-    public void ReceiveDamage()
+    public void Excute()
     {
         Debug.Log(gameObject.name + "が被弾");
     }
