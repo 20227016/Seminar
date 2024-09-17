@@ -8,7 +8,9 @@ public class InputActionManager : MonoBehaviour
         new InputActionMappingStruct(InputActionTypeEnum.Dash, "Dash"),
         new InputActionMappingStruct(InputActionTypeEnum.AttackLight, "AttackLight"),
         new InputActionMappingStruct(InputActionTypeEnum.AttackStrong, "AttackStrong"),
-        new InputActionMappingStruct(InputActionTypeEnum.Avoidance, "Avoidance")
+        new InputActionMappingStruct(InputActionTypeEnum.Avoidance, "Avoidance"),
+        new InputActionMappingStruct(InputActionTypeEnum.Target, "Target"),
+        new InputActionMappingStruct(InputActionTypeEnum.Skill, "Skill")
     };
 
     public static InputActionTypeEnum? GetActionType(string actionName)

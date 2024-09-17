@@ -18,8 +18,17 @@ public class EnemyMove : IEnemyMove
     /// </summary>
     /// <param name="moveDirection">移動方向</param>
     /// <param name="speed">プレイヤーのステータス</param>
-    public void Execute(Vector2 moveDirection, float speed)
+    public void Execute(Vector3 startPos, Vector3 targetPos, float speed)
     {
+
+        // 方向を求める
+        float right = targetPos.x - startPos.x;
+        float forward = targetPos.z - startPos.z;
+        Vector3 director = Vector3.right * right +
+                           Vector3.up * startPos.y + 
+                           Vector3.forward * forward;
+        
+
 
     }
 

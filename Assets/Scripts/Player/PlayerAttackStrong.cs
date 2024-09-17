@@ -10,10 +10,15 @@ using System.Collections;
 /// 作成日: 9/10
 /// 作成者: 山田智哉
 /// </summary>
-public class PlayerAttackStrong : MonoBehaviour, IAttackStrong
+public class PlayerAttackStrong : MonoBehaviour, IAttackStrong, IComboCounter
 {
     public void AttackStrong()
     {
         Debug.Log("強攻撃");
+    }
+
+    public void ComboCounter()
+    {
+        
     }
 }
