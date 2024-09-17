@@ -10,7 +10,7 @@ using System.Collections.Generic;
 /// 作成日: /
 /// 作成者: 
 /// </summary>
-public abstract class BaseEnemy : MonoBehaviour
+public abstract class BaseEnemy : MonoBehaviour,IReceiveDamage
 {
 
     [SerializeField, Header("無視するレイヤー")]
@@ -97,6 +97,15 @@ public abstract class BaseEnemy : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// ダメージ処理
+    /// </summary>
+    /// <param name="damegeValue">ダメージ</param>
+    public void ReceiveDamage(int damegeValue)
+    {
 
+        _enemyStatusStruct._hp -= damegeValue - _enemyStatusStruct._diffencePower;
+
+    }
 
 }
