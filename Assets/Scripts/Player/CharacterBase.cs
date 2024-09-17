@@ -259,4 +259,9 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
     public abstract void Skill();
 
     public abstract void Passive();
+
+    public void ReceiveDamage(int damegeValue)
+    {
+        _currentHP.Value -= damegeValue - _characterStatusStruct._defensePower;
+    }
 }
