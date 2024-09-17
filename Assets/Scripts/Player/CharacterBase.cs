@@ -4,6 +4,7 @@ using Fusion;
 using System.Collections;
 using UnityEngine.InputSystem;
 using UniRx;
+using UniRx.Triggers;
 
 /// <summary>
 /// CharacterBase.cs
@@ -35,19 +36,30 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
     protected PlayerInput _playerInput = default;
 
     // カメラコントローラー
-    protected CameraDirection _cameraController;
+    protected CameraDirection _cameraDirection = default;
 
     // 移動方向
     protected Vector2 _moveDirection = default;
 
+    // 入力方向
+    protected Vector2 _inputDirection = default;
+
     // 走るフラグ
     protected bool _isRun = default;
 
+    // 移動速度
+    protected float _moveSpeed = default;
+
+    // 自身のトランスフォーム
+    protected Transform _playerTransform = default;
+
     // 各種インターフェース
     protected IMove _move = default;
+    protected IMoveProvider _moveProvider = default;
     protected IAvoidance _avoidance = default;
     protected IAttackLight _playerAttackLight = default;
     protected IAttackStrong _playerAttackStrong = default;
+    protected IAttackProvider _attackProvider = default;
 
     #region プロパティ
 
@@ -62,26 +74,44 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
     /// </summary>
     protected virtual void Awake()
     {
+        // キャッシュ
+        _moveProvider = new PlayerMoveProvider();
+        _move = _moveProvider.GetWalk();
+        _attackProvider = new PlayerAttackProvider();
+        _playerAttackLight = _attackProvider.GetAttackLight();
+        _playerAttackStrong = _attackProvider.GetAttackStrong();
+        _avoidance = new PlayerAvoidance();
+        _characterStatusStruct._playerStatus = new WrapperPlayerStatus();
+        _cameraDirection = new CameraDirection(Camera.main.transform);
+        
+        _playerInput = GetComponent<PlayerInput>();
+
+       
         // 初期化
         _currentState = CharacterStateEnum.IDLE;
+        _playerTransform = this.transform;
+        _moveSpeed = _characterStatusStruct._walkSpeed;
+        RegisterInputActions(true);
 
-        IMoveProvider moveProvider = new PlayerMoveProvider();
-
-        // キャッシュ
-        _cameraController = new CameraDirection(Camera.main.transform);
-        _playerInput = GetComponent<PlayerInput>();
-        _move = moveProvider.GetWalk();
-        _playerAttackLight = GetComponent<PlayerAttackLight>();
-        _playerAttackStrong = GetComponent<PlayerAttackStrong>();
-        _avoidance = GetComponent<PlayerAvoidance>();
-        _characterStatusStruct._playerStatus = new WrapperPlayerStatus();
 
         // 最大HPと最大スタミナをリアクティブプロパティに設定
         _currentHP.Value = _characterStatusStruct._playerStatus.MaxHp;
         _currentStamina.Value = _characterStatusStruct._playerStatus.MaxStamina;
 
-        // 入力アクションを登録
-        RegisterInputActions(true);
+
+        // 移動処理
+        this.FixedUpdateAsObservable()
+            // 入力がないときは通らない
+            .Where(_ => _inputDirection != Vector2.zero)
+            .Subscribe(_ => 
+            {
+
+                // メインカメラから移動方向を算出
+                _moveDirection = _cameraDirection.GetCameraRelativeMoveDirection(_inputDirection);
+                Move(_playerTransform, _moveDirection, _moveSpeed);
+
+            })
+            .AddTo(this);
     }
 
     /// <summary>
@@ -98,21 +128,26 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
     /// </summary>
     private void RegisterInputActions(bool isRegister)
     {
+
         if (isRegister)
         {
+
             foreach (InputAction action in _playerInput.actions)
             {
                 action.performed += HandleInput;
                 action.canceled += HandleInput;
             }
+
         }
         else
         {
+
             foreach (InputAction action in _playerInput.actions)
             {
                 action.performed -= HandleInput;
                 action.canceled -= HandleInput;
             }
+
         }
     }
 
@@ -121,8 +156,10 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
     /// </summary>
     private void HandleInput(InputAction.CallbackContext context)
     {
+        // 定義されているアクションを取得
         InputActionTypeEnum? actionType = InputActionManager.GetActionType(context.action.name);
 
+        // 定義にないアクションはリターン
         if (actionType == null)
         {
             return;
@@ -130,47 +167,63 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
 
         switch (actionType.Value)
         {
+
             case InputActionTypeEnum.Move:
-                _moveDirection = _cameraController.GetCameraRelativeMoveDirection(context.ReadValue<Vector2>());
-                Move(_moveDirection, _isRun ? _characterStatusStruct._runSpeed : _characterStatusStruct._walkSpeed);
+
+                _inputDirection = context.ReadValue<Vector2>();
                 return;
 
             case InputActionTypeEnum.Dash:
+
                 _isRun = !context.canceled;
-                Move(_moveDirection, _isRun ? _characterStatusStruct._runSpeed : _characterStatusStruct._walkSpeed);
+                if (_isRun)
+                {
+                    _move = _moveProvider.GetRun();
+                    _moveSpeed = _characterStatusStruct._runSpeed;
+                }
+                else
+                {
+                    _move = _moveProvider.GetWalk();
+                    _moveSpeed = _characterStatusStruct._walkSpeed;
+                }
                 return;
 
             case InputActionTypeEnum.AttackLight:
+
                 if (context.canceled) return;
                 AttackLight();
                 return;
 
             case InputActionTypeEnum.AttackStrong:
+
                 if (context.canceled) return;
                 AttackStrong();
                 return;
 
             case InputActionTypeEnum.Avoidance:
+
                 if (context.canceled) return;
-                Avoidance(_moveDirection, _characterStatusStruct._avoidanceDistance, _characterStatusStruct._avoidanceDuration);
+                Avoidance(_playerTransform, _moveDirection, _characterStatusStruct._avoidanceDistance, _characterStatusStruct._avoidanceDuration);
                 return;
 
             case InputActionTypeEnum.Target:
+
                 if (context.canceled) return;
                 Target();
                 return;
 
             case InputActionTypeEnum.Skill:
+
                 if (context.canceled) return;
                 Skill();
                 return;
+
         }
     }
 
-    public void Move(Vector2 moveDirection, float moveSpeed)
+    public void Move(Transform transform, Vector2 moveDirection, float moveSpeed)
     {
-        _moveDirection = moveDirection;
-        _move.Move(moveDirection, moveSpeed);
+        _move.Move(transform, moveDirection, moveSpeed);
     }
 
     public void AttackLight()
@@ -198,9 +251,9 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
         Debug.Log("ターゲッティング");
     }
 
-    public void Avoidance(Vector2 avoidanceDirection, float avoidanceDistance, float avoidanceDuration)
+    public void Avoidance(Transform transform, Vector2 avoidanceDirection, float avoidanceDistance, float avoidanceDuration)
     {
-        _avoidance.Avoidance(avoidanceDirection, avoidanceDistance, avoidanceDuration);
+        _avoidance.Avoidance(transform, avoidanceDirection, avoidanceDistance, avoidanceDuration);
     }
 
     public abstract void Skill();

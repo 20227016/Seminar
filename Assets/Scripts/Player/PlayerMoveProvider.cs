@@ -5,7 +5,7 @@ using System.Collections;
 /// <summary>
 /// PlayerMoveProvider.cs
 /// クラス説明
-///
+/// 移動インターフェースを渡すクラス
 ///
 /// 作成日: 9/13
 /// 作成者: 山田智哉
