@@ -24,8 +24,6 @@ public class ClawWolf : BaseEnemy
     private EnemyActionState _actionState = EnemyActionState.SEARCHING;
 
 
-    //private int _attackNo = 1;
-
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -61,7 +59,9 @@ public class ClawWolf : BaseEnemy
 
             // 待機
             case EnemyMovementState.IDLE:
-
+                print("攻撃");
+                Search.BoxCast(_boxCastStruct);
+                _enemyAnimation.Attack(_myAnimator, 1);
 
                 break;
             // 歩き
@@ -74,12 +74,12 @@ public class ClawWolf : BaseEnemy
 
 
                 break;
-            // ダウン
+            // ダウン(ブレイク)
             case EnemyMovementState.DOWNED:
 
 
                 break;
-            // のけぞり
+            // のけぞり(カウンターの時)
             case EnemyMovementState.STUNNED:
 
 
