@@ -40,9 +40,19 @@ public class ClawWolf : BaseEnemy
         //Raycastの基本設定
         BasicRaycast();
         _boxCastStruct._distance = _searhDistance;
-        _myAnimator.SetFloat("Attack1", _enemyStatusStruct._attackPowerSpeed);
-        _myAnimator.SetFloat("Attack2", _enemyStatusStruct._attackPowerSpeed);
-        _myAnimator.SetFloat("Attack3", _enemyStatusStruct._attackPowerSpeed);
+        //アニメーター取得
+        RuntimeAnimatorController myRuntimeAnimator = _myAnimator.runtimeAnimatorController;
+        AnimationClip[] animationClips = myRuntimeAnimator.animationClips;
+        foreach (AnimationClip animationClip in animationClips)
+        {
+            
+           // animationClip.pa
+
+        }
+
+        //_myAnimator.SetFloat("Attack1", _enemyStatusStruct._attackPowerSpeed);
+        //_myAnimator.SetFloat("Attack2", _enemyStatusStruct._attackPowerSpeed);
+        //_myAnimator.SetFloat("Attack3", _enemyStatusStruct._attackPowerSpeed);
 
     }
 
