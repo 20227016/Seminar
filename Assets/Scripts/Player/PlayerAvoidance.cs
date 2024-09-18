@@ -1,6 +1,6 @@
+
 using UnityEngine;
 using Cysharp.Threading.Tasks;
-using System;
 
 /// <summary>
 /// Avoidance.cs
@@ -10,50 +10,53 @@ using System;
 /// 作成日: 9/10
 /// 作成者: 高橋光栄
 /// </summary>
-public class PlayerAvoidance : MonoBehaviour, IAvoidance
+public class PlayerAvoidance : IAvoidance
 {
-
-    private Rigidbody _rigidBody = default;
-
-    // 回避できるか
+    // 回避中フラグ
     private bool _isAvoiding = false;
 
-    private void Awake()
+
+    public void Avoidance(Transform transform, Vector2 avoidanceDirection, float avoidanceDistance, float avoidanceDuration)
     {
-        _rigidBody = GetComponent<Rigidbody>();
-    }
+        // 回避中はリターン
+        if (_isAvoiding) return;
 
+        // 正規化した移動方向を算出
+        Vector3 normalizedAvoidanceDirection = new Vector3(avoidanceDirection.x, 0, avoidanceDirection.y).normalized;
 
-    /// <summary>
-    /// 回避呼び出し処理
-    /// </summary>
-    public void Avoidance(Vector2 avoidanceDirection, float avoidanceDistance, float avoidanceDuration)
-    {
-        if (!_isAvoiding)
-        {
-            Vector3 normalizedAvoidanceDirection = new Vector3(avoidanceDirection.x, 0, avoidanceDirection.y).normalized;
-            Vector3 avoidanceMovement = normalizedAvoidanceDirection * avoidanceDistance;
+        // 開始位置と終了位置を取得
+        Vector3 startPosition = transform.position;
+        Vector3 endPosition = startPosition + normalizedAvoidanceDirection * avoidanceDistance;
 
-            _rigidBody.AddForce(avoidanceMovement, ForceMode.VelocityChange);
-
-            // 回避の実行処理
-            AvoidanceTime(avoidanceDuration).Forget();
-        }
+        // 回避処理
+        AvoidanceCoroutine(transform, startPosition, endPosition, avoidanceDuration).Forget();
     }
 
     /// <summary>
-    /// 回避の処理
+    /// 回避処理の非同期コルーチン
     /// </summary>
-    /// <returns>回避時間</returns>
-    private async UniTaskVoid AvoidanceTime(float avoidanceDuration)
+    private async UniTaskVoid AvoidanceCoroutine(Transform transform, Vector3 startPosition, Vector3 endPosition, float duration)
     {
         _isAvoiding = true;
+        float elapsedTime = 0f;
 
-        // 経過中、回避判定True
-        await UniTask.Delay(TimeSpan.FromSeconds(avoidanceDuration));
+        // 回避の持続時間が経過するまでループ
+        while (elapsedTime < duration)
+        {
 
-        // 速度をゼロに
-        _rigidBody.velocity = Vector3.zero;
+            // 時間計測
+            elapsedTime += Time.deltaTime;
+
+            // `progress` は回避処理の進行度を表す割合。0 で開始位置、1 で終了位置。
+            float progress = Mathf.Clamp01(elapsedTime / duration);
+
+            // `progress` を使って、開始位置から終了位置までを補間
+            transform.position = Vector3.Lerp(startPosition, endPosition, progress);
+
+            // フレームごとに待機
+            await UniTask.Yield();
+
+        }
 
         _isAvoiding = false;
     }

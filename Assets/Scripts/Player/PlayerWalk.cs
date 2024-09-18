@@ -1,7 +1,5 @@
 
 using UnityEngine;
-using UniRx;
-using UniRx.Triggers;
 
 /// <summary>
 /// PlayerMove.cs
@@ -11,38 +9,26 @@ using UniRx.Triggers;
 /// 作成日: 9/10
 /// 作成者: 山田智哉
 /// </summary>
-public class PlayerWalk : MonoBehaviour,IMove
+public class PlayerWalk :IMove
 {
-    // rbの取得
-    private Rigidbody _rigidBody = default;
-
-    // 移動方向
-    private Vector3 _moveDirection = default;
-
     // 移動方向キャッシュ用
     private Vector3 _cachedMoveDirection = default;
 
-    private void Awake()
+    public void Move(Transform transform, Vector2 moveDirection, float moveSpeed)
     {
-        _rigidBody = GetComponent<Rigidbody>();
-
-        // FixedUpdateで移動
-        this.FixedUpdateAsObservable()
-            .Where(_ => _moveDirection != Vector3.zero)
-            .Subscribe(_ =>
-            {
-
-                _rigidBody.MovePosition(_rigidBody.position + _moveDirection);
-                transform.rotation = Quaternion.LookRotation(_moveDirection);
-            });
-    }
-
-    public void Move(Vector2 moveDirection, float moveSpeed)
-    {
-
-        // 再利用可能なVector3に変換結果を保存
+        // Vector2をVector3に変換
         _cachedMoveDirection.Set(moveDirection.x, 0, moveDirection.y);
-        _moveDirection = _cachedMoveDirection * moveSpeed * Time.deltaTime;
 
+        // 移動量を計算 
+        Vector3 moveVector = _cachedMoveDirection * moveSpeed * Time.deltaTime;
+
+        // 現在の位置に移動量を加算して移動
+        transform.position += moveVector;
+
+        // 移動方向が変わった場合は、その方向にキャラクターを向ける
+        if (_cachedMoveDirection != Vector3.zero)
+        {
+            transform.rotation = Quaternion.LookRotation(_cachedMoveDirection);
+        }
     }
 }
