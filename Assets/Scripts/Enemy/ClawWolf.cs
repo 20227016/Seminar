@@ -19,6 +19,12 @@ public class ClawWolf : BaseEnemy
     private Transform _playerTrans = default;
     [SerializeField, Header("探索距離")]
     private float _searhDistance = 2f;
+    [SerializeField,Header("攻撃１の倍率")]
+    private float _attackMultiplier1 = 1;
+    [SerializeField, Header("攻撃２の倍率")]
+    private float _attackMultiplier2 = 1;
+    [SerializeField, Header("攻撃３の倍率")]
+    private float _attackMultiplier3 = 1;
 
     private EnemyMovementState _movementState = EnemyMovementState.IDLE;
     private EnemyActionState _actionState = EnemyActionState.SEARCHING;
@@ -37,16 +43,6 @@ public class ClawWolf : BaseEnemy
         _myAnimator.SetFloat("Attack1", _enemyStatusStruct._attackPowerSpeed);
         _myAnimator.SetFloat("Attack2", _enemyStatusStruct._attackPowerSpeed);
         _myAnimator.SetFloat("Attack3", _enemyStatusStruct._attackPowerSpeed);
-
-    }
-
-    /// <summary>
-    /// 更新前処理
-    /// </summary>
-    private void Start()
-    {
-
-
 
     }
 
@@ -99,41 +95,6 @@ public class ClawWolf : BaseEnemy
 
     }
 
-    private void OnTriggerExit(Collider other)
-    {
-
-        IReceiveDamage receiveDamage = other.GetComponent<IReceiveDamage>();
-        receiveDamage.ReceiveDamage(_enemyStatusStruct._attackPower);
-
-    
-    }
-
 }
-//if (Input.GetKeyDown(KeyCode.S))
-//{
-
-//    _myAnimator.Play("Die",2);
-
-//}
-//if (Input.GetKeyDown(KeyCode.Space))
-//{
-
-//    _myAnimator.SetTrigger("Attack"+ _attackNo);
-
-//}
-//if (Input.GetKeyDown(KeyCode.UpArrow))
-//{
-
-//    _attackNo += 1;
-
-//}
-//if (Input.GetKeyDown(KeyCode.DownArrow))
-//{
-
-//    _attackNo -= 1;
-
-//}
-
-//_attackNo = Mathf.Clamp(_attackNo,0,3);
 
 

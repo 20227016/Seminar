@@ -29,6 +29,8 @@ public abstract class BaseEnemy : MonoBehaviour,IReceiveDamage
 
     protected IEnemyAnimation _enemyAnimation = new EnemyAnimation();
 
+    protected float _currentAttackMultiplier = default;
+
     private void OnDrawGizmos()
     {
 
@@ -94,6 +96,19 @@ public abstract class BaseEnemy : MonoBehaviour,IReceiveDamage
 
         // 距離
         _boxCastStruct._distance = 5f;
+
+    }
+
+    /// <summary>
+    /// ダメージを与える処理
+    /// </summary>
+    /// <param name="other"></param>
+    private void OnTriggerExit(Collider other)
+    {
+
+        IReceiveDamage receiveDamage = other.GetComponent<IReceiveDamage>();
+        receiveDamage.ReceiveDamage( Mathf.FloorToInt(_enemyStatusStruct._attackPower * _currentAttackMultiplier));
+
 
     }
 
