@@ -590,6 +590,9 @@ MonoBehaviour:
   _myAnimator: {fileID: 5785497811627240981}
   _playerTrans: {fileID: 150222643}
   _searhDistance: 2
+  _attackMultiplier1: 1
+  _attackMultiplier2: 1
+  _attackMultiplier3: 1
 --- !u!65 &1322951826
 BoxCollider:
   m_ObjectHideFlags: 0
