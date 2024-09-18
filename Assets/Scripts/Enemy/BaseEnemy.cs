@@ -107,7 +107,7 @@ public abstract class BaseEnemy : MonoBehaviour,IReceiveDamage
     {
 
         IReceiveDamage receiveDamage = other.GetComponent<IReceiveDamage>();
-        receiveDamage.ReceiveDamage( Mathf.FloorToInt(_enemyStatusStruct._attackPower * _currentAttackMultiplier));
+        receiveDamage.ReceiveDamage( (int)(_enemyStatusStruct._attackPower * _currentAttackMultiplier));
 
 
     }
