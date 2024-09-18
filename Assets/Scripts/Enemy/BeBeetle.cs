@@ -24,12 +24,6 @@ public class BeBeetle : BaseEnemy
     private EnemyMovementState _movementState = EnemyMovementState.IDLE;
     private EnemyActionState   _actionState   = EnemyActionState.SEARCHING;  
 
-    private void Start()
-    {
-
-
-    }
-
     /// <summary>
     /// 更新処理
     /// </summary>
