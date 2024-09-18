@@ -243,8 +243,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8418576}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.00000020861626, y: 2.6165812, z: -7}
+  m_LocalRotation: {x: 0.07350942, y: 3e-45, z: 0, w: 0.99729455}
+  m_LocalPosition: {x: -5.2e-44, y: 2.3195896, z: -8.902734}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1006,7 +1006,7 @@ MonoBehaviour:
   - m_Script
   m_LockStageInInspector: 
   m_StreamingVersion: 20170927
-  m_Priority: 1
+  m_Priority: 2
   m_StandbyUpdate: 1
   m_LookAt: {fileID: 535369128}
   m_Follow: {fileID: 967373467}
@@ -1037,8 +1037,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 967018436}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.07350942, y: -0.000000001110777, z: 8.187406e-11, w: 0.99729455}
-  m_LocalPosition: {x: 0.00000001983156, y: 2.3195896, z: -8.902734}
+  m_LocalRotation: {x: 0.07350942, y: 3e-45, z: 0, w: 0.99729455}
+  m_LocalPosition: {x: -5.2e-44, y: 2.3195896, z: -8.902734}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1687,7 +1687,7 @@ MonoBehaviour:
   m_LookaheadIgnoreY: 0
   m_XDamping: 0.5
   m_YDamping: 0.5
-  m_ZDamping: 0.5
+  m_ZDamping: 0.2
   m_TargetMovementOnly: 0
   m_ScreenX: 0.5
   m_ScreenY: 0.5
@@ -1728,8 +1728,8 @@ MonoBehaviour:
   m_LookaheadTime: 0
   m_LookaheadSmoothing: 0
   m_LookaheadIgnoreY: 1
-  m_HorizontalDamping: 1
-  m_VerticalDamping: 1
+  m_HorizontalDamping: 0.5
+  m_VerticalDamping: 0.5
   m_ScreenX: 0.5
   m_ScreenY: 0.35
   m_DeadZoneWidth: 0
