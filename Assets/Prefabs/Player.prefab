@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5067589300485888437}
   - component: {fileID: 2325398044626590015}
   - component: {fileID: 2005088888248520462}
+  - component: {fileID: 4423899915434286126}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -197,6 +198,14 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: f60e6a53-f9d6-430c-9841-e582cbfea7c1
     m_ActionName: Player/Skill
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: b219e708-8a87-40f0-962e-6ad31b77911f
+    m_ActionName: Player/Dash[/Keyboard/leftShift]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 1c3a4a53-ac53-43f2-8a1b-a57b309aa4c5
+    m_ActionName: Player/Look[/Mouse/delta]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -224,6 +233,20 @@ MonoBehaviour:
     _skillTime: 0
     _skillCoolTime: 0
     _counterTime: 0
+--- !u!114 &4423899915434286126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3094039062246849175}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cdc5d58befe3314aa2e0d4b14c3957c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _normalCamera: {fileID: 0}
+  _targettingCamera: {fileID: 0}
 --- !u!1 &7216366634176659554
 GameObject:
   m_ObjectHideFlags: 0

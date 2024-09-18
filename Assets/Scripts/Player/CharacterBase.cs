@@ -14,7 +14,7 @@ using UniRx.Triggers;
 /// 作成日: 9/2
 /// 作成者: 山田智哉
 /// </summary>
-public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, IAvoidance, IComboCounter, IReceiveDamage, ITarget, ISkill, IPassive
+public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, IAvoidance, IComboCounter, IReceiveDamage, ITargetting, ISkill, IPassive
 {
     // ステータス
     [SerializeField, Tooltip("ステータス値")]
@@ -60,6 +60,7 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
     protected IAttackLight _playerAttackLight = default;
     protected IAttackStrong _playerAttackStrong = default;
     protected IAttackProvider _attackProvider = default;
+    protected ITargetting _target = default;
 
     #region プロパティ
 
@@ -81,6 +82,7 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
         _playerAttackLight = _attackProvider.GetAttackLight();
         _playerAttackStrong = _attackProvider.GetAttackStrong();
         _avoidance = new PlayerAvoidance();
+        _target = GetComponent<PlayerTargetting>();
         _characterStatusStruct._playerStatus = new WrapperPlayerStatus();
         _cameraDirection = new CameraDirection(Camera.main.transform);
         
@@ -100,7 +102,7 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
 
 
         // 移動処理
-        this.FixedUpdateAsObservable()
+        this.UpdateAsObservable()
             // 入力がないときは通らない
             .Where(_ => _inputDirection != Vector2.zero)
             .Subscribe(_ => 
@@ -209,7 +211,7 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
             case InputActionTypeEnum.Target:
 
                 if (context.canceled) return;
-                Target();
+                Targetting();
                 return;
 
             case InputActionTypeEnum.Skill:
@@ -246,9 +248,9 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
         Debug.Log(gameObject.name + "が被弾");
     }
 
-    public void Target()
+    public void Targetting()
     {
-        Debug.Log("ターゲッティング");
+        _target.Targetting();
     }
 
     public void Avoidance(Transform transform, Vector2 avoidanceDirection, float avoidanceDistance, float avoidanceDuration)
