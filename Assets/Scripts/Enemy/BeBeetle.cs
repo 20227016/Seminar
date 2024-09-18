@@ -46,20 +46,15 @@ public class BeBeetle : BaseEnemy
             case EnemyMovementState.IDLE:
                 print("アイドル");
 
-                // プレイヤーを見続ける
-                PlayerLook();
-                print(Search.BoxCast(_boxCastStruct));
-
                 break;
+
 
             // 走り
             case EnemyMovementState.RUNNING:
                 print("移動(走る)");
 
-                // プレイヤーを見続ける
-                PlayerLook();
-
                 break;
+
 
             // ダウン(ブレイク)
             case EnemyMovementState.DOWNED:
@@ -67,33 +62,28 @@ public class BeBeetle : BaseEnemy
 
                 break;
 
-            // のけぞり(カウンターの時)
-            case EnemyMovementState.STUNNED:
-                print("のけぞり");
-
-                break;
-
         }
 
-        switch (_movementState)
+        
+        switch (_actionState)
         {
 
-            // 待機
-            case EnemyMovementState.IDLE:
-                print("アイドル");
+            // サーチ
+            case EnemyActionState.SEARCHING:
+                print("サーチ");
 
                 // プレイヤーを見続ける
                 PlayerLook();
-                print(Search.BoxCast(_boxCastStruct));
+
+                // RayHit判定
+                PlayerSearch();
 
                 break;
 
-            // 走り
-            case EnemyMovementState.RUNNING:
-                print("移動(走る)");
 
-                // プレイヤーを見続ける
-                PlayerLook();
+            // 攻撃
+            case EnemyActionState.ATTACKING:
+                print("攻撃");
 
                 break;
         }
@@ -139,4 +129,21 @@ public class BeBeetle : BaseEnemy
         transform.LookAt(lookPosition);
     }
 
+    /// <summary>
+    /// プレイヤーを探す
+    /// </summary>
+    private void PlayerSearch()
+    {
+        RaycastHit hit = Search.BoxCast(_boxCastStruct);
+        if(hit.collider.CompareTag("Player"))
+        {
+            print("プレイヤーに当たった");
+            _actionState = EnemyActionState.ATTACKING;
+        }
+        else
+        {
+            print("プレイヤー以外に当たった");
+            _movementState = EnemyMovementState.RUNNING;
+        }
+    }
 }
