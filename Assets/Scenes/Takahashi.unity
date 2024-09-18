@@ -1043,7 +1043,8 @@ MonoBehaviour:
     _diffencePower: 1
     _attackCoolTime: 1
   _tags: []
-  _player: {fileID: 2099091808}
+  _myAnimator: {fileID: 871670616637043254}
+  _playerTrans: {fileID: 2099091825}
 --- !u!4 &872841026336455066
 Transform:
   m_ObjectHideFlags: 0

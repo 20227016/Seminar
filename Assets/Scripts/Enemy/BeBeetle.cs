@@ -15,11 +15,14 @@ public class BeBeetle : BaseEnemy
 {
 
 
-    [SerializeField, Tooltip("プレイヤーオブジェクト")]
-    private GameObject _player = default;
+    [SerializeField, Header("自分のアニメーター")]
+    private Animator _myAnimator = default;
 
-    [SerializeField]
-    private Animator _animator = default;
+    [SerializeField, Header("プレイヤーのトランスフォーム")]
+    private Transform _playerTrans = default;
+
+    private EnemyMovementState _movementState = EnemyMovementState.IDLE;
+    private EnemyActionState   _actionState   = EnemyActionState.SEARCHING;  
 
     private void Start()
     {
@@ -30,8 +33,78 @@ public class BeBeetle : BaseEnemy
     /// <summary>
     /// 更新処理
     /// </summary>
-    protected  void Update()
+    protected void Update()
     {
+
+        // レイキャスト設定
+        RayCastSetting();
+
+        switch (_movementState)
+        {
+
+            // 待機
+            case EnemyMovementState.IDLE:
+                print("アイドル");
+
+                // プレイヤーを見続ける
+                PlayerLook();
+                print(Search.BoxCast(_boxCastStruct));
+
+                break;
+
+            // 走り
+            case EnemyMovementState.RUNNING:
+                print("移動(走る)");
+
+                // プレイヤーを見続ける
+                PlayerLook();
+
+                break;
+
+            // ダウン(ブレイク)
+            case EnemyMovementState.DOWNED:
+                print("ダウン");
+
+                break;
+
+            // のけぞり(カウンターの時)
+            case EnemyMovementState.STUNNED:
+                print("のけぞり");
+
+                break;
+
+        }
+
+        switch (_movementState)
+        {
+
+            // 待機
+            case EnemyMovementState.IDLE:
+                print("アイドル");
+
+                // プレイヤーを見続ける
+                PlayerLook();
+                print(Search.BoxCast(_boxCastStruct));
+
+                break;
+
+            // 走り
+            case EnemyMovementState.RUNNING:
+                print("移動(走る)");
+
+                // プレイヤーを見続ける
+                PlayerLook();
+
+                break;
+        }
+    }
+
+    /// <summary>
+    /// レイキャスト設定
+    /// </summary>
+    private void RayCastSetting()
+    {
+
         //例キャスト初期設定
         BasicRaycast();
 
@@ -39,25 +112,31 @@ public class BeBeetle : BaseEnemy
         _boxCastStruct._originPos = this.transform.position;
 
         // 索敵範囲の距離
-        _boxCastStruct._distance = 1f;
+        _boxCastStruct._distance = 50f;
 
         // 自分のスケール(x)を取得
         float squareSize = transform.localScale.x;
 
         // BoxCastを正方形のサイズにする
         _boxCastStruct._size = new Vector2(squareSize, squareSize);
+    }
 
+    /// <summary>
+    /// Lookat設定
+    /// </summary>
+    private void PlayerLook()
+    {
+        // プレイヤーのTransformを取得
+        Transform playerTrans = _playerTrans;
 
+        // プレイヤーの位置を取得
+        Vector3 playerPosition = playerTrans.position;
 
-        // マウスクリックで攻撃アニメーションに切り替える
-        if (Input.GetMouseButtonDown(0))  // 左クリック
-        {
-            _animator.SetInteger("", 1);  // 攻撃アニメーションに切り替え
-        }
-        else
-        {
-            _animator.SetInteger("", 0);  // アイドルアニメーションに戻す
-        }
+        // プレイヤーのY軸を無視したターゲットの位置を計算
+        Vector3 lookPosition = new Vector3(playerPosition.x, transform.position.y, playerPosition.z);
+
+        // プレイヤーの方向に向く
+        transform.LookAt(lookPosition);
     }
 
 }
