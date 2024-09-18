@@ -10,7 +10,7 @@ using System.Collections;
 /// 作成日: 9/10
 /// 作成者: 山田智哉
 /// </summary>
-public class PlayerAttackStrong : MonoBehaviour, IAttackStrong, IComboCounter
+public class PlayerAttackStrong : IAttackStrong, IComboCounter
 {
     public void AttackStrong()
     {
