@@ -66,7 +66,7 @@ public static class Search
 
             //求めているタグと合ったかの判定
             bool isMach = false;
-            foreach(string tag in boxCastStruct._tags)
+            foreach (string tag in boxCastStruct._tags)
             {
 
                 if (hit.collider.CompareTag(tag))
@@ -122,7 +122,7 @@ public static class Search
             if (boxCastStruct._layerMask == 0)
             {
 
-                hits = Physics.BoxCastAll(boxCastStruct._originPos, boxCastStruct._size, boxCastStruct._direction,boxCastStruct._quaternion, boxCastStruct._distance);
+                hits = Physics.BoxCastAll(boxCastStruct._originPos, boxCastStruct._size, boxCastStruct._direction, boxCastStruct._quaternion, boxCastStruct._distance);
 
             }
             //Distanceを指定している > LayerMaskを指定している
@@ -138,7 +138,7 @@ public static class Search
         //精査するためにリストにする
         List<RaycastHit> hitList = new List<RaycastHit>(hits);
         //探索して見つかったとき
-        if (hitList.Count == 0 && boxCastStruct._tags != null)
+        if (hitList.Count != 0 && boxCastStruct._tags != null)
         {
 
             //求めているタグと合ったかの判定
@@ -167,18 +167,53 @@ public static class Search
 
             }
             //中身がないとき
-            if(hitList.Count == 0)
+            if (hitList.Count == 0)
             {
 
                 return new RaycastHit[0];
 
             }
             //精査したリストを配列に戻す
-            return hits = hitList.ToArray();
+            hits = hitList.ToArray();
 
         }
 
-        return hits;
+        return Sort(hits);
+
+    }
+
+    private static RaycastHit[] Sort(RaycastHit[] hits)
+    {
+
+        //配列化
+        List<RaycastHit> sortList = new List<RaycastHit>(hits);
+        //ソートをしたかの判定
+        bool isSort = false;
+        //ソートが終わるまで回す
+        while (isSort)
+        {
+
+            //リスト０１
+            //カウント２
+            for(int i = 0 ; sortList.Count -1 < i ; i++)
+            {
+
+                //次のオブジェクトのほうが距離が近かった時
+                if(sortList[i].distance > sortList[i + 1].distance)
+                {
+
+                    // 入れ替え
+                    RaycastHit memory = sortList[i];
+                    sortList[i] = sortList[i + 1];
+                    sortList[i + 1] = memory;
+                    isSort = true;
+
+                }
+
+            }
+
+        }
+        return sortList.ToArray();
 
     }
 
