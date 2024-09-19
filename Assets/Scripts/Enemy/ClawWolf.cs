@@ -46,7 +46,7 @@ public class ClawWolf : BaseEnemy
         foreach (AnimationClip animationClip in animationClips)
         {
             
-           // animationClip.pa
+           //animationClip.averageSpeed
 
         }
 
@@ -76,6 +76,7 @@ public class ClawWolf : BaseEnemy
                 {
 
                     _enemyAnimation.Attack(_myAnimator, 1);
+                    _currentAttackMultiplier = _attackMultiplier1;
 
                 }
 
