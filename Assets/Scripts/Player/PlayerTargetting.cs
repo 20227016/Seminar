@@ -1,6 +1,5 @@
 
 using UnityEngine;
-using System.Collections;
 using Cinemachine;
 
 /// <summary>
@@ -29,7 +28,11 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
     // ターゲッティングフラグ
     private bool _isTargetting = default;
 
+    private BoxCastStruct _boxCastStruct = default;
 
+    /// <summary>
+    /// 起動時処理
+    /// </summary>
     private void Awake()
     {
         // キャッシュ
@@ -43,12 +46,19 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
     public void Targetting()
     {
 
-        if (_isTargetting)
+        if (!_isTargetting)
+        {
+
+            
+
+        }
+        else
         {
 
             // ターゲッティングカメラの回転角をノーマルカメラのPOVに反映
             _normalCameraPOV.m_VerticalAxis.Value = Mathf.Repeat(_targettingCamera.transform.eulerAngles.x + HalfCircleDegrees, FullCircleDegrees) - HalfCircleDegrees;
             _normalCameraPOV.m_HorizontalAxis.Value = _targettingCamera.transform.eulerAngles.y;
+
         }
 
         // カメラの切り替え

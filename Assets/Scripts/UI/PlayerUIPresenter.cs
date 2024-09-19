@@ -21,7 +21,7 @@ public class PlayerUIPresenter : MonoBehaviour
     /// <summary>
     /// 初期化処理
     /// </summary>
-    private void Awake()
+    private void Start()
     {
         _playerUIViews = GetComponent<PlayerUIViews>();
 
