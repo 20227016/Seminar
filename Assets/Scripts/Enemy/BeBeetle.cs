@@ -21,8 +21,22 @@ public class BeBeetle : BaseEnemy
     [SerializeField, Header("プレイヤーのトランスフォーム")]
     private Transform _playerTrans = default;
 
+    [SerializeField, Tooltip("探索範囲(前方距離)")]
+    private float _searchRange = default;
+
+    [SerializeField, Header("攻撃１の倍率")]
+    private float _attackMultiplier1 = 1;
+
     private EnemyMovementState _movementState = EnemyMovementState.IDLE;
-    private EnemyActionState   _actionState   = EnemyActionState.SEARCHING;  
+    private EnemyActionState   _actionState   = EnemyActionState.SEARCHING;
+
+　　/// <summary>
+    /// 初期化 
+    /// </summary>
+    private void Awake()
+    {
+        _searchRange = _boxCastStruct._distance;
+    }
 
     /// <summary>
     /// 更新処理
@@ -31,6 +45,7 @@ public class BeBeetle : BaseEnemy
     {
 
         // レイキャスト設定
+
         RayCastSetting();
 
         switch (_movementState)
@@ -40,6 +55,8 @@ public class BeBeetle : BaseEnemy
             case EnemyMovementState.IDLE:
                 print("アイドル");
 
+                _enemyAnimation.Movement(_myAnimator, 0);
+
                 break;
 
 
@@ -47,12 +64,16 @@ public class BeBeetle : BaseEnemy
             case EnemyMovementState.RUNNING:
                 print("移動(走る)");
 
+                _enemyAnimation.Movement(_myAnimator, 4);
+
                 break;
 
 
             // ダウン(ブレイク)
             case EnemyMovementState.DOWNED:
                 print("ダウン");
+
+                _enemyAnimation.Movement(_myAnimator, 5);
 
                 break;
 
@@ -79,6 +100,9 @@ public class BeBeetle : BaseEnemy
             case EnemyActionState.ATTACKING:
                 print("攻撃");
 
+                // 攻撃1アニメーション再生
+                _enemyAnimation.Attack(_myAnimator, 1);
+
                 break;
         }
     }
@@ -94,9 +118,6 @@ public class BeBeetle : BaseEnemy
 
         // 中心点を取得
         _boxCastStruct._originPos = this.transform.position;
-
-        // 索敵範囲の距離
-        _boxCastStruct._distance = 50f;
 
         // 自分のスケール(x)を取得
         float squareSize = transform.localScale.x;
@@ -129,7 +150,7 @@ public class BeBeetle : BaseEnemy
     private void PlayerSearch()
     {
         RaycastHit hit = Search.BoxCast(_boxCastStruct);
-        if(hit.collider.CompareTag("Player"))
+        if(hit.collider.gameObject.layer == 6)
         {
             print("プレイヤーに当たった");
             _actionState = EnemyActionState.ATTACKING;

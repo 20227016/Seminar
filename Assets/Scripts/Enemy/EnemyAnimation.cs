@@ -17,19 +17,26 @@ public class EnemyAnimation : IEnemyAnimation
     /// <summary>
     /// 移動
     /// 方向の引数は
-    /// １：全身
+    /// ０：待機
+    /// １：前進
     /// ２：後退
     /// ３：右歩き
     /// ４：左歩き
     /// </summary>
     /// <param name="_animator">呼び出したオブジェクトのアニメーター</param>
     /// <param name="dirctionID">移動方向のID</param>
-    public void Move(Animator _animator, int dirctionID)
+    public void Movement(Animator _animator, int dirctionID)
     {
 
         switch (dirctionID)
         {
 
+
+            case 0:
+
+                _animator.Play("Idel");
+
+                break;
             //前進
             case 1:
 
@@ -52,6 +59,19 @@ public class EnemyAnimation : IEnemyAnimation
             case 4:
 
                 _animator.Play("WalkLeft", 2);
+
+                break;
+
+            //ダウン
+            case 5:
+
+                _animator.Play("Down");
+
+                break;
+
+            case 6:
+
+                _animator.Play("Die");
 
                 break;
 

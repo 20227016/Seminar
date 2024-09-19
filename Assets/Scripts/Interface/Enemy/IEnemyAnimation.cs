@@ -13,7 +13,7 @@ public interface IEnemyAnimation
     /// </summary>
     /// <param name="_animator">呼び出したオブジェクトのアニメーター</param>
     /// <param name="dirctionID">移動方向のID</param>
-    public void Move(Animator _animator, int dirctionID);
+    public void Movement(Animator _animator, int dirctionID);
 
     /// <summary>
     /// 攻撃アニメーション
