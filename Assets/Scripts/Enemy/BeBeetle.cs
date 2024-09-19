@@ -150,7 +150,12 @@ public class BeBeetle : BaseEnemy
     private void PlayerSearch()
     {
         RaycastHit hit = Search.BoxCast(_boxCastStruct);
+<<<<<<< HEAD
         if(hit.collider.gameObject.layer == 6)
+=======
+
+        if(hit.collider.CompareTag("Player"))
+>>>>>>> 6c94371a64f3513c77b1299065babbc411718566
         {
             print("プレイヤーに当たった");
             _actionState = EnemyActionState.ATTACKING;

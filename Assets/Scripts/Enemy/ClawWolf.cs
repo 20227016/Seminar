@@ -19,7 +19,7 @@ public class ClawWolf : BaseEnemy
     private Transform _playerTrans = default;
     [SerializeField, Header("探索距離")]
     private float _searhDistance = 2f;
-    [SerializeField,Header("攻撃１の倍率")]
+    [SerializeField, Header("攻撃１の倍率")]
     private float _attackMultiplier1 = 1;
     [SerializeField, Header("攻撃２の倍率")]
     private float _attackMultiplier2 = 1;
@@ -40,9 +40,19 @@ public class ClawWolf : BaseEnemy
         //Raycastの基本設定
         BasicRaycast();
         _boxCastStruct._distance = _searhDistance;
-        _myAnimator.SetFloat("Attack1", _enemyStatusStruct._attackPowerSpeed);
-        _myAnimator.SetFloat("Attack2", _enemyStatusStruct._attackPowerSpeed);
-        _myAnimator.SetFloat("Attack3", _enemyStatusStruct._attackPowerSpeed);
+        //アニメーター取得
+        RuntimeAnimatorController myRuntimeAnimator = _myAnimator.runtimeAnimatorController;
+        AnimationClip[] animationClips = myRuntimeAnimator.animationClips;
+        foreach (AnimationClip animationClip in animationClips)
+        {
+
+            //animationClip.averageSpeed
+
+        }
+
+        //_myAnimator.SetFloat("Attack1", _enemyStatusStruct._attackPowerSpeed);
+        //_myAnimator.SetFloat("Attack2", _enemyStatusStruct._attackPowerSpeed);
+        //_myAnimator.SetFloat("Attack3", _enemyStatusStruct._attackPowerSpeed);
 
     }
 
@@ -54,20 +64,13 @@ public class ClawWolf : BaseEnemy
 
         //Rayの位置更新
         SetPostion();
-        RaycastHit _hit = default;
         switch (_movementState)
         {
 
             // 待機
             case EnemyMovementState.IDLE:
 
-                _hit = Search.BoxCast(_boxCastStruct);
-                if (_hit.collider)
-                {
-
-                    _enemyAnimation.Attack(_myAnimator, 1);
-
-                }
+                Action();
 
                 break;
             // 歩き
@@ -90,6 +93,44 @@ public class ClawWolf : BaseEnemy
 
 
                 break;
+
+        }
+
+    }
+
+    private void Action()
+    {
+
+        RaycastHit[] hits = new RaycastHit[0];
+
+        switch (_actionState)
+        {
+
+            // 探索
+            case EnemyActionState.SEARCHING:
+
+                hits = Search.BoxCastAll(_boxCastStruct);
+                foreach(RaycastHit hit in hits)
+                {
+
+                    print(hit.collider.name);
+
+                }
+
+                break;
+            // 攻撃
+            case EnemyActionState.ATTACKING:
+
+
+
+                break;
+            // ガード
+            case EnemyActionState.GUARDING:
+
+
+
+                break;
+
 
         }
 

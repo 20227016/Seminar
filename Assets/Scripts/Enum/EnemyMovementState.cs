@@ -1,3 +1,11 @@
+
+/// <summary>
+/// IDLE : 止まっている<br />
+/// WALKING : 歩いている<br />
+/// RUNNING : 走っている<br />
+/// DOWNED : ダウンしている<br />
+///  STUNNED : のけぞり中<br />
+/// </summary>
 public enum EnemyMovementState
 {
     IDLE,        // 止まっている
