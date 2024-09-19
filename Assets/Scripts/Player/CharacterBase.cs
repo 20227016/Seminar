@@ -75,31 +75,11 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
     /// </summary>
     protected virtual void Awake()
     {
-        // キャッシュ
-        _moveProvider = new PlayerMoveProvider();
-        _move = _moveProvider.GetWalk();
-        _attackProvider = new PlayerAttackProvider();
-        _playerAttackLight = _attackProvider.GetAttackLight();
-        _playerAttackStrong = _attackProvider.GetAttackStrong();
-        _avoidance = new PlayerAvoidance();
-        _target = GetComponent<PlayerTargetting>();
-        _characterStatusStruct._playerStatus = new WrapperPlayerStatus();
-        _cameraDirection = new CameraDirection(Camera.main.transform);
-        
-        _playerInput = GetComponent<PlayerInput>();
-
-       
-        // 初期化
-        _currentState = CharacterStateEnum.IDLE;
-        _playerTransform = this.transform;
-        _moveSpeed = _characterStatusStruct._walkSpeed;
-        RegisterInputActions(true);
-
+        Initialize();
 
         // 最大HPと最大スタミナをリアクティブプロパティに設定
         _currentHP.Value = _characterStatusStruct._playerStatus.MaxHp;
         _currentStamina.Value = _characterStatusStruct._playerStatus.MaxStamina;
-
 
         // 移動処理
         this.UpdateAsObservable()
@@ -117,6 +97,31 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
     }
 
     /// <summary>
+    /// 初期化処理
+    /// </summary>
+    protected virtual void Initialize()
+    {
+        // キャッシュ
+        _moveProvider = new PlayerMoveProvider();
+        _move = _moveProvider.GetWalk();
+        _attackProvider = new PlayerAttackProvider();
+        _playerAttackLight = _attackProvider.GetAttackLight();
+        _playerAttackStrong = _attackProvider.GetAttackStrong();
+        _avoidance = new PlayerAvoidance();
+        _target = GetComponent<PlayerTargetting>();
+        _characterStatusStruct._playerStatus = new WrapperPlayerStatus();
+        _cameraDirection = new CameraDirection(Camera.main.transform);
+        _playerInput = GetComponent<PlayerInput>();
+
+        // 初期化
+        _currentState = CharacterStateEnum.IDLE;
+        _playerTransform = this.transform;
+        _moveSpeed = _characterStatusStruct._walkSpeed;
+        RegisterInputActions(true);
+
+    }
+
+    /// <summary>
     /// 非アクティブ時処理
     /// </summary>
     protected virtual void OnDisable()
@@ -130,27 +135,31 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
     /// </summary>
     private void RegisterInputActions(bool isRegister)
     {
-
+        // 一括登録
         if (isRegister)
         {
 
             foreach (InputAction action in _playerInput.actions)
             {
+
                 action.performed += HandleInput;
                 action.canceled += HandleInput;
             }
 
         }
+        // 一括解除
         else
         {
 
             foreach (InputAction action in _playerInput.actions)
             {
+
                 action.performed -= HandleInput;
                 action.canceled -= HandleInput;
             }
 
         }
+
     }
 
     /// <summary>
@@ -264,10 +273,6 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
 
     public void ReceiveDamage(int damegeValue)
     {
-        Debug.Log(damegeValue);
-
         _currentHP.Value -= damegeValue - _characterStatusStruct._defensePower;
-
-        Debug.Log(CurrentHP.Value);
     }
 }

@@ -135,6 +135,7 @@ public class BeBeetle : BaseEnemy
     private void PlayerSearch()
     {
         RaycastHit hit = Search.BoxCast(_boxCastStruct);
+
         if(hit.collider.CompareTag("Player"))
         {
             print("プレイヤーに当たった");
