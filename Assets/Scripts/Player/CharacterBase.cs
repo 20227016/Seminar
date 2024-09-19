@@ -264,6 +264,10 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
 
     public void ReceiveDamage(int damegeValue)
     {
+        Debug.Log(damegeValue);
+
         _currentHP.Value -= damegeValue - _characterStatusStruct._defensePower;
+
+        Debug.Log(CurrentHP.Value);
     }
 }
