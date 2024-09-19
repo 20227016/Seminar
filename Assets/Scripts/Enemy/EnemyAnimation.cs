@@ -34,44 +34,44 @@ public class EnemyAnimation : IEnemyAnimation
 
             case 0:
 
-                _animator.Play("Idel");
+                _animator.Play("Idel",0);
 
                 break;
             //前進
             case 1:
 
-                _animator.Play("WalkFWD",2);
+                _animator.Play("WalkFWD",0);
 
                 break;
             //後退
             case 2:
 
-                _animator.Play("WalkBWD", 2);
+                _animator.Play("WalkBWD", 0);
 
                 break;
             //右歩き
             case 3:
 
-                _animator.Play("WalkRight", 2);
+                _animator.Play("WalkRight", 0);
 
                 break;
             //左歩き
             case 4:
 
-                _animator.Play("WalkLeft", 2);
+                _animator.Play("WalkLeft", 0);
 
                 break;
 
             //ダウン
             case 5:
 
-                _animator.Play("Down");
+                _animator.Play("Down",2);
 
                 break;
 
             case 6:
 
-                _animator.Play("Die");
+                _animator.Play("Die",2);
 
                 break;
 

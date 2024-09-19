@@ -53,7 +53,7 @@ public class BeBeetle : BaseEnemy
 
             // 待機
             case EnemyMovementState.IDLE:
-                print("アイドル");
+                //print("アイドル");
 
                 _enemyAnimation.Movement(_myAnimator, 0);
 
@@ -62,7 +62,7 @@ public class BeBeetle : BaseEnemy
 
             // 走り
             case EnemyMovementState.RUNNING:
-                print("移動(走る)");
+                //print("移動(走る)");
 
                 _enemyAnimation.Movement(_myAnimator, 4);
 
@@ -71,7 +71,7 @@ public class BeBeetle : BaseEnemy
 
             // ダウン(ブレイク)
             case EnemyMovementState.DOWNED:
-                print("ダウン");
+                //print("ダウン");
 
                 _enemyAnimation.Movement(_myAnimator, 5);
 
@@ -85,7 +85,7 @@ public class BeBeetle : BaseEnemy
 
             // サーチ
             case EnemyActionState.SEARCHING:
-                print("サーチ");
+                //print("サーチ");
 
                 // プレイヤーを見続ける
                 PlayerLook();
@@ -98,7 +98,7 @@ public class BeBeetle : BaseEnemy
 
             // 攻撃
             case EnemyActionState.ATTACKING:
-                print("攻撃");
+                //print("攻撃");
 
                 // 攻撃1アニメーション再生
                 _enemyAnimation.Attack(_myAnimator, 1);
@@ -150,19 +150,21 @@ public class BeBeetle : BaseEnemy
     private void PlayerSearch()
     {
         RaycastHit hit = Search.BoxCast(_boxCastStruct);
-<<<<<<< HEAD
-        if(hit.collider.gameObject.layer == 6)
-=======
-
-        if(hit.collider.CompareTag("Player"))
->>>>>>> 6c94371a64f3513c77b1299065babbc411718566
+        if (!hit.collider)
         {
-            print("プレイヤーに当たった");
+
+            return;
+
+        }
+
+        if(hit.collider.gameObject.layer == 6)
+        {
+            //print("プレイヤーに当たった");
             _actionState = EnemyActionState.ATTACKING;
         }
         else
         {
-            print("プレイヤー以外に当たった");
+            //print("プレイヤー以外に当たった");
             _movementState = EnemyMovementState.RUNNING;
         }
     }
