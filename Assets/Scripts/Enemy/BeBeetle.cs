@@ -40,8 +40,8 @@ public class BeBeetle : BaseEnemy
     /// </summary>
     private void Awake()
     {
-        _
-        _searchRange = _boxCastStruct._distance;
+        //Rayの位置更新
+        SetPostion();
     }
 
     /// <summary>
@@ -51,7 +51,6 @@ public class BeBeetle : BaseEnemy
     {
 
         // レイキャスト設定
-
         RayCastSetting();
 
         switch (_movementState)
@@ -69,6 +68,7 @@ public class BeBeetle : BaseEnemy
             case EnemyMovementState.RUNNING:
 
                 _enemyAnimation.Movement(_myAnimator, 4);
+                transform.position += new Vector3(0, 0, 1);
 
                 break;
 
@@ -132,6 +132,16 @@ public class BeBeetle : BaseEnemy
     }
 
     /// <summary>
+    /// レイキャストの距離(探索範囲)
+    /// </summary>
+    protected override void SetDistance()
+    {
+        base.SetDistance();
+        _boxCastStruct._distance = _searchRange;
+        print(_boxCastStruct._distance);
+    }
+
+    /// <summary>
     /// Lookat設定
     /// </summary>
     private void PlayerLook()
@@ -155,16 +165,42 @@ public class BeBeetle : BaseEnemy
     private void PlayerSearch()
     {
         RaycastHit hit = Search.BoxCast(_boxCastStruct);
-        if (!hit.collider)
+        if(hit.collider.gameObject.layer == 6)
         {
+            print("プレイヤーに触れました");
+            _actionState = EnemyActionState.ATTACKING;
+        }
+        else
+        {
+            print("プレイヤー以外に触れました");
             _movementState = EnemyMovementState.RUNNING;
+        }
+
+        if(hit.collider)
+        {
             return;
 
         }
+    }
 
-        if(hit.collider.gameObject.layer == 6)
+    /// <summary>
+    /// 攻撃処理
+    /// </summary>
+    /// <param name="hitCollider"></param>
+    private void OnTriggerEnter(Collider hitCollider)
+    {
+        if (hitCollider.gameObject.layer == 6)
         {
-            _actionState = EnemyActionState.ATTACKING;
+            print("プレイヤーに当たったお☆");
+        }
+        else if (hitCollider.gameObject.layer == 8)
+        {
+            print("壁にぶっ刺さったお☆");
+            _actionState = EnemyActionState.SEARCHING;
+        }
+        else
+        {
+            print("何も感じない");
         }
     }
 }
