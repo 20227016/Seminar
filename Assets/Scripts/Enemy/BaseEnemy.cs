@@ -95,8 +95,8 @@ public abstract class BaseEnemy : MonoBehaviour,IReceiveDamage
     {
 
         // 距離
-        _boxCastStruct._distance = 5f;
-
+        _boxCastStruct._distance = 5f
+;
     }
 
     /// <summary>
