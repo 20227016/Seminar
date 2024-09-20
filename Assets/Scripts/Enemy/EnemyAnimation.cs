@@ -34,7 +34,7 @@ public class EnemyAnimation : IEnemyAnimation
 
             case 0:
 
-                _animator.Play("Idel",0);
+                _animator.Play("Idle",0);
 
                 break;
             //前進
