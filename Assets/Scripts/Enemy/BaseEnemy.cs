@@ -103,10 +103,16 @@ public abstract class BaseEnemy : MonoBehaviour,IReceiveDamage
     /// ダメージを与える処理
     /// </summary>
     /// <param name="other"></param>
-    private void OnTriggerExit(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
 
         IReceiveDamage receiveDamage = other.GetComponent<IReceiveDamage>();
+        if (receiveDamage !=null)
+        {
+
+            return;
+
+        }
         // 攻撃力に攻撃倍率を渡して渡す
         receiveDamage.ReceiveDamage((int)(_enemyStatusStruct._attackPower * _currentAttackMultiplier));
 
