@@ -68,7 +68,6 @@ public class BeBeetle : BaseEnemy
             case EnemyMovementState.RUNNING:
 
                 _enemyAnimation.Movement(_myAnimator, 4);
-                transform.position += new Vector3(0, 0, 1);
 
                 break;
 
@@ -88,7 +87,6 @@ public class BeBeetle : BaseEnemy
 
             // サーチ
             case EnemyActionState.SEARCHING:
-                print("サーチ");
 
                 // プレイヤーを見続ける
                 PlayerLook();
@@ -101,7 +99,6 @@ public class BeBeetle : BaseEnemy
 
             // 攻撃
             case EnemyActionState.ATTACKING:
-                print("攻撃");
 
                 // 攻撃1アニメーション再生
                 _enemyAnimation.Attack(_myAnimator, 1);
@@ -138,7 +135,7 @@ public class BeBeetle : BaseEnemy
     {
         base.SetDistance();
         _boxCastStruct._distance = _searchRange;
-        print(_boxCastStruct._distance);
+
     }
 
     /// <summary>
@@ -154,9 +151,12 @@ public class BeBeetle : BaseEnemy
 
         // プレイヤーのY軸を無視したターゲットの位置を計算
         Vector3 lookPosition = new Vector3(playerPosition.x, transform.position.y, playerPosition.z);
+        print(lookPosition+"前");
 
         // プレイヤーの方向に向く
         transform.LookAt(lookPosition);
+        print(transform.rotation + "あと");
+
     }
 
     /// <summary>
