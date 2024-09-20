@@ -182,7 +182,7 @@ public static class Search
 
     }
 
-    private static RaycastHit[] Sort(RaycastHit[] hits)
+    public static RaycastHit[] Sort(RaycastHit[] hits)
     {
 
         //配列化
