@@ -3,6 +3,7 @@ using UnityEngine;
 using Cinemachine;
 using UniRx;
 using UniRx.Triggers;
+using System;
 
 /// <summary>
 /// PlayerTargetting.cs
@@ -41,19 +42,27 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
     // 現在のターゲット
     private GameObject _currentTarget = default;
 
+    // ロックオンイベント
+    private Subject<Transform> _lockonEvent = new Subject<Transform>();
+
+    public IObservable<Transform> LockOnEvent => _lockonEvent;
+
     /// <summary>
     /// ボックスキャスト設定
     /// </summary>
     /// <returns>BoxCastStruct</returns>
     private BoxCastStruct CreateBoxCastStruct()
     {
+
         return new BoxCastStruct
         {
+
             _originPos = transform.position,
             _size = transform.localScale * BoxCastScaleMultiplier,
             _direction = _camera.transform.forward,
             _quaternion = Quaternion.identity,
             _distance = BoxCastDistance
+
         };
     }
 
@@ -62,6 +71,7 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
     /// </summary>
     private void Awake()
     {
+
         // キャッシュ
         _camera = Camera.main;
         _normalCameraPOV = _normalCamera.GetCinemachineComponent<CinemachinePOV>();
@@ -72,6 +82,7 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
         this.UpdateAsObservable()
             .Where(_ => _isTargetting && !IsEnemyVisible(_currentTarget))
             .Subscribe(_ => Targetting());
+
     }
 
     public void Targetting()
@@ -91,16 +102,19 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
                 if (hit.collider.gameObject.layer == EnemyLayer &&
                     IsEnemyVisible(hit.collider.gameObject))
                 {
-
+                    
                     // ターゲットに設定
                     _currentTarget = hit.collider.gameObject;
                     _targettingCamera.LookAt = hit.collider.transform;
+                    
                     hasTarget = true;
+
                     break;
                 }
             }
             if (!hasTarget)
             {
+
 
                 return;
 
@@ -117,6 +131,7 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
         _isTargetting = !_isTargetting;
         _normalCamera.gameObject.SetActive(!_isTargetting);
         _targettingCamera.gameObject.SetActive(_isTargetting);
+        _lockonEvent.OnNext(_currentTarget.transform);
     }
 
     /// <summary>
@@ -126,6 +141,7 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
     /// <returns>敵が視認できているか</returns>
     private bool IsEnemyVisible(GameObject enemy)
     {
+
         Vector3 direction = enemy.transform.position - _camera.transform.position;
 
         if (Physics.Raycast(_camera.transform.position, direction, out RaycastHit hit, BoxCastDistance, _layerMask))
