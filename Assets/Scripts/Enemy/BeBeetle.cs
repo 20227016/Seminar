@@ -1,6 +1,9 @@
 
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 using System.Collections;
+using System.Threading;
+using System;
 
 /// <summary>
 /// EnemyTest.cs
@@ -14,6 +17,8 @@ using System.Collections;
 public class BeBeetle : BaseEnemy
 {
 
+    // UniTaskキャンセルトークン
+    private CancellationTokenSource _cancellatToken = default;
 
     [SerializeField, Header("自分のアニメーター")]
     private Animator _myAnimator = default;
@@ -35,13 +40,27 @@ public class BeBeetle : BaseEnemy
     [SerializeField,Tooltip("攻撃用コライダーを格納")]
     private BoxCollider _attackCollider = default;
 
+
+    // 自分の現在の位置を格納
+    private Vector3 _newPosition = default;
+
+    private Vector3 _hitAttackPos = default;
+
+    // 攻撃中か
+    private bool _isAttack = false;
+    // ダウン中か
+    private bool _isDowned = false;
+
 　　/// <summary>
     /// 初期化 
     /// </summary>
     private void Awake()
     {
-        //Rayの位置更新
+        // Rayの位置更新
         SetPostion();
+
+        // キャンセルトークン生成
+        _cancellatToken = new CancellationTokenSource();
     }
 
     /// <summary>
@@ -49,7 +68,7 @@ public class BeBeetle : BaseEnemy
     /// </summary>
     protected void Update()
     {
-
+        print(_movementState);
         // レイキャスト設定
         RayCastSetting();
 
@@ -59,15 +78,15 @@ public class BeBeetle : BaseEnemy
             // 待機
             case EnemyMovementState.IDLE:
                
-                    _enemyAnimation.Movement(_myAnimator, 0);
+                _enemyAnimation.Movement(_myAnimator, 0);
 
                 break;
 
 
-            // 走り
+            // 移動
             case EnemyMovementState.RUNNING:
 
-                _enemyAnimation.Movement(_myAnimator, 4);
+                BeBeetleMove();
 
                 break;
 
@@ -75,7 +94,7 @@ public class BeBeetle : BaseEnemy
             // ダウン(ブレイク)
             case EnemyMovementState.DOWNED:
 
-                _enemyAnimation.Movement(_myAnimator, 5);
+                BeBeetleDowned(_cancellatToken.Token).Forget();
 
                 break;
 
@@ -88,11 +107,14 @@ public class BeBeetle : BaseEnemy
             // サーチ
             case EnemyActionState.SEARCHING:
 
-                // プレイヤーを見続ける
-                PlayerLook();
+                if(!_isDowned)
+                {
+                    // プレイヤーを見続ける
+                    PlayerLook();
 
-                // RayHit判定
-                PlayerSearch();
+                    // RayHit判定
+                    PlayerSearch();
+                }
 
                 break;
 
@@ -100,10 +122,9 @@ public class BeBeetle : BaseEnemy
             // 攻撃
             case EnemyActionState.ATTACKING:
 
-                // 攻撃1アニメーション再生
-                _enemyAnimation.Attack(_myAnimator, 1);
 
-               
+                // 攻撃処理
+                RushAttack(_cancellatToken.Token).Forget();
 
                 break;
         }
@@ -151,11 +172,9 @@ public class BeBeetle : BaseEnemy
 
         // プレイヤーのY軸を無視したターゲットの位置を計算
         Vector3 lookPosition = new Vector3(playerPosition.x, transform.position.y, playerPosition.z);
-        print(lookPosition+"前");
 
         // プレイヤーの方向に向く
         transform.LookAt(lookPosition);
-        print(transform.rotation + "あと");
 
     }
 
@@ -168,6 +187,7 @@ public class BeBeetle : BaseEnemy
         if(hit.collider.gameObject.layer == 6)
         {
             print("プレイヤーに触れました");
+            _movementState = EnemyMovementState.IDLE;
             _actionState = EnemyActionState.ATTACKING;
         }
         else
@@ -176,11 +196,100 @@ public class BeBeetle : BaseEnemy
             _movementState = EnemyMovementState.RUNNING;
         }
 
-        if(hit.collider)
+        if(!hit.collider)
         {
             return;
 
         }
+    }
+
+    /// <summary>
+    /// 移動処理
+    /// </summary>
+    private void BeBeetleMove()
+    {
+
+        _enemyAnimation.Movement(_myAnimator, 4);
+
+        _newPosition = transform.position + -transform.right * _enemyStatusStruct._moveSpeed * Time.deltaTime;
+
+        transform.position = _newPosition;
+
+
+    }
+
+    /// <summary>
+    /// ダウン処理
+    /// </summary>
+    private async UniTaskVoid BeBeetleDowned(CancellationToken token)
+    {
+
+        try
+        {
+
+            _isDowned = true;
+
+            transform.position = _hitAttackPos;
+
+            _enemyAnimation.Movement(_myAnimator, 5);
+
+            int downedTime = _enemyStatusStruct._downedTime * 1000;
+
+            await UniTask.Delay(downedTime, cancellationToken: token);
+
+            _isDowned = false;
+
+            _movementState = EnemyMovementState.IDLE;
+
+        }
+        catch (OperationCanceledException)
+        {
+
+            Debug.Log("タスクがキャンセルされました");
+        }
+    }
+
+    /// <summary>
+    /// 攻撃1の処理(2は未定)
+    /// </summary>
+    private async UniTaskVoid RushAttack(CancellationToken token)
+    {
+
+        try
+        {
+            
+            // 攻撃1アニメーション再生
+            _enemyAnimation.Attack(_myAnimator, 1);
+
+            int attackDelayTime = _enemyStatusStruct._attackDelayTime * 1000;
+
+            await UniTask.Delay(attackDelayTime, cancellationToken: token);
+
+            if(!_isAttack)
+            {
+                PlayerLook();
+                _isAttack = true;
+            }
+
+            // 前に進む
+            _newPosition = transform.position + transform.forward * _enemyStatusStruct._attackPowerSpeed * Time.deltaTime;
+
+            // 突進処理
+            transform.position = _newPosition;
+        }
+        catch (OperationCanceledException)
+        {
+
+            Debug.Log("タスクがキャンセルされました");
+        }
+    }
+
+    /// <summary>
+    /// UniTaskの破棄
+    /// </summary>
+    private void OperationCanceledException()
+    {
+        _cancellatToken.Cancel();
     }
 
     /// <summary>
@@ -191,16 +300,19 @@ public class BeBeetle : BaseEnemy
     {
         if (hitCollider.gameObject.layer == 6)
         {
-            print("プレイヤーに当たったお☆");
+            
         }
         else if (hitCollider.gameObject.layer == 8)
         {
             print("壁にぶっ刺さったお☆");
+            _isAttack = false;
+            _hitAttackPos = this.transform.position;
+            _movementState = EnemyMovementState.DOWNED;
             _actionState = EnemyActionState.SEARCHING;
         }
         else
         {
-            print("何も感じない");
+           
         }
     }
 }
