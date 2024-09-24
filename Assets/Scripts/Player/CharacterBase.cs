@@ -14,7 +14,7 @@ using UniRx.Triggers;
 /// 作成日: 9/2
 /// 作成者: 山田智哉
 /// </summary>
-public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, IAvoidance, IComboCounter, IReceiveDamage, ITargetting, ISkill, IPassive
+public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, IAvoidance, IReceiveDamage, ITargetting, ISkill, IPassive
 {
     // ステータス
     [SerializeField, Tooltip("ステータス値")]
@@ -144,6 +144,7 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
 
                 action.performed += HandleInput;
                 action.canceled += HandleInput;
+
             }
 
         }
@@ -156,6 +157,7 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
 
                 action.performed -= HandleInput;
                 action.canceled -= HandleInput;
+
             }
 
         }
@@ -245,11 +247,6 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
     public void AttackStrong()
     {
         _playerAttackStrong.AttackStrong();
-    }
-
-    public void ComboCounter()
-    {
-        // コンボカウンター処理を実装
     }
 
     public void Excute()

@@ -15,27 +15,24 @@ public class PlayerAvoidance : IAvoidance
     // 回避中フラグ
     private bool _isAvoiding = false;
 
+    // 壁との衝突判定用
+    private LayerMask _collisionLayerMask = LayerMask.GetMask("Stage"); // 変更する場合はLayerMaskを設定
 
     public void Avoidance(Transform transform, Vector2 avoidanceDirection, float avoidanceDistance, float avoidanceDuration)
     {
-        // 回避中はリターン
         if (_isAvoiding) return;
 
-        // 正規化した移動方向を算出
         Vector3 normalizedAvoidanceDirection = new Vector3(avoidanceDirection.x, 0, avoidanceDirection.y).normalized;
-
-        // 開始位置と終了位置を取得
         Vector3 startPosition = transform.position;
         Vector3 endPosition = startPosition + normalizedAvoidanceDirection * avoidanceDistance;
 
-        // 回避処理
-        AvoidanceCoroutine(transform, startPosition, endPosition, avoidanceDuration).Forget();
+        AvoidanceCoroutine(transform, startPosition, endPosition, avoidanceDuration, normalizedAvoidanceDirection).Forget();
     }
 
     /// <summary>
     /// 回避処理の非同期コルーチン
     /// </summary>
-    private async UniTaskVoid AvoidanceCoroutine(Transform transform, Vector3 startPosition, Vector3 endPosition, float duration)
+    private async UniTaskVoid AvoidanceCoroutine(Transform transform, Vector3 startPosition, Vector3 endPosition, float duration, Vector3 moveDirection)
     {
         _isAvoiding = true;
         float elapsedTime = 0f;
@@ -43,21 +40,29 @@ public class PlayerAvoidance : IAvoidance
         // 回避の持続時間が経過するまでループ
         while (elapsedTime < duration)
         {
-
-            // 時間計測
             elapsedTime += Time.deltaTime;
 
-            // `progress` は回避処理の進行度を表す割合。0 で開始位置、1 で終了位置。
+            // progress は回避処理の進行度を表す割合
             float progress = Mathf.Clamp01(elapsedTime / duration);
 
-            // `progress` を使って、開始位置から終了位置までを補間
-            transform.position = Vector3.Lerp(startPosition, endPosition, progress);
+            // 移動先を計算
+            Vector3 nextPosition = Vector3.Lerp(startPosition, endPosition, progress);
+
+            // 移動方向にレイキャストを飛ばして壁があるか確認
+            if (Physics.Raycast(transform.position, moveDirection, out RaycastHit hit, transform.localScale.x / 2f, _collisionLayerMask))
+            {
+                // 衝突している場合、回避を終了させる
+                break;
+            }
+
+            // 壁に衝突していなければ位置を更新
+            transform.position = nextPosition;
 
             // フレームごとに待機
             await UniTask.Yield();
-
         }
 
         _isAvoiding = false;
     }
+    
 }
