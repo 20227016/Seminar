@@ -35,7 +35,7 @@ public abstract class BaseEnemy : MonoBehaviour,IReceiveDamage
 
     protected IEnemyAnimation _enemyAnimation = new EnemyAnimation();
 
-    protected float _currentAttackMultiplier = default;
+    protected float _currentAttackMultiplier = 1;
 
     private void OnDrawGizmos()
     {
@@ -113,7 +113,6 @@ public abstract class BaseEnemy : MonoBehaviour,IReceiveDamage
     {
 
         IReceiveDamage receiveDamage = hitCollider.GetComponent<IReceiveDamage>();
-        print(receiveDamage + "   " + hitCollider.name);
         if (receiveDamage == null)
         {
 

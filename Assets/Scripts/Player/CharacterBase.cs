@@ -283,6 +283,9 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
 
     public virtual void ReceiveDamage(int damegeValue)
     {
+
+        print(damegeValue);
         _currentHP.Value -= damegeValue - _characterStatusStruct._defensePower;
+        print("なんだよーまたかよー");
     }
 }
