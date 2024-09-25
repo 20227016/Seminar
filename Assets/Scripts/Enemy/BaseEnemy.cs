@@ -117,11 +117,9 @@ public abstract class BaseEnemy : MonoBehaviour,IReceiveDamage
         if (receiveDamage == null)
         {
 
-            print("なかみないよ");
             return;
 
         }
-        print("すっすみませんなんでもするので許してください");
         // 攻撃力に攻撃倍率を渡して渡す
         receiveDamage.ReceiveDamage((int)(_enemyStatusStruct._attackPower * _currentAttackMultiplier));
     }
