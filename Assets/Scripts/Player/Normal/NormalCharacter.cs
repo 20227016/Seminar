@@ -13,11 +13,15 @@ public class NormalCharacter : CharacterBase
 {
     public override void Passive()
     {
-        Debug.Log("ノーマルのパッシブ");
+
+
+        _passive.Passive();
+
     }
 
     public override void Skill()
     {
-        Debug.Log("ノーマルのスキル");
+        base.Skill();
+        _skill.Skill();
     }
 }
