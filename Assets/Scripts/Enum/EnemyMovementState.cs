@@ -12,5 +12,6 @@ public enum EnemyMovementState
     WALKING,     // 歩いている
     RUNNING,     // 走っている
     DOWNED,      // ダウンしている
-    STUNNED      // のけぞり中
+    STUNNED,     // のけぞり中
+    DIE,         // 死亡
 }
