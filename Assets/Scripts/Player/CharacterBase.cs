@@ -14,7 +14,7 @@ using UniRx.Triggers;
 /// 作成日: 9/2
 /// 作成者: 山田智哉
 /// </summary>
-public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong, IMove, IAvoidance, IReceiveDamage, ITargetting, ISkill, IPassive
+public abstract class CharacterBase : MonoBehaviour
 {
     // ステータス
     [SerializeField, Tooltip("ステータス値")]
@@ -26,11 +26,14 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
     // 現在のステート
     protected CharacterStateEnum _currentState = default;
 
-    // 現在HP量
+    // 現在のHP量
     protected ReactiveProperty<float> _currentHP = new ReactiveProperty<float>();
 
-    // 現在スタミナ量
+    // 現在のスタミナ量
     protected ReactiveProperty<float> _currentStamina = new ReactiveProperty<float>();
+
+    // 現在のスキルポイント
+    protected ReactiveProperty<float> _currentSkillPoint = new ReactiveProperty<float>();
 
     // PlayerInputコンポーネントへの参照
     protected PlayerInput _playerInput = default;
@@ -61,12 +64,16 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
     protected IAttackStrong _playerAttackStrong = default;
     protected IAttackProvider _attackProvider = default;
     protected ITargetting _target = default;
+    protected ISkill _skill = default;
+    protected IPassive _passive = default;
 
     #region プロパティ
 
     public IReadOnlyReactiveProperty<float> CurrentHP => _currentHP;
 
     public IReadOnlyReactiveProperty<float> CurrentStamina => _currentStamina;
+
+    public IReadOnlyReactiveProperty<float> CurrentSkillPoint => _currentSkillPoint;
 
     #endregion
 
@@ -80,12 +87,13 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
         // 最大HPと最大スタミナをリアクティブプロパティに設定
         _currentHP.Value = _characterStatusStruct._playerStatus.MaxHp;
         _currentStamina.Value = _characterStatusStruct._playerStatus.MaxStamina;
+        _currentSkillPoint.Value = 0f;
 
         // 移動処理
         this.UpdateAsObservable()
             // 入力がないときは通らない
             .Where(_ => _inputDirection != Vector2.zero)
-            .Subscribe(_ => 
+            .Subscribe(_ =>
             {
 
                 // メインカメラから移動方向を算出
@@ -109,6 +117,8 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
         _playerAttackStrong = _attackProvider.GetAttackStrong();
         _avoidance = new PlayerAvoidance();
         _target = GetComponent<PlayerTargetting>();
+        _skill = GetComponent<ISkill>();
+        _passive = GetComponent<IPassive>();
         _characterStatusStruct._playerStatus = new WrapperPlayerStatus();
         _cameraDirection = new CameraDirection(Camera.main.transform);
         _playerInput = GetComponent<PlayerInput>();
@@ -228,47 +238,58 @@ public abstract class CharacterBase : MonoBehaviour, IAttackLight, IAttackStrong
             case InputActionTypeEnum.Skill:
 
                 if (context.canceled) return;
-                Skill();
+                if (_currentSkillPoint.Value <= _characterStatusStruct._skillPointUpperLimit) Skill();
+
                 return;
 
         }
     }
 
-    public void Move(Transform transform, Vector2 moveDirection, float moveSpeed)
+    public virtual void Move(Transform transform, Vector2 moveDirection, float moveSpeed)
     {
         _move.Move(transform, moveDirection, moveSpeed);
     }
 
-    public void AttackLight()
+    public virtual void AttackLight()
     {
         _playerAttackLight.AttackLight();
+        _currentSkillPoint.Value = 100f;
     }
 
-    public void AttackStrong()
+    public virtual void AttackStrong()
     {
         _playerAttackStrong.AttackStrong();
     }
 
-    public void Excute()
+    public virtual void Excute()
     {
         Debug.Log(gameObject.name + "が被弾");
     }
 
-    public void Targetting()
+    public virtual void Targetting()
     {
         _target.Targetting();
     }
 
-    public void Avoidance(Transform transform, Vector2 avoidanceDirection, float avoidanceDistance, float avoidanceDuration)
+    public virtual void Avoidance(Transform transform, Vector2 avoidanceDirection, float avoidanceDistance, float avoidanceDuration)
     {
         _avoidance.Avoidance(transform, avoidanceDirection, avoidanceDistance, avoidanceDuration);
     }
 
-    public abstract void Skill();
+    public virtual void Skill()
+    {
+        if (_currentSkillPoint.Value <= _characterStatusStruct._skillPointUpperLimit)
+        {
+            return;
+        }
+
+        _currentSkillPoint.Value = 0f;
+
+    }
 
     public abstract void Passive();
 
-    public void ReceiveDamage(int damegeValue)
+    public virtual void ReceiveDamage(int damegeValue)
     {
         _currentHP.Value -= damegeValue - _characterStatusStruct._defensePower;
     }

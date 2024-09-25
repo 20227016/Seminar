@@ -51,4 +51,6 @@ public struct CharacterStatusStruct
     /// カウンタータイム
     /// </summary>
     public float _counterTime;
+
+    public float _skillPointUpperLimit;
 }
