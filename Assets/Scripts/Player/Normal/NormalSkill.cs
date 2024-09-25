@@ -14,10 +14,7 @@ public class NormalSkill : MonoBehaviour, ISkill
 {
     public void Skill()
     {
-
-
         Debug.Log("ノーマルのスキル");
-
     }
 
 }

@@ -14,7 +14,7 @@ using UniRx.Triggers;
 /// 作成日: 9/2
 /// 作成者: 山田智哉
 /// </summary>
-public abstract class CharacterBase : MonoBehaviour
+public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
 {
     // ステータス
     [SerializeField, Tooltip("ステータス値")]
@@ -238,8 +238,10 @@ public abstract class CharacterBase : MonoBehaviour
             case InputActionTypeEnum.Skill:
 
                 if (context.canceled) return;
-                if (_currentSkillPoint.Value <= _characterStatusStruct._skillPointUpperLimit) Skill();
-
+                if (_currentSkillPoint.Value >= _characterStatusStruct._skillPointUpperLimit)
+                {
+                    Skill();
+                }
                 return;
 
         }
@@ -253,7 +255,6 @@ public abstract class CharacterBase : MonoBehaviour
     public virtual void AttackLight()
     {
         _playerAttackLight.AttackLight();
-        _currentSkillPoint.Value = 100f;
     }
 
     public virtual void AttackStrong()
@@ -276,16 +277,7 @@ public abstract class CharacterBase : MonoBehaviour
         _avoidance.Avoidance(transform, avoidanceDirection, avoidanceDistance, avoidanceDuration);
     }
 
-    public virtual void Skill()
-    {
-        if (_currentSkillPoint.Value <= _characterStatusStruct._skillPointUpperLimit)
-        {
-            return;
-        }
-
-        _currentSkillPoint.Value = 0f;
-
-    }
+    public abstract void Skill();
 
     public abstract void Passive();
 

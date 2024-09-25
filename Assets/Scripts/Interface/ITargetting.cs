@@ -2,7 +2,7 @@
 public interface ITargetting
 {
     /// <summary>
-    /// ターゲッティング実行
+    /// ターゲッティング
     /// </summary>
     void Targetting();
 }

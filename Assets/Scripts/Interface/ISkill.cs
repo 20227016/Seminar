@@ -1,5 +1,8 @@
 
 public interface ISkill
 {
+    /// <summary>
+    /// ÉXÉLÉã
+    /// </summary>
     void Skill();
 }
