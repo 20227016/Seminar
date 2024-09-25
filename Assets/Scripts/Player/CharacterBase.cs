@@ -128,7 +128,7 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
         _playerTransform = this.transform;
         _moveSpeed = _characterStatusStruct._walkSpeed;
         RegisterInputActions(true);
-
+        _passive.Passive();
     }
 
     /// <summary>
@@ -286,6 +286,5 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
 
         print(damegeValue);
         _currentHP.Value -= damegeValue - _characterStatusStruct._defensePower;
-        print("なんだよーまたかよー");
     }
 }
