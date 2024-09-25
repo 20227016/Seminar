@@ -286,6 +286,5 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
 
         print(damegeValue);
         _currentHP.Value -= damegeValue - _characterStatusStruct._defensePower;
-        print("なんだよーまたかよー");
     }
 }
