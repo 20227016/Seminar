@@ -1,7 +1,6 @@
 
-using UnityEngine;
-using System.Collections;
 using UniRx;
+using UnityEngine;
 
 /// <summary>
 /// LockOnCursorPresenter.cs
@@ -24,9 +23,10 @@ public class LockOnCursorPresenter : MonoBehaviour
     {
 
         _lockOnCursorView = GetComponent<LockOnCursorView>();
+
         _player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerTargetting>();
 
-        _player.LockOnEvent.Subscribe(_ => _lockOnCursorView.UpdateLockOnCursor(_));
+        _player.LockOnEvent.Subscribe(target => _lockOnCursorView.UpdateLockOnCursor(target));
 
     }
 
