@@ -21,7 +21,7 @@ public class NormalCharacter : CharacterBase
 
     public override void Skill()
     {
-        base.Skill();
+        _currentSkillPoint.Value = 0f;
         _skill.Skill();
     }
 }
