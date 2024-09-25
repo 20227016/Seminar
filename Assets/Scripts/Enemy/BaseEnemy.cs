@@ -1,6 +1,9 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using System.Threading;
+using System;
 
 /// <summary>
 /// BaseEnemy.cs
@@ -19,6 +22,9 @@ public abstract class BaseEnemy : MonoBehaviour,IReceiveDamage
     protected EnemyStatusStruct _enemyStatusStruct = default;
     [SerializeField, Header("無視するレイヤー")]
     protected List<string> _tags = new List<string>();
+
+    // UniTaskキャンセルトークン
+    private CancellationTokenSource _cancellatToken = default;
 
     // 探索するときに使用する構造体
     protected BoxCastStruct _boxCastStruct = default;
@@ -103,10 +109,10 @@ public abstract class BaseEnemy : MonoBehaviour,IReceiveDamage
     /// ダメージを与える処理
     /// </summary>
     /// <param name="other"></param>
-    private void OnTriggerEnter(Collider other)
+    public virtual void OnTriggerEnter(Collider hitCollider)
     {
 
-        IReceiveDamage receiveDamage = other.GetComponent<IReceiveDamage>();
+        IReceiveDamage receiveDamage = hitCollider.GetComponent<IReceiveDamage>();
         if (receiveDamage !=null)
         {
 
@@ -115,7 +121,6 @@ public abstract class BaseEnemy : MonoBehaviour,IReceiveDamage
         }
         // 攻撃力に攻撃倍率を渡して渡す
         receiveDamage.ReceiveDamage((int)(_enemyStatusStruct._attackPower * _currentAttackMultiplier));
-
     }
 
     /// <summary>

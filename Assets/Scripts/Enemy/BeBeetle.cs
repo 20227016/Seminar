@@ -1,7 +1,6 @@
 
 using UnityEngine;
 using Cysharp.Threading.Tasks;
-using System.Collections;
 using System.Threading;
 using System;
 
@@ -44,12 +43,15 @@ public class BeBeetle : BaseEnemy
     // 自分の現在の位置を格納
     private Vector3 _newPosition = default;
 
+    // 自分が当たった位置を取得
     private Vector3 _hitAttackPos = default;
 
     // 攻撃中か
     private bool _isAttack = false;
     // ダウン中か
     private bool _isDowned = false;
+    // 死亡中か
+    private bool _isDeath = false;
 
 　　/// <summary>
     /// 初期化 
@@ -98,6 +100,13 @@ public class BeBeetle : BaseEnemy
 
                 break;
 
+            // 死亡
+            case EnemyMovementState.DIE:
+
+                BeBeetleDeath(_cancellatToken.Token).Forget();
+
+                break;
+
         }
 
         
@@ -107,7 +116,7 @@ public class BeBeetle : BaseEnemy
             // サーチ
             case EnemyActionState.SEARCHING:
 
-                if(!_isDowned)
+                if((!_isDowned)&&(!_isDeath))
                 {
                     // プレイヤーを見続ける
                     PlayerLook();
@@ -285,6 +294,33 @@ public class BeBeetle : BaseEnemy
     }
 
     /// <summary>
+    /// 死亡処理
+    /// </summary>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    private async UniTaskVoid BeBeetleDeath(CancellationToken token)
+    {
+
+        // その場で止まる
+        transform.position = _hitAttackPos;
+
+        // 死亡アニメーションを再生
+        _enemyAnimation.Movement(_myAnimator, 6);
+
+        // 現在再生されているアニメーションを取得
+        AnimatorStateInfo stateInfo = _myAnimator.GetCurrentAnimatorStateInfo(0);
+
+        // 現在再生されているアニメーションの時間を代入
+        float animationLength = stateInfo.length;
+
+        // アニメーションが終わるまで待機
+        await UniTask.Delay(TimeSpan.FromSeconds(animationLength));
+
+        // アニメーション終了後にオブジェクトを非表示にする
+        this.gameObject.SetActive(false);
+    }
+
+    /// <summary>
     /// UniTaskの破棄
     /// </summary>
     private void OperationCanceledException()
@@ -296,14 +332,27 @@ public class BeBeetle : BaseEnemy
     /// 攻撃処理
     /// </summary>
     /// <param name="hitCollider"></param>
-    private void OnTriggerEnter(Collider hitCollider)
+    public override void OnTriggerEnter(Collider hitCollider)
     {
+
         if (hitCollider.gameObject.layer == 6)
         {
-            
+
+            base.OnTriggerEnter(hitCollider);
+
+            _isDeath = true;
+
+            // 当たった位置で止まる
+            _hitAttackPos = this.transform.position;
+
+            _actionState = EnemyActionState.SEARCHING;
+
+            _movementState = EnemyMovementState.DIE;
+
         }
         else if (hitCollider.gameObject.layer == 8)
         {
+
             print("壁にぶっ刺さったお☆");
             _isAttack = false;
             _hitAttackPos = this.transform.position;
@@ -312,7 +361,7 @@ public class BeBeetle : BaseEnemy
         }
         else
         {
-           
+            Debug.LogError("想定外のエラー");
         }
     }
 }
