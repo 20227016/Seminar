@@ -29,7 +29,7 @@ public class BeBeetle : BaseEnemy
     private float _searchRange = default;
 
     [SerializeField, Header("攻撃１の倍率")]
-    private float _attackMultiplier1 = 1;
+    private float _attackMultiplier1 = default;
 
     [SerializeField]
     private EnemyMovementState _movementState = EnemyMovementState.IDLE;
@@ -193,7 +193,7 @@ public class BeBeetle : BaseEnemy
     private void PlayerSearch()
     {
         RaycastHit hit = Search.BoxCast(_boxCastStruct);
-        if(hit.collider.gameObject.layer == 6)
+        if (hit.collider.gameObject.layer == 6)
         {
             print("プレイヤーに触れました");
             _movementState = EnemyMovementState.IDLE;
@@ -338,6 +338,10 @@ public class BeBeetle : BaseEnemy
         if (hitCollider.gameObject.layer == 6)
         {
 
+           
+
+            print("プレイヤーに当たった");
+
             base.OnTriggerEnter(hitCollider);
 
             _isDeath = true;
@@ -353,7 +357,6 @@ public class BeBeetle : BaseEnemy
         else if (hitCollider.gameObject.layer == 8)
         {
 
-            print("壁にぶっ刺さったお☆");
             _isAttack = false;
             _hitAttackPos = this.transform.position;
             _movementState = EnemyMovementState.DOWNED;
