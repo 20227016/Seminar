@@ -26,6 +26,5 @@ public class PlayerAttackLight : IAttackLight
 
         int currentCombo = _comboCounter.GetCombo();
         _comboCounter.AddCombo();
-        Debug.Log(currentCombo);
     }
 }

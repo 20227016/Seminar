@@ -94,44 +94,17 @@ public static class Search
 
         //探索結果を格納
         RaycastHit[] hits = default;
-        //Distanceを指定していない
-        if (boxCastStruct._distance == 0)
+        if (boxCastStruct._layerMask == 0)
         {
 
-            //Distanceを指定している > LayerMaskを指定していない
-            if (boxCastStruct._layerMask == 0)
-            {
-
-                hits = Physics.BoxCastAll(boxCastStruct._originPos, boxCastStruct._size, boxCastStruct._direction, boxCastStruct._quaternion);
-
-            }
-            //Distanceを指定している > LayerMaskを指定している
-            else
-            {
-
-                hits = Physics.BoxCastAll(boxCastStruct._originPos, boxCastStruct._size, boxCastStruct._direction, boxCastStruct._quaternion, boxCastStruct._layerMask);
-
-            }
+            hits = Physics.BoxCastAll(boxCastStruct._originPos, boxCastStruct._size, boxCastStruct._direction, boxCastStruct._quaternion, boxCastStruct._distance);
 
         }
-        //Distanceを指定している
+        //Distanceを指定している > LayerMaskを指定している
         else
         {
 
-            //Distanceを指定している > LayerMaskを指定していない
-            if (boxCastStruct._layerMask == 0)
-            {
-
-                hits = Physics.BoxCastAll(boxCastStruct._originPos, boxCastStruct._size, boxCastStruct._direction, boxCastStruct._quaternion, boxCastStruct._distance);
-
-            }
-            //Distanceを指定している > LayerMaskを指定している
-            else
-            {
-
-                hits = Physics.BoxCastAll(boxCastStruct._originPos, boxCastStruct._size, boxCastStruct._direction, boxCastStruct._quaternion, boxCastStruct._distance, boxCastStruct._layerMask);
-
-            }
+            hits = Physics.BoxCastAll(boxCastStruct._originPos, boxCastStruct._size, boxCastStruct._direction, boxCastStruct._quaternion, boxCastStruct._distance, boxCastStruct._layerMask);
 
         }
 

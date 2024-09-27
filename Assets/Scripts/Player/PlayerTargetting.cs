@@ -34,12 +34,12 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
     private CinemachinePOV _normalCameraPOV = default;
 
     // メインカメラ
-    private Camera _camera = default;
+    private Camera _mainCamera = default;
 
     // ターゲッティングフラグ
     private bool _isTargetting = default;
 
-    // 現在のターゲット
+    // 現在のターゲットオブジェクト
     private GameObject _currentTarget = default;
 
     // ロックオンイベント
@@ -59,7 +59,7 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
 
             _originPos = transform.position,
             _size = transform.localScale * BoxCastScaleMultiplier,
-            _direction = _camera.transform.forward,
+            _direction = _mainCamera.transform.forward,
             _quaternion = Quaternion.identity,
             _distance = BoxCastDistance
 
@@ -73,7 +73,7 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
     {
 
         // キャッシュ
-        _camera = Camera.main;
+        _mainCamera = Camera.main;
         _normalCameraPOV = _normalCamera.GetCinemachineComponent<CinemachinePOV>();
         _targettingCamera.gameObject.SetActive(false);
         _isTargetting = false;
@@ -142,9 +142,9 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
     private bool IsEnemyVisible(GameObject enemy)
     {
 
-        Vector3 direction = enemy.transform.position - _camera.transform.position;
+        Vector3 direction = enemy.transform.position - _mainCamera.transform.position;
 
-        if (Physics.Raycast(_camera.transform.position, direction, out RaycastHit hit, BoxCastDistance, _layerMask))
+        if (Physics.Raycast(_mainCamera.transform.position, direction, out RaycastHit hit, BoxCastDistance, _layerMask))
         {
             return hit.collider.gameObject.layer == EnemyLayer;
         }

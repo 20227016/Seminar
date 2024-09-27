@@ -7,76 +7,34 @@ using System;
 /// <summary>
 /// PlayerUIViews.cs
 /// クラス説明
-/// プレイヤー強攻撃
+/// プレイヤーUIのview
 ///
 /// 作成日: 9/10
 /// 作成者: 山田智哉
 /// </summary>
-public class PlayerUIViews : MonoBehaviour
+public class PlayerUIViews
 {
-    [SerializeField, Tooltip("HPゲージ")]
-    private Slider _hpBar = default;
-
-    [SerializeField, Tooltip("スタミナゲージ")]
-    private Slider _staminaBar = default;
-
-    // アニメーション速度の調整用
-    [SerializeField, Tooltip("HP/スタミナの減少アニメーション速度")]
-    private float animationSpeed = 0.5f;
-
-    private IDisposable _hpAnimationDisposable;
-    private IDisposable _staminaAnimationDisposable;
+    private IDisposable _animationDisposable = default;
 
 
-    public void UpdateHP(float newValue)
+    public void UpdateGauge(Slider slider, float value,  float animationSpeed)
     {
-        if (_hpAnimationDisposable != null)
+        if (_animationDisposable != null)
         {
-            _hpAnimationDisposable.Dispose();
+            _animationDisposable.Dispose();
         }
 
-        _hpAnimationDisposable = Observable.EveryUpdate()
+        _animationDisposable = Observable.EveryUpdate()
             .Subscribe(_ =>
             {
-                // HPゲージを滑らかに減らす
-                _hpBar.value = Mathf.Lerp(_hpBar.value, newValue, Time.deltaTime * animationSpeed);
-
+                // ゲージを滑らかに減らす
+                slider.value = Mathf.Lerp(slider.value, value, Time.deltaTime * animationSpeed);
                 // 目標値に近づいたらアニメーションを終了する
-                if (Mathf.Abs(_hpBar.value - newValue) < 0.01f)
+                if (Mathf.Abs(slider.value - value) < 0.01f)
                 {
-                    _hpBar.value = newValue;
-                    _hpAnimationDisposable.Dispose();
+                    slider.value = value;
+                    _animationDisposable.Dispose();
                 }
             });
-    }
-
-
-    public void UpdateStamina(float newValue)
-    {
-        if (_staminaAnimationDisposable != null)
-        {
-            _staminaAnimationDisposable.Dispose();
-        }
-
-        _staminaAnimationDisposable = Observable.EveryUpdate()
-            .Subscribe(_ =>
-            {
-                // スタミナゲージを滑らかに減らす
-                _staminaBar.value = Mathf.Lerp(_staminaBar.value, newValue, Time.deltaTime * animationSpeed);
-                
-                // 目標値に近づいたらアニメーションを終了する
-                if (Mathf.Abs(_staminaBar.value - newValue) < 0.01f)
-                {
-                    _staminaBar.value = newValue;
-                    _staminaAnimationDisposable.Dispose();
-                }
-            });
-    }
-
-    private void OnDesable()
-    {
-        // Dispose
-        _hpAnimationDisposable?.Dispose();
-        _staminaAnimationDisposable?.Dispose();
     }
 }

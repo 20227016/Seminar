@@ -17,7 +17,7 @@ public class TankCharacter : CharacterBase
         Debug.Log("タンクのパッシブ");
     }
 
-    public override void Skill()
+    public override void Skill(float skillTime, float skillCoolTime)
     {
         Debug.Log("タンクのスキル");
     }
