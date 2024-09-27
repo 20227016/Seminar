@@ -26,7 +26,7 @@ public class LockOnCursorPresenter : MonoBehaviour
 
         _player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerTargetting>();
 
-        _player.LockOnEvent.Subscribe(target => _lockOnCursorView.UpdateLockOnCursor(target));
+        _player.LockOnEvent.Subscribe(target => _lockOnCursorView.UpdateLockOnCursorTarget(target));
 
     }
 

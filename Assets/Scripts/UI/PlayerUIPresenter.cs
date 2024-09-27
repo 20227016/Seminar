@@ -1,6 +1,7 @@
 
 using UnityEngine;
 using UniRx;
+using UnityEngine.UI;
 
 /// <summary>
 /// PlayerUIPresenter.cs
@@ -16,14 +17,22 @@ public class PlayerUIPresenter : MonoBehaviour
     private CharacterBase _player = default;
 
     // Viewクラス
-    private PlayerUIViews _playerUIViews = default;
+    private PlayerUIViews _playerUIViews = new PlayerUIViews();
+
+    [SerializeField]
+    private Slider _hpGauge = default;
+
+    [SerializeField]
+    private Slider _staminaGauge = default;
+
+    [SerializeField]
+    private float _animationSpeed = 10f;
 
     /// <summary>
     /// 初期化処理
     /// </summary>
     private void Start()
     {
-        _playerUIViews = GetComponent<PlayerUIViews>();
 
         try
         {
@@ -34,9 +43,12 @@ public class PlayerUIPresenter : MonoBehaviour
             Debug.LogWarning("プレイヤーがおらへん");
         }
 
-        _player.CurrentHP.Subscribe(_ => _playerUIViews.UpdateHP(_));
+        // HPの更新
+        _player.CurrentHP.Subscribe(value => _playerUIViews.UpdateGauge(_hpGauge, value, _animationSpeed));
 
-        _player.CurrentStamina.Subscribe(_ => _playerUIViews.UpdateStamina(_));
+        // スタミナの更新
+        _player.CurrentStamina.Subscribe(value => _playerUIViews.UpdateGauge(_staminaGauge, value, _animationSpeed));
+
 
     }
 

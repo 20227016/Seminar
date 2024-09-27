@@ -4,5 +4,5 @@ public interface ISkill
     /// <summary>
     /// ÉXÉLÉã
     /// </summary>
-    void Skill();
+    void Skill(float skillTime, float skillCoolTime);
 }

@@ -20,5 +20,9 @@ public enum CharacterStateEnum
     /// <summary>
     /// ƒXƒLƒ‹
     /// </summary>
-    SKILL
+    SKILL,
+    /// <summary>
+    /// Ž€–S
+    /// </summary>
+    DEATH
 }

@@ -24,7 +24,8 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
     protected CharacterStateEnum _characterStateEnum = default;
 
     // 現在のステート
-    protected CharacterStateEnum _currentState = default;
+    [HideInInspector]
+    public CharacterStateEnum _currentState = default;
 
     // 現在のHP量
     protected ReactiveProperty<float> _currentHP = new ReactiveProperty<float>();
@@ -66,6 +67,7 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
     protected ITargetting _target = default;
     protected ISkill _skill = default;
     protected IPassive _passive = default;
+    protected IResurrection _resurrection = default;
 
     #region プロパティ
 
@@ -102,6 +104,11 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
 
             })
             .AddTo(this);
+
+        _currentHP.
+            Where(_ => _ <= 0f).
+            Subscribe(_ => Death()).
+            AddTo(this);
     }
 
     /// <summary>
@@ -119,6 +126,7 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
         _target = GetComponent<PlayerTargetting>();
         _skill = GetComponent<ISkill>();
         _passive = GetComponent<IPassive>();
+        _resurrection = new PlayerResurrection();
         _characterStatusStruct._playerStatus = new WrapperPlayerStatus();
         _cameraDirection = new CameraDirection(Camera.main.transform);
         _playerInput = GetComponent<PlayerInput>();
@@ -226,7 +234,7 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
             case InputActionTypeEnum.Avoidance:
 
                 if (context.canceled) return;
-                Avoidance(_playerTransform, _moveDirection, _characterStatusStruct._avoidanceDistance, _characterStatusStruct._avoidanceDuration);
+                Avoidance();
                 return;
 
             case InputActionTypeEnum.Target:
@@ -240,10 +248,14 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
                 if (context.canceled) return;
                 if (_currentSkillPoint.Value >= _characterStatusStruct._skillPointUpperLimit)
                 {
-                    Skill();
+                    Skill(_characterStatusStruct._skillTime, _characterStatusStruct._skillCoolTime);
                 }
                 return;
 
+            case InputActionTypeEnum.Resurrection:
+
+                Resurrection();
+                return;
         }
     }
 
@@ -255,6 +267,7 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
     public virtual void AttackLight()
     {
         _playerAttackLight.AttackLight();
+        ReceiveDamage(10);
     }
 
     public virtual void AttackStrong()
@@ -262,29 +275,34 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
         _playerAttackStrong.AttackStrong();
     }
 
-    public virtual void Excute()
-    {
-        Debug.Log(gameObject.name + "が被弾");
-    }
-
     public virtual void Targetting()
     {
         _target.Targetting();
     }
 
-    public virtual void Avoidance(Transform transform, Vector2 avoidanceDirection, float avoidanceDistance, float avoidanceDuration)
+    public virtual void Avoidance()
     {
-        _avoidance.Avoidance(transform, avoidanceDirection, avoidanceDistance, avoidanceDuration);
+        _avoidance.Avoidance(_playerTransform, _moveDirection, _characterStatusStruct._avoidanceDistance, _characterStatusStruct._avoidanceDuration);
     }
 
-    public abstract void Skill();
+    public abstract void Skill(float skillTime, float skillCoolTime);
 
     public abstract void Passive();
 
+    public virtual void Resurrection()
+    {
+        _resurrection.Resurrection(10, this.transform);
+    }
+
     public virtual void ReceiveDamage(int damegeValue)
     {
-
         print(damegeValue);
         _currentHP.Value -= damegeValue - _characterStatusStruct._defensePower;
+    }
+
+    public virtual void Death()
+    {
+        Debug.Log("死んだ");
+        this.gameObject.SetActive(false);
     }
 }

@@ -19,9 +19,9 @@ public class NormalCharacter : CharacterBase
 
     }
 
-    public override void Skill()
+    public override void Skill(float skillTime, float skillCoolTime)
     {
         _currentSkillPoint.Value = 0f;
-        _skill.Skill();
+        _skill.Skill(skillTime, skillCoolTime);
     }
 }

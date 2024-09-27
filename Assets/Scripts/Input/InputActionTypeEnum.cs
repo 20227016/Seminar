@@ -28,5 +28,9 @@ public enum InputActionTypeEnum
     /// <summary>
     /// ÉXÉLÉã
     /// </summary>
-    Skill
+    Skill,
+    /// <summary>
+    /// ëhê∂
+    /// </summary>
+    Resurrection
 }

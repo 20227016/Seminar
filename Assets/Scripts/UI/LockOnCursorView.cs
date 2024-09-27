@@ -35,10 +35,16 @@ public class LockOnCursorView : MonoBehaviour
             {
                 _lockOnCursor.transform.position = _camera.WorldToScreenPoint(_target.position);
             });
+
+    }
+
+    public void UpdateLockOnCursorPosition(Transform lockOnCursorTransform, Camera camera)
+    {
+        lockOnCursorTransform.position = camera.WorldToScreenPoint(_target.position);
     }
 
 
-    public void UpdateLockOnCursor(Transform targetTransform)
+    public void UpdateLockOnCursorTarget(Transform targetTransform)
     {
         _isTargetting = !_isTargetting;
         _target = targetTransform;

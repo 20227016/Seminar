@@ -24,7 +24,6 @@ public class PlayerAttackStrong : IAttackStrong
         Debug.Log("強攻撃");
         int currentCombo = _comboCounter.GetCombo();
         _comboCounter.AddCombo();
-        Debug.Log(currentCombo);
     }
 
 }
