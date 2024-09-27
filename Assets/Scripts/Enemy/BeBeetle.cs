@@ -63,6 +63,7 @@ public class BeBeetle : BaseEnemy
 
         // キャンセルトークン生成
         _cancellatToken = new CancellationTokenSource();
+
     }
 
     /// <summary>
@@ -195,13 +196,11 @@ public class BeBeetle : BaseEnemy
         RaycastHit hit = Search.BoxCast(_boxCastStruct);
         if (hit.collider.gameObject.layer == 6)
         {
-            print("プレイヤーに触れました");
             _movementState = EnemyMovementState.IDLE;
             _actionState = EnemyActionState.ATTACKING;
         }
         else
         {
-            print("プレイヤー以外に触れました");
             _movementState = EnemyMovementState.RUNNING;
         }
 
@@ -266,7 +265,10 @@ public class BeBeetle : BaseEnemy
 
         try
         {
-            
+
+            // 攻撃1の倍率に変更
+            _currentAttackMultiplier = _attackMultiplier1;
+
             // 攻撃1アニメーション再生
             _enemyAnimation.Attack(_myAnimator, 1);
 
@@ -335,36 +337,35 @@ public class BeBeetle : BaseEnemy
     public override void OnTriggerEnter(Collider hitCollider)
     {
 
-        if (hitCollider.gameObject.layer == 6)
+        if(_actionState == EnemyActionState.ATTACKING)
         {
+            if (hitCollider.gameObject.layer == 6)
+            {
 
-           
+                base.OnTriggerEnter(hitCollider);
 
-            print("プレイヤーに当たった");
+                _isDeath = true;
 
-            base.OnTriggerEnter(hitCollider);
+                // 当たった位置で止まる
+                _hitAttackPos = this.transform.position;
 
-            _isDeath = true;
+                _actionState = EnemyActionState.SEARCHING;
 
-            // 当たった位置で止まる
-            _hitAttackPos = this.transform.position;
+                _movementState = EnemyMovementState.DIE;
 
-            _actionState = EnemyActionState.SEARCHING;
+            }
+            else if (hitCollider.gameObject.layer == 8)
+            {
 
-            _movementState = EnemyMovementState.DIE;
-
-        }
-        else if (hitCollider.gameObject.layer == 8)
-        {
-
-            _isAttack = false;
-            _hitAttackPos = this.transform.position;
-            _movementState = EnemyMovementState.DOWNED;
-            _actionState = EnemyActionState.SEARCHING;
-        }
-        else
-        {
-            Debug.LogError("想定外のエラー");
+                _isAttack = false;
+                _hitAttackPos = this.transform.position;
+                _movementState = EnemyMovementState.DOWNED;
+                _actionState = EnemyActionState.SEARCHING;
+            }
+            else
+            {
+                Debug.LogError("想定外のエラー");
+            }
         }
     }
 }
