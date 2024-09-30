@@ -11,17 +11,10 @@ using UnityEngine;
 /// </summary>
 public class NormalCharacter : CharacterBase
 {
-    public override void Passive()
-    {
 
-
-        _passive.Passive();
-
-    }
-
-    public override void Skill(float skillTime, float skillCoolTime)
+    public override void Skill(CharacterBase characterBase, float skillTime, float skillCoolTime)
     {
         _currentSkillPoint.Value = 0f;
-        _skill.Skill(skillTime, skillCoolTime);
+        _skill.Skill(this, skillTime, skillCoolTime);
     }
 }

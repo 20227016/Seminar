@@ -18,7 +18,7 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
 {
     // ステータス
     [SerializeField, Tooltip("ステータス値")]
-    protected CharacterStatusStruct _characterStatusStruct = default;
+    public CharacterStatusStruct _characterStatusStruct = default;
 
     // ステート
     protected CharacterStateEnum _characterStateEnum = default;
@@ -136,7 +136,7 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
         _playerTransform = this.transform;
         _moveSpeed = _characterStatusStruct._walkSpeed;
         RegisterInputActions(true);
-        _passive.Passive();
+        
     }
 
     /// <summary>
@@ -248,7 +248,7 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
                 if (context.canceled) return;
                 if (_currentSkillPoint.Value >= _characterStatusStruct._skillPointUpperLimit)
                 {
-                    Skill(_characterStatusStruct._skillTime, _characterStatusStruct._skillCoolTime);
+                    Skill(this, _characterStatusStruct._skillTime, _characterStatusStruct._skillCoolTime);
                 }
                 return;
 
@@ -267,12 +267,13 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
     public virtual void AttackLight()
     {
         _playerAttackLight.AttackLight();
-        ReceiveDamage(10);
+        
     }
 
     public virtual void AttackStrong()
     {
         _playerAttackStrong.AttackStrong();
+        ReceiveDamage(10);
     }
 
     public virtual void Targetting()
@@ -285,24 +286,22 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
         _avoidance.Avoidance(_playerTransform, _moveDirection, _characterStatusStruct._avoidanceDistance, _characterStatusStruct._avoidanceDuration);
     }
 
-    public abstract void Skill(float skillTime, float skillCoolTime);
-
-    public abstract void Passive();
+    public abstract void Skill(CharacterBase characterBase, float skillTime, float skillCoolTime);
 
     public virtual void Resurrection()
     {
-        _resurrection.Resurrection(10, this.transform);
+        _resurrection.Resurrection(_characterStatusStruct._ressurectionTime, this.transform);
     }
 
     public virtual void ReceiveDamage(int damegeValue)
     {
-        print(damegeValue);
         _currentHP.Value -= damegeValue - _characterStatusStruct._defensePower;
     }
 
     public virtual void Death()
     {
         Debug.Log("死んだ");
+        _currentState = CharacterStateEnum.DEATH;
         this.gameObject.SetActive(false);
     }
 }
