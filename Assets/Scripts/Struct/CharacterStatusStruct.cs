@@ -52,5 +52,13 @@ public struct CharacterStatusStruct
     /// </summary>
     public float _counterTime;
 
+    /// <summary>
+    /// スキルポイント上限
+    /// </summary>
     public float _skillPointUpperLimit;
+
+    /// <summary>
+    /// 蘇生時間
+    /// </summary>
+    public float _ressurectionTime;
 }

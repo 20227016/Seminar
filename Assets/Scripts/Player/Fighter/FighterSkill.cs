@@ -3,20 +3,17 @@ using UnityEngine;
 using System.Collections;
 
 /// <summary>
-/// NormalSkill.cs
+/// FighterSkill.cs
 /// クラス説明
-/// ノーマルキャラのスキル
 ///
-/// 作成日: 9/25
+///
+/// 作成日: 9/30
 /// 作成者: 山田智哉
 /// </summary>
-public class NormalSkill : MonoBehaviour, ISkill
+public class FighterSkill : MonoBehaviour, ISkill
 {
-
-
     public void Skill(CharacterBase characterBase, float skillTime, float skillCoolTime)
     {
-        Debug.Log("ノーマルのスキル");
+        print("ファイターのスキル");
     }
-
 }
