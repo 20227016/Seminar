@@ -767,10 +767,10 @@ MonoBehaviour:
   _targettingCamera: {fileID: 820432858259504263}
   _targetLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 512
   _ignoreLayer:
     serializedVersion: 2
-    m_Bits: 439
+    m_Bits: 887
 --- !u!114 &9157881592287375250
 MonoBehaviour:
   m_ObjectHideFlags: 0

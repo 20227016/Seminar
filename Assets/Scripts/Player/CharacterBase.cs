@@ -295,7 +295,15 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
 
     public virtual void ReceiveDamage(int damegeValue)
     {
+        
         _currentHP.Value -= damegeValue - _characterStatusStruct._defensePower;
+
+        if (_currentHP.Value <= 0)
+        {
+
+            _currentHP.Value = 0f;
+
+        }
     }
 
     public virtual void Death()
