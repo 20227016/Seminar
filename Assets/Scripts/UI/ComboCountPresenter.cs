@@ -13,10 +13,6 @@ using UniRx;
 /// </summary>
 public class ComboCountPresenter : MonoBehaviour
 {
-    private ComboCounter _comboCounter = default;
-
-    private ComboCountView _comboCountView = default;
-
     [SerializeField]
     private TextMeshProUGUI _comboCountText = default;
 
@@ -25,9 +21,9 @@ public class ComboCountPresenter : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        _comboCounter = ComboCounter.Instance;
-        _comboCountView = new ComboCountView();
-        _comboCounter.ComboCount.Subscribe(value => _comboCountView.UpdateText(value, _comboCountText));
+        ComboCounter comboCounter = ComboCounter.Instance;
+        ComboCountView comboCountView = new ComboCountView();
+        comboCounter.ComboCount.Subscribe(value => comboCountView.UpdateText(value, _comboCountText));
     }
 
 }

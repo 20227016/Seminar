@@ -183,7 +183,7 @@ Transform:
   m_GameObject: {fileID: 7624781020476082994}
   serializedVersion: 2
   m_LocalRotation: {x: 0.24142276, y: 0.36938667, z: -0.100000575, w: 0.89177823}
-  m_LocalPosition: {x: -5.4948344, y: 4.54022, z: -5.4948335}
+  m_LocalPosition: {x: -5.4948344, y: 5.54022, z: -5.4948335}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -925,10 +925,10 @@ MonoBehaviour:
   _targettingCamera: {fileID: 4919407826375976160}
   _targetLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 512
   _ignoreLayer:
     serializedVersion: 2
-    m_Bits: 439
+    m_Bits: 887
 --- !u!114 &6992792323134260260
 MonoBehaviour:
   m_ObjectHideFlags: 0
