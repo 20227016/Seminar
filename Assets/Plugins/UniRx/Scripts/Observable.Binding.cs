@@ -20,6 +20,11 @@ namespace UniRx
             return source.Multicast(new BehaviorSubject<T>(initialValue));
         }
 
+        public static object WithLatestFrom(IObservable<Unit> allEnemiesDefeated, IObservable<Unit> playerGather)
+        {
+            throw new NotImplementedException();
+        }
+
         public static IConnectableObservable<T> PublishLast<T>(this IObservable<T> source)
         {
             return source.Multicast(new AsyncSubject<T>());

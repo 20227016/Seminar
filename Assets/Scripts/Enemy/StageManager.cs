@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using UniRx;
+using System;
 
 /// <summary>
 /// StageManager.cs
@@ -15,7 +16,10 @@ public class StageManager : MonoBehaviour
 {
 
     [SerializeField]
-    private StageEnemyManagement enemyManagement;
+    private StageEnemyManagement _enemyManagement = default;
+
+    [SerializeField]
+    private PlayersGather _playersGather = default;
 
     /// <summary>
     /// 初期化処理
@@ -23,8 +27,6 @@ public class StageManager : MonoBehaviour
     private void Awake()
     {
 
-        // StageEnemyManagementのイベントを購読
-        enemyManagement.AllEnemiesDefeated.Subscribe(_ => HandleAllEnemiesDefeated());
     }
 
     /// <summary>
@@ -32,7 +34,13 @@ public class StageManager : MonoBehaviour
     /// </summary>
     private void Start()
     {
-
+        // IObservableとPlayerGatherの二つのイベントの発行を待つ
+        Observable.CombineLatest(
+            _enemyManagement.AllEnemiesDefeated,
+            _playersGather.PlayerGather
+        )
+        .Subscribe(_ => HandleAllEnemiesDefeated())
+        .AddTo(this); // メモリリーク防止のため、AddToでサブスクリプションを管理
     }
 
     /// <summary>
@@ -43,10 +51,13 @@ public class StageManager : MonoBehaviour
 
     }
 
-    // シーン移動管理
+    /// <summary>
+    /// シーン移動管理
+    /// </summary>
     private void HandleAllEnemiesDefeated()
     {
-        print("イベント取得");
+        print("敵全滅＋プレイヤーの集合を確認。シーン移動を開始します");
+        // ここにテレポート先の位置を記述する
     }
 
 }
