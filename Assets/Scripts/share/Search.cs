@@ -155,6 +155,74 @@ public static class Search
 
     }
 
+    public static Collider[] OverlapBox(BoxCastStruct boxStruct)
+    {
+
+
+        //探索結果を格納
+        Collider[] hits = default;
+        if (boxStruct._layerMask == 0)
+        {
+
+            hits = Physics.OverlapBox(boxStruct._originPos, boxStruct._size, boxStruct._quaternion );
+
+        }
+        //Distanceを指定している > LayerMaskを指定している
+        else
+        {
+
+            hits = Physics.OverlapBox(boxStruct._originPos, boxStruct._size, boxStruct._quaternion, boxStruct._layerMask);
+
+        }
+
+        //精査するためにリストにする
+        List<Collider> hitList = new List<Collider>(hits);
+        //探索して見つかったとき
+        if (hitList.Count != 0 && boxStruct._tags != null)
+        {
+
+            //求めているタグと合ったかの判定
+            bool isMach = false;
+            /*タグで求められていないあたったものを配列から消す*/
+            foreach (Collider hit in hitList)
+            {
+
+                foreach (string tag in boxStruct._tags)
+                {
+
+                    if (hit.CompareTag(tag))
+                    {
+
+                        isMach = true;
+
+                    }
+                    if (!isMach)
+                    {
+
+                        hitList.Remove(hit);
+
+                    }
+
+                }
+
+            }
+            //中身がないとき
+            if (hitList.Count == 0)
+            {
+
+                return new Collider[0];
+
+            }
+            //精査したリストを配列に戻す
+            hits = hitList.ToArray();
+
+        }
+
+        return Sort(hits,boxStruct._originPos);
+
+
+    }
+
     public static RaycastHit[] Sort(RaycastHit[] hits)
     {
 
@@ -177,6 +245,44 @@ public static class Search
 
                     // 入れ替え
                     RaycastHit memory = sortList[i];
+                    sortList[i] = sortList[i + 1];
+                    sortList[i + 1] = memory;
+                    isSort = true;
+
+                }
+
+            }
+
+        }
+        return sortList.ToArray();
+        //なぜだだだだだーーーーーーーーーー
+
+    }
+    public static Collider[] Sort(Collider[] hits,Vector3 pos)
+    {
+
+        //配列化
+        List<Collider> sortList = new List<Collider>(hits);
+        //ソートをしたかの判定
+        bool isSort = false;
+        //ソートが終わるまで回す
+        while (isSort)
+        {
+
+            //リスト０１
+            //カウント２
+            for (int i = 0; sortList.Count - 1 < i; i++)
+            {
+
+                float currentDistnce = Vector3.Distance(sortList[i].transform.position, pos) ;
+                float nextDistnce = Vector3.Distance(sortList[i + 1].transform.position, pos); 
+
+                //次のオブジェクトのほうが距離が近かった時
+                if (currentDistnce > nextDistnce)
+                {
+
+                    // 入れ替え
+                    Collider memory = sortList[i];
                     sortList[i] = sortList[i + 1];
                     sortList[i + 1] = memory;
                     isSort = true;

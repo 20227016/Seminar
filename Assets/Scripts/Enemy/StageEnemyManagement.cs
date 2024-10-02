@@ -24,6 +24,8 @@ public class StageEnemyManagement : MonoBehaviour
 
     private int _enemyLayer = default;
 
+    private bool _hasExecuted = false;
+
 
     public IObservable<Unit> AllEnemiesDefeated => OnAllEnemiesDefeated;
 
@@ -100,12 +102,12 @@ public class StageEnemyManagement : MonoBehaviour
 
     private void OnAllObjectHidden()
     {
-        // UniRxでステージクリアのイベントを発行。
-        // ステージマネージャーでそのイベントを取得し、
-        // シーンを移動させる。この際、使いまわせるように、シーン(i)で指定して、できるようにする
-        // これにより、イベント発行毎にintを＋して、Stage2.Stage3と移動できるようにする
-
-        OnAllEnemiesDefeated.OnNext(Unit.Default);
+        if(!_hasExecuted)
+        {
+            print("エネミーが全滅しました");
+            OnAllEnemiesDefeated.OnNext(Unit.Default);
+            _hasExecuted = true;
+        }
     }
 
 
