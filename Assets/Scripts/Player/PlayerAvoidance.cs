@@ -15,9 +15,6 @@ public class PlayerAvoidance : IAvoidance
     // 回避中フラグ
     private bool _isAvoiding = false;
 
-    // 壁との衝突判定用
-    private LayerMask _collisionLayerMask = LayerMask.GetMask("Stage"); // 変更する場合はLayerMaskを設定
-
     public void Avoidance(Transform transform, Vector2 avoidanceDirection, float avoidanceDistance, float avoidanceDuration)
     {
         if (_isAvoiding) return;
@@ -49,7 +46,7 @@ public class PlayerAvoidance : IAvoidance
             Vector3 nextPosition = Vector3.Lerp(startPosition, endPosition, progress);
 
             // 移動方向にレイキャストを飛ばして壁があるか確認
-            if (Physics.Raycast(transform.position, moveDirection, out RaycastHit hit, transform.localScale.x / 2f, _collisionLayerMask))
+            if (Physics.Raycast(transform.position, moveDirection, out RaycastHit hit, transform.localScale.x / 2f, LayerMask.GetMask("Stage")))
             {
                 // 衝突している場合、回避を終了させる
                 break;

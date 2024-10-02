@@ -58,16 +58,23 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
     protected Transform _playerTransform = default;
 
     // 各種インターフェース
+    protected IMoveProvider _moveProvider = new PlayerMoveProvider();
     protected IMove _move = default;
-    protected IMoveProvider _moveProvider = default;
-    protected IAvoidance _avoidance = default;
+
+    protected IAvoidance _avoidance = new PlayerAvoidance();
+
+    protected IAttackProvider _attackProvider = new PlayerAttackProvider();
     protected IAttackLight _playerAttackLight = default;
     protected IAttackStrong _playerAttackStrong = default;
-    protected IAttackProvider _attackProvider = default;
+    
     protected ITargetting _target = default;
     protected ISkill _skill = default;
     protected IPassive _passive = default;
-    protected IResurrection _resurrection = default;
+
+    private Animator _animator = default;
+    protected IAnimation _animation = new PlayerAnima();
+
+    protected IResurrection _resurrection = new PlayerResurrection();
 
     #region プロパティ
 
@@ -117,19 +124,18 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
     protected virtual void Initialize()
     {
         // キャッシュ
-        _moveProvider = new PlayerMoveProvider();
         _move = _moveProvider.GetWalk();
-        _attackProvider = new PlayerAttackProvider();
         _playerAttackLight = _attackProvider.GetAttackLight();
         _playerAttackStrong = _attackProvider.GetAttackStrong();
-        _avoidance = new PlayerAvoidance();
+
         _target = GetComponent<PlayerTargetting>();
         _skill = GetComponent<ISkill>();
         _passive = GetComponent<IPassive>();
-        _resurrection = new PlayerResurrection();
         _characterStatusStruct._playerStatus = new WrapperPlayerStatus();
         _cameraDirection = new CameraDirection(Camera.main.transform);
         _playerInput = GetComponent<PlayerInput>();
+
+        _animator = GetComponent<Animator>();
 
         // 初期化
         _currentState = CharacterStateEnum.IDLE;
@@ -200,7 +206,8 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
         {
 
             case InputActionTypeEnum.Move:
-
+                print("あ");
+                _animation.BoolAnimation(_animator, "Walk", !context.canceled);
                 _inputDirection = context.ReadValue<Vector2>();
                 return;
 
@@ -266,16 +273,14 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
 
     public virtual void AttackLight()
     {
-        Animator animator = GetComponent<Animator>();
-        animator.SetTrigger("AttackLight");
+        _animation.TriggerAnimation(_animator, "AttackLight");
         _playerAttackLight.AttackLight();
         
     }
 
     public virtual void AttackStrong()
     {
-        Animator animator = GetComponent<Animator>();
-        animator.SetTrigger("AttackStrong");
+        _animation.TriggerAnimation(_animator, "AttackStrong");
         _playerAttackStrong.AttackStrong();
     }
 
