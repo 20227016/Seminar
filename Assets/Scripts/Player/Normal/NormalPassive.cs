@@ -12,8 +12,9 @@ using System.Collections;
 /// </summary>
 public class NormalPassive : MonoBehaviour, IPassive
 {
-    public void Passive()
+
+    public void Passive(CharacterBase characterBase)
     {
-        Debug.Log("ノーマルのパッシブ");
+
     }
 }

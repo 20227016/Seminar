@@ -12,13 +12,9 @@ using System.Collections;
 /// </summary>
 public class TankCharacter : CharacterBase
 {
-    public override void Passive()
-    {
-        Debug.Log("タンクのパッシブ");
-    }
 
-    public override void Skill(float skillTime, float skillCoolTime)
+    public override void Skill(CharacterBase characterBase, float skillTime, float skillCoolTime)
     {
-        Debug.Log("タンクのスキル");
+        _skill.Skill(characterBase, skillTime, skillCoolTime);
     }
 }

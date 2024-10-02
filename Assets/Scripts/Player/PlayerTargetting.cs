@@ -1,9 +1,9 @@
-
 using UnityEngine;
 using Cinemachine;
 using UniRx;
 using UniRx.Triggers;
 using System;
+using System.Collections.Generic;
 
 /// <summary>
 /// PlayerTargetting.cs
@@ -17,9 +17,11 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
 {
     private const float FullCircleDegrees = 360f;
     private const float HalfCircleDegrees = 180f;
-    private const float BoxCastScaleMultiplier = 10f;
-    private const float BoxCastDistance = 100f;
-    private const int EnemyLayer = 7;
+    private const float TargettingDistance = 50f;
+    private const float TargettingFactor = 0.3f;
+    private const float TargettingThreshold = 0.5f;
+    private const float CameraRotationCorrectionFactor = Mathf.PI * 2;
+    private const float DistanceNormalizationFactor = 500f;
 
     [SerializeField, Tooltip("通常時のカメラ")]
     private CinemachineVirtualCamera _normalCamera = default;
@@ -27,8 +29,11 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
     [SerializeField, Tooltip("ターゲッティング時のカメラ")]
     private CinemachineVirtualCamera _targettingCamera = default;
 
-    [SerializeField, Tooltip("障害物のレイヤー")]
-    private LayerMask _layerMask = default;
+    [SerializeField, Tooltip("ターゲットのレイヤー")]
+    private LayerMask _targetLayer = default;
+
+    [SerializeField, Tooltip("無視するレイヤー")]
+    private LayerMask _ignoreLayer = default;
 
     // 通常時カメラのPOVコンポーネント取得用
     private CinemachinePOV _normalCameraPOV = default;
@@ -48,39 +53,19 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
     public IObservable<Transform> LockOnEvent => _lockonEvent;
 
     /// <summary>
-    /// ボックスキャスト設定
-    /// </summary>
-    /// <returns>BoxCastStruct</returns>
-    private BoxCastStruct CreateBoxCastStruct()
-    {
-
-        return new BoxCastStruct
-        {
-
-            _originPos = transform.position,
-            _size = transform.localScale * BoxCastScaleMultiplier,
-            _direction = _mainCamera.transform.forward,
-            _quaternion = Quaternion.identity,
-            _distance = BoxCastDistance
-
-        };
-    }
-
-    /// <summary>
     /// 起動時処理
     /// </summary>
     private void Awake()
     {
-
         // キャッシュ
         _mainCamera = Camera.main;
         _normalCameraPOV = _normalCamera.GetCinemachineComponent<CinemachinePOV>();
         _targettingCamera.gameObject.SetActive(false);
         _isTargetting = false;
 
-        // 更新処理
+        //// 更新処理
         this.UpdateAsObservable()
-            .Where(_ => _isTargetting && !IsEnemyVisible(_currentTarget))
+            .Where(_ => _isTargetting && !IsTargetVisible(_currentTarget))
             .Subscribe(_ => Targetting());
 
     }
@@ -90,41 +75,20 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
         // ターゲッティングしてないとき
         if (!_isTargetting)
         {
+            // 現在のターゲットにターゲット検索結果を格納
+            _currentTarget = SearchTarget();
+            
+            if (_currentTarget == null) return;
 
-            BoxCastStruct boxCastStruct = CreateBoxCastStruct();
-            RaycastHit[] hits = Search.Sort(Search.BoxCastAll(boxCastStruct));
-            bool hasTarget = false;
-
-            foreach (RaycastHit hit in hits)
-            {
-
-                // エネミーを発見した時
-                if (hit.collider.gameObject.layer == EnemyLayer &&
-                    IsEnemyVisible(hit.collider.gameObject))
-                {
-                    
-                    // ターゲットに設定
-                    _currentTarget = hit.collider.gameObject;
-                    _targettingCamera.LookAt = hit.collider.transform;
-                    
-                    hasTarget = true;
-
-                    break;
-                }
-            }
-            if (!hasTarget)
-            {
-
-
-                return;
-
-            }
+            _targettingCamera.LookAt = _currentTarget.transform;
         }
         else
         {
+
             // ターゲッティングカメラの回転角をノーマルカメラのPOVに反映
             _normalCameraPOV.m_VerticalAxis.Value = Mathf.Repeat(_targettingCamera.transform.eulerAngles.x + HalfCircleDegrees, FullCircleDegrees) - HalfCircleDegrees;
             _normalCameraPOV.m_HorizontalAxis.Value = _targettingCamera.transform.eulerAngles.y;
+
         }
 
         // カメラを切り替える
@@ -135,20 +99,107 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
     }
 
     /// <summary>
-    /// 敵視認フラグ
+    /// ターゲット視認フラグ
     /// </summary>
-    /// <param name="enemy">敵オブジェクト</param>
-    /// <returns>敵が視認できているか</returns>
-    private bool IsEnemyVisible(GameObject enemy)
+    /// <param name="target">ターゲットオブジェクト</param>
+    /// <returns>ターゲットが視認できているか</returns>
+    private bool IsTargetVisible(GameObject target)
     {
+        // ターゲットと自身の距離を計算
+        Vector3 direction = target.transform.position - _mainCamera.transform.position;
 
-        Vector3 direction = enemy.transform.position - _mainCamera.transform.position;
-
-        if (Physics.Raycast(_mainCamera.transform.position, direction, out RaycastHit hit, BoxCastDistance, _layerMask))
+        // 射線が通っているときはtrue
+        if (Physics.Raycast(_mainCamera.transform.position, direction, out RaycastHit hit, TargettingDistance, _ignoreLayer))
         {
-            return hit.collider.gameObject.layer == EnemyLayer;
+
+            return hit.collider.gameObject.layer != _targetLayer;
+
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// ターゲットを検索
+    /// </summary>
+    private GameObject SearchTarget()
+    {
+        RaycastHit[] hits = Physics.SphereCastAll(transform.position, TargettingDistance, Vector3.up, 0, _targetLayer);
+
+        if (hits.Length == 0) return null;
+
+        List<GameObject> targetObjects = new List<GameObject>();
+
+        foreach (var hit in hits)
+        {
+
+            Vector3 directionToHit = hit.collider.gameObject.transform.position - transform.position;
+
+            if (Physics.Raycast(transform.position, directionToHit, out RaycastHit hitResult, TargettingDistance, _ignoreLayer))
+            {
+
+                if (hitResult.collider.gameObject.layer == hit.collider.gameObject.layer)
+                {
+
+                    // 射線上にいるターゲットをリストに追加
+                    targetObjects.Add(hit.collider.gameObject);
+
+                }
+
+            }
+
+        }
+
+        if (targetObjects.Count == 0) return null;
+
+        // 一番近いターゲットを選択
+        float playerCameraForwardAngle = Mathf.Atan2(_mainCamera.transform.forward.x, _mainCamera.transform.forward.z);
+        float closestAngle = CameraRotationCorrectionFactor;
+        GameObject closestTarget = null;
+
+        foreach (GameObject target in targetObjects)
+        {
+
+            Vector3 cameraToTarget = target.transform.position - _mainCamera.transform.position;
+            Vector3 directionToTarget = cameraToTarget.normalized;
+
+            float targetAngle = Mathf.Atan2(directionToTarget.x, directionToTarget.z);
+
+            targetAngle = AdjustAngle(playerCameraForwardAngle, targetAngle, cameraToTarget.magnitude);
+
+            if (Mathf.Abs(closestAngle) >= Mathf.Abs(targetAngle))
+            {
+
+                closestAngle = targetAngle;
+                closestTarget = target;
+
+            }
+
+        }
+
+        return Mathf.Abs(closestAngle) <= TargettingThreshold ? closestTarget : null;
+    }
+
+    /// <summary>
+    /// ターゲットの角度を調整する
+    /// </summary>
+    private float AdjustAngle(float cameraAngle, float targetAngle, float distanceToTarget)
+    {
+        float adjustedAngle = cameraAngle - targetAngle;
+
+        if (Mathf.PI <= adjustedAngle)
+        {
+
+            adjustedAngle -= CameraRotationCorrectionFactor;
+
+        }
+        else if (-Mathf.PI >= adjustedAngle)
+        {
+
+            adjustedAngle += CameraRotationCorrectionFactor;
+
+        }
+
+        return adjustedAngle + adjustedAngle * (distanceToTarget / DistanceNormalizationFactor) * TargettingFactor;
     }
 }

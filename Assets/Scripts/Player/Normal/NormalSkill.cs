@@ -12,11 +12,11 @@ using System.Collections;
 /// </summary>
 public class NormalSkill : MonoBehaviour, ISkill
 {
-    public void Skill(float skillTime, float skillCoolTime)
+
+
+    public void Skill(CharacterBase characterBase, float skillTime, float skillCoolTime)
     {
         Debug.Log("ノーマルのスキル");
-
-
     }
 
 }
