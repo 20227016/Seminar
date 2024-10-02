@@ -255,7 +255,7 @@ public static class Search
 
         }
         return sortList.ToArray();
-        //
+        //なぜだだだだだーーーーーーーーーー
     }
     public static Collider[] Sort(Collider[] hits,Vector3 pos)
     {
