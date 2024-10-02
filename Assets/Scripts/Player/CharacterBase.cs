@@ -266,14 +266,17 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
 
     public virtual void AttackLight()
     {
+        Animator animator = GetComponent<Animator>();
+        animator.SetTrigger("AttackLight");
         _playerAttackLight.AttackLight();
         
     }
 
     public virtual void AttackStrong()
     {
+        Animator animator = GetComponent<Animator>();
+        animator.SetTrigger("AttackStrong");
         _playerAttackStrong.AttackStrong();
-        ReceiveDamage(10);
     }
 
     public virtual void Targetting()
