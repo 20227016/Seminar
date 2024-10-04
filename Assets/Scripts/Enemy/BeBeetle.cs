@@ -3,6 +3,7 @@ using UnityEngine;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 using System;
+using UniRx;
 
 /// <summary>
 /// EnemyTest.cs
@@ -19,11 +20,11 @@ public class BeBeetle : BaseEnemy
     // UniTaskキャンセルトークン
     private CancellationTokenSource _cancellatToken = default;
 
+    [SerializeField, Tooltip("ゲームマネージャー格納用")]
+    private GameManager _gameManager = default;
+
     [SerializeField, Header("自分のアニメーター")]
     private Animator _myAnimator = default;
-
-    [SerializeField, Header("プレイヤーのトランスフォーム")]
-    private Transform _playerTrans = default;
 
     [SerializeField, Tooltip("探索範囲(前方距離)")]
     private float _searchRange = default;
@@ -39,6 +40,7 @@ public class BeBeetle : BaseEnemy
     [SerializeField,Tooltip("攻撃用コライダーを格納")]
     private BoxCollider _attackCollider = default;
 
+    private GameObject _player = default;
 
     // 自分の現在の位置を格納
     private Vector3 _newPosition = default;
@@ -46,6 +48,8 @@ public class BeBeetle : BaseEnemy
     // 自分が当たった位置を取得
     private Vector3 _hitAttackPos = default;
 
+    // ゲームが開始されているか
+    private bool _startGame = false;
     // 攻撃中か
     private bool _isAttack = false;
     // ダウン中か
@@ -53,24 +57,56 @@ public class BeBeetle : BaseEnemy
     // 死亡中か
     private bool _isDeath = false;
 
-　　/// <summary>
-    /// 初期化 
+    /// <summary>
+    /// ゲーム開始を購読
     /// </summary>
     private void Awake()
     {
+        // ゲーム開始イベントを購読
+        _gameManager.GameStart.Subscribe(_ => StartGame());
+    }
+
+    /// <summary>
+    ///  ゲーム開始処理
+    /// </summary>
+    private void StartGame()
+    {
+        print("GameInitializerからゲーム開始処理を受け取りました。ビービートル起動");
+        _startGame = true;
+        if(_startGame)
+        {
+            // 毎フレームの更新処理をUniRxで行う
+            Observable.EveryUpdate()
+                .Subscribe(_ => UpdateLogic())
+                .AddTo(this);
+
+            // 疑似スタートメソッド
+            StartLogic();
+        }
+    }
+
+    /// <summary>
+    /// 初期処理
+    /// </summary>
+    private void StartLogic()
+    {
+
         // Rayの位置更新
         SetPostion();
 
         // キャンセルトークン生成
         _cancellatToken = new CancellationTokenSource();
 
+        // プレイヤーを取得
+        _player = GameObject.FindWithTag("Player");
     }
 
     /// <summary>
     /// 更新処理
     /// </summary>
-    protected void Update()
+    protected void UpdateLogic()
     {
+
         print(_movementState);
         // レイキャスト設定
         RayCastSetting();
@@ -175,7 +211,7 @@ public class BeBeetle : BaseEnemy
     private void PlayerLook()
     {
         // プレイヤーのTransformを取得
-        Transform playerTrans = _playerTrans;
+        Transform playerTrans = _player.transform;
 
         // プレイヤーの位置を取得
         Vector3 playerPosition = playerTrans.position;
