@@ -37,9 +37,6 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     // 現在のスキルポイント
     protected ReactiveProperty<float> _currentSkillPoint = new ReactiveProperty<float>();
 
-    // PlayerInputコンポーネントへの参照
-    protected PlayerInput _playerInput = default;
-
     // カメラコントローラー
     protected CameraDirection _cameraDirection = default;
 
@@ -132,7 +129,6 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
         _passive = GetComponent<IPassive>();
         _characterStatusStruct._playerStatus = new WrapperPlayerStatus();
         _cameraDirection = new CameraDirection(Camera.main.transform);
-        _playerInput = GetComponent<PlayerInput>();
 
         _animator = GetComponent<Animator>();
 

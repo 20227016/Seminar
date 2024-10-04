@@ -19,9 +19,10 @@ public class GameManager : MonoBehaviour
     public IObservable<Unit> GameStart => OnGameStart;
 
     private GameInitializer _gameInitializer = new GameInitializer();
+
+
     private void Awake()
     {
-
         // ゲーム開始イベントを購読
         _gameInitializer.InitializationComplete.Subscribe(_ => StartGame());
 

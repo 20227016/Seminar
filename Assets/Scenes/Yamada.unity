@@ -1038,7 +1038,7 @@ MonoBehaviour:
   networkRunnerPrefab: {fileID: 5846787326430381538, guid: ea72b7765dfc78b488a71db45a300bdb, type: 3}
   playerAvatarPrefab:
     RawGuidValue: a0d28c3f64fa04741afc158cfa02d927
-  _playerSpawnPos: {x: 0, y: 1.5, z: 2}
+  _playerSpawnPos: {x: 0, y: 0, z: 2}
 --- !u!4 &1221141374
 Transform:
   m_ObjectHideFlags: 0
@@ -1208,95 +1208,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1668442810
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: -2591080339352084894, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
-      propertyPath: Flags
-      value: 133633
-      objectReference: {fileID: 0}
-    - target: {fileID: -2591080339352084894, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
-      propertyPath: NetworkGuid.RawGuidValue.Array.data[0]
-      value: 7443636493554817671
-      objectReference: {fileID: 0}
-    - target: {fileID: -2591080339352084894, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
-      propertyPath: NetworkGuid.RawGuidValue.Array.data[1]
-      value: 5603618263797211574
-      objectReference: {fileID: 0}
-    - target: {fileID: 6381242967693832639, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6381242967693832639, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6381242967693832639, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6381242967693832639, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6381242967693832639, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6381242967693832639, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6381242967693832639, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6381242967693832639, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6381242967693832639, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6381242967693832639, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6925893225625276836, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
-      propertyPath: m_Name
-      value: NormalPlayer
-      objectReference: {fileID: 0}
-    - target: {fileID: 6925893225625276836, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8509425192746278793, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
-      propertyPath: Flags
-      value: 2561
-      objectReference: {fileID: 0}
-    - target: {fileID: 8509425192746278793, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
-      propertyPath: NetworkedBehaviours.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8509425192746278793, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
-      propertyPath: NetworkGuid.RawGuidValue.Array.data[0]
-      value: 4991350656006586373
-      objectReference: {fileID: 0}
-    - target: {fileID: 8509425192746278793, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
-      propertyPath: NetworkGuid.RawGuidValue.Array.data[1]
-      value: 2390980175170148741
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
 --- !u!1 &2113852242
 GameObject:
   m_ObjectHideFlags: 0
@@ -1568,6 +1479,5 @@ SceneRoots:
   - {fileID: 535617584}
   - {fileID: 1176304740}
   - {fileID: 289584979}
-  - {fileID: 1668442810}
   - {fileID: 1221141374}
   - {fileID: 347292889}
