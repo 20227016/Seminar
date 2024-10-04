@@ -993,6 +993,7 @@ MonoBehaviour:
   networkRunnerPrefab: {fileID: 1260641292023973970, guid: 0b1c4696e37112d478d9b9cb468d300a, type: 3}
   playerAvatarPrefab:
     RawGuidValue: 1a6fff5c849cbe2419e00b5204f35434
+  _playerSpawnPos: {x: 0, y: 0, z: 0}
 --- !u!4 &1232832148
 Transform:
   m_ObjectHideFlags: 0
@@ -1059,6 +1060,22 @@ PrefabInstance:
     - target: {fileID: 6925893225625276836, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
       propertyPath: m_Name
       value: NormalPlayer
+      objectReference: {fileID: 0}
+    - target: {fileID: 8509425192746278793, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
+      propertyPath: Flags
+      value: 2561
+      objectReference: {fileID: 0}
+    - target: {fileID: 8509425192746278793, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
+      propertyPath: NetworkedBehaviours.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8509425192746278793, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
+      propertyPath: NetworkGuid.RawGuidValue.Array.data[0]
+      value: 4991350656006586373
+      objectReference: {fileID: 0}
+    - target: {fileID: 8509425192746278793, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
+      propertyPath: NetworkGuid.RawGuidValue.Array.data[1]
+      value: 2390980175170148741
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

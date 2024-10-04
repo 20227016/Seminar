@@ -15,7 +15,7 @@ using Cysharp.Threading.Tasks;
 /// 作成日: 9/2
 /// 作成者: 山田智哉
 /// </summary>
-public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
+public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
 {
     // ステータス
     [SerializeField, Tooltip("ステータス値")]
@@ -77,6 +77,8 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
 
     protected IResurrection _resurrection = new PlayerResurrection();
 
+    private NetworkCharacterControllerPrototype characterController;
+
     #region プロパティ
 
     public IReadOnlyReactiveProperty<float> CurrentHP => _currentHP;
@@ -93,25 +95,25 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
     protected virtual void Awake()
     {
         Initialize();
-
+        characterController = GetComponentInParent<NetworkCharacterControllerPrototype>();
         // 最大HPと最大スタミナをリアクティブプロパティに設定
         _currentHP.Value = _characterStatusStruct._playerStatus.MaxHp;
         _currentStamina.Value = _characterStatusStruct._playerStatus.MaxStamina;
         _currentSkillPoint.Value = 0f;
 
         // 移動処理
-        this.UpdateAsObservable()
-            // 入力がないときは通らない
-            .Where(_ => _inputDirection != Vector2.zero)
-            .Subscribe(_ =>
-            {
+        //this.UpdateAsObservable()
+        //    // 入力がないときは通らない
+        //    .Where(_ => _inputDirection != Vector2.zero)
+        //    .Subscribe(_ =>
+        //    {
 
-                // メインカメラから移動方向を算出
-                _moveDirection = _cameraDirection.GetCameraRelativeMoveDirection(_inputDirection);
-                Move(_playerTransform, _moveDirection, _moveSpeed);
+        //        // メインカメラから移動方向を算出
+        //        _moveDirection = _cameraDirection.GetCameraRelativeMoveDirection(_inputDirection);
+        //        Move(_playerTransform, _moveDirection, _moveSpeed);
 
-            })
-            .AddTo(this);
+        //    })
+            //.AddTo(this);
 
         _currentHP.
             Where(_ => _ <= 0f).
@@ -119,10 +121,16 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
             AddTo(this);
     }
 
-    //private void Update()
-    //{
-    //    Debug.Log(_currentState);
-    //}
+    public override void FixedUpdateNetwork()
+    {
+        base.FixedUpdateNetwork();
+        if (GetInput(out PlayerNetworkInput data))
+        {
+            ProcessInput(data);
+        }
+    }
+
+
 
     /// <summary>
     /// 初期化処理
@@ -148,7 +156,7 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
         _playerTransform = this.transform;
         _moveSpeed = _characterStatusStruct._walkSpeed;
         RegisterInputActions(true);
-        
+
     }
 
     /// <summary>
@@ -280,14 +288,73 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
         }
     }
 
+    public void ProcessInput(PlayerNetworkInput input)
+    {
+        // 移動
+        _inputDirection = input.MoveDirection;
+        Debug.Log(_inputDirection);
+
+        // ダッシュ（ラン）
+        _isRun = input.IsRunning;
+        if (_isRun)
+        {
+            _move = _moveProvider.GetRun();
+            _moveSpeed = _characterStatusStruct._runSpeed;
+        }
+        else
+        {
+            _move = _moveProvider.GetWalk();
+            _moveSpeed = _characterStatusStruct._walkSpeed;
+        }
+        _moveDirection = _cameraDirection.GetCameraRelativeMoveDirection(_inputDirection);
+        Move(_playerTransform, _moveDirection, _moveSpeed);
+
+        //// 攻撃
+        //if (input.IsAttackLight)
+        //{
+        //    Debug.Log("弱攻撃");
+        //    AttackLight();
+        //}
+
+        //if (input.IsAttackStrong)
+        //{
+        //    Debug.Log("強攻撃");
+        //    AttackStrong();
+        //}
+
+        //// 回避
+        //if (input.IsAvoidance)
+        //{
+        //    Avoidance();
+        //}
+
+        //// ターゲッティング
+        //if (input.IsTargetting)
+        //{
+        //    Targetting();
+        //}
+
+        //// スキル
+        //if (input.IsSkill && _currentSkillPoint.Value >= _characterStatusStruct._skillPointUpperLimit)
+        //{
+        //    Skill(this, _characterStatusStruct._skillTime, _characterStatusStruct._skillCoolTime);
+        //}
+
+        //// 蘇生
+        //if (input.IsResurrection)
+        //{
+        //    Resurrection();
+        //}
+    }
+
     public virtual void Move(Transform transform, Vector2 moveDirection, float moveSpeed)
     {
-
         _move.Move(transform, moveDirection, moveSpeed);
     }
 
     public virtual async void AttackLight()
     {
+        print("あ");
         _currentState = CharacterStateEnum.ATTACK;
 
         _playerAttackLight.AttackLight(this.transform, _characterStatusStruct._attackMultipiler);

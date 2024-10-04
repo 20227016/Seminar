@@ -1,4 +1,5 @@
 
+using Fusion;
 using UnityEngine;
 
 /// <summary>
@@ -14,8 +15,10 @@ public class PlayerWalk :IMove
     // 移動方向キャッシュ用
     private Vector3 _cachedMoveDirection = default;
 
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
     public void Move(Transform transform, Vector2 moveDirection, float moveSpeed)
     {
+
         // Vector2をVector3に変換
         _cachedMoveDirection.Set(moveDirection.x, 0, moveDirection.y);
 
