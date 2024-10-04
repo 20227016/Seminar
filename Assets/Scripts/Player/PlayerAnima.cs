@@ -18,8 +18,25 @@ public class PlayerAnima : IAnimation
         animator.SetBool(animationName, isPlay);
     }
 
-    public void TriggerAnimation(Animator animator, string animationName)
+    public float TriggerAnimation(Animator animator, string animationName)
     {
+        // パラメーターを配列に取得
+        AnimatorControllerParameter[] parameters = animator.parameters;
+
+        // 各パラメーターを調べてBool型の場合、リセットする
+        foreach (AnimatorControllerParameter parameter in parameters)
+        {
+            if (parameter.type == AnimatorControllerParameterType.Bool)
+            {
+                animator.SetBool(parameter.name, false);
+            }
+        }
+
         animator.SetTrigger(animationName);
+
+        AnimatorClipInfo[] clipInfo = animator.GetCurrentAnimatorClipInfo(0);
+        float clipTime = clipInfo[0].clip.length;
+
+        return 1;
     }
 }

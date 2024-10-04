@@ -113,7 +113,7 @@ public class ClawWolf : BaseEnemy
                 foreach(RaycastHit hit in hits)
                 {
 
-                    print(hit.collider.name);
+                    //print(hit.collider.name);
 
                 }
 
