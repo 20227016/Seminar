@@ -77,8 +77,6 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
 
     protected IResurrection _resurrection = new PlayerResurrection();
 
-    private NetworkCharacterControllerPrototype characterController;
-
     #region プロパティ
 
     public IReadOnlyReactiveProperty<float> CurrentHP => _currentHP;
@@ -95,25 +93,12 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     protected virtual void Awake()
     {
         Initialize();
-        characterController = GetComponentInParent<NetworkCharacterControllerPrototype>();
+
         // 最大HPと最大スタミナをリアクティブプロパティに設定
         _currentHP.Value = _characterStatusStruct._playerStatus.MaxHp;
         _currentStamina.Value = _characterStatusStruct._playerStatus.MaxStamina;
         _currentSkillPoint.Value = 0f;
 
-        // 移動処理
-        //this.UpdateAsObservable()
-        //    // 入力がないときは通らない
-        //    .Where(_ => _inputDirection != Vector2.zero)
-        //    .Subscribe(_ =>
-        //    {
-
-        //        // メインカメラから移動方向を算出
-        //        _moveDirection = _cameraDirection.GetCameraRelativeMoveDirection(_inputDirection);
-        //        Move(_playerTransform, _moveDirection, _moveSpeed);
-
-        //    })
-            //.AddTo(this);
 
         _currentHP.
             Where(_ => _ <= 0f).
@@ -219,35 +204,35 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
         switch (actionType.Value)
         {
 
-            case InputActionTypeEnum.Move:
-                if (context.canceled)
-                {
-                    _animation.BoolAnimation(_animator, "Walk", false);
-                    _animation.BoolAnimation(_animator, "Run", false);
-                }
-                else
-                {
-                    _animation.BoolAnimation(_animator, "Walk", !_isRun);
-                    _animation.BoolAnimation(_animator, "Run", _isRun);
-                }
-                _inputDirection = context.ReadValue<Vector2>();
-                return;
+            //case InputActionTypeEnum.Move:
+            //    if (context.canceled)
+            //    {
+            //        _animation.BoolAnimation(_animator, "Walk", false);
+            //        _animation.BoolAnimation(_animator, "Run", false);
+            //    }
+            //    else
+            //    {
+            //        _animation.BoolAnimation(_animator, "Walk", !_isRun);
+            //        _animation.BoolAnimation(_animator, "Run", _isRun);
+            //    }
+            //    _inputDirection = context.ReadValue<Vector2>();
+                //return;
 
-            case InputActionTypeEnum.Dash:
+            //case InputActionTypeEnum.Dash:
 
-                _isRun = !context.canceled;
-                if (_isRun)
-                {
-                    _move = _moveProvider.GetRun();
-                    _moveSpeed = _characterStatusStruct._runSpeed;
-                }
-                else
-                {
-                    _move = _moveProvider.GetWalk();
-                    _moveSpeed = _characterStatusStruct._walkSpeed;
-                }
+            //    _isRun = !context.canceled;
+            //    if (_isRun)
+            //    {
+            //        _move = _moveProvider.GetRun();
+            //        _moveSpeed = _characterStatusStruct._runSpeed;
+            //    }
+            //    else
+            //    {
+            //        _move = _moveProvider.GetWalk();
+            //        _moveSpeed = _characterStatusStruct._walkSpeed;
+            //    }
                 
-                return;
+            //    return;
 
             case InputActionTypeEnum.AttackLight:
                 if (context.canceled) return;
@@ -292,7 +277,6 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     {
         // 移動
         _inputDirection = input.MoveDirection;
-        Debug.Log(_inputDirection);
 
         // ダッシュ（ラン）
         _isRun = input.IsRunning;

@@ -1017,6 +1017,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -2591080339352084894, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
+      propertyPath: Flags
+      value: 2561
+      objectReference: {fileID: 0}
+    - target: {fileID: -2591080339352084894, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
+      propertyPath: NetworkGuid.RawGuidValue.Array.data[0]
+      value: 7443636493554817671
+      objectReference: {fileID: 0}
+    - target: {fileID: -2591080339352084894, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
+      propertyPath: NetworkGuid.RawGuidValue.Array.data[1]
+      value: 5603618263797211574
+      objectReference: {fileID: 0}
     - target: {fileID: 6381242967693832639, guid: a0d28c3f64fa04741afc158cfa02d927, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
