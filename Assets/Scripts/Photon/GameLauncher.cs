@@ -67,14 +67,19 @@ public class GameLauncher : SimulationBehaviour, INetworkRunnerCallbacks
     {
         PlayerNetworkInput playerNetworkInput = new PlayerNetworkInput();
 
+        // 移動処理は継続的に読み取る
         playerNetworkInput.MoveDirection = _playerInput.actions["Move"].ReadValue<Vector2>();
+
+        // 押している間だけ有効な入力
         playerNetworkInput.IsRunning = _playerInput.actions["Dash"].IsPressed();
-        playerNetworkInput.IsAttackLight = _playerInput.actions["AttackLight"].IsPressed();
-        playerNetworkInput.IsAttackStrong = _playerInput.actions["AttackStrong"].IsPressed();
-        playerNetworkInput.IsAvoidance = _playerInput.actions["Avoidance"].IsPressed();
-        playerNetworkInput.IsTargetting = _playerInput.actions["Targetting"].IsPressed();
-        playerNetworkInput.IsSkill = _playerInput.actions["Skill"].IsPressed();
-        playerNetworkInput.IsResurrection = _playerInput.actions["Resurrection"].IsPressed();
+
+        // 攻撃や回避は入力が行われた瞬間だけ処理する
+        playerNetworkInput.IsAttackLight = _playerInput.actions["AttackLight"].triggered;
+        playerNetworkInput.IsAttackStrong = _playerInput.actions["AttackStrong"].triggered;
+        playerNetworkInput.IsAvoidance = _playerInput.actions["Avoidance"].triggered;
+        playerNetworkInput.IsTargetting = _playerInput.actions["Targetting"].triggered;
+        playerNetworkInput.IsSkill = _playerInput.actions["Skill"].triggered;
+        playerNetworkInput.IsResurrection = _playerInput.actions["Resurrection"].triggered;
 
         // 入力をNetworkInputにセット
         input.Set(playerNetworkInput);
