@@ -5,6 +5,7 @@ using Fusion;
 using Fusion.Sockets;
 using UnityEngine;
 using UniRx;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// GameLauncher.cs
@@ -27,12 +28,14 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField, Tooltip("プレイヤーのスポーン位置")]
     private Vector3 _playerSpawnPos = default;
 
+    private PlayerInput _playerInput = default;
+
     private async void Start()
     {
         networkRunner = Instantiate(networkRunnerPrefab);
         // NetworkRunnerのコールバック対象に、このスクリプト（GameLauncher）を登録する
         networkRunner.AddCallbacks(this);
-
+        _playerInput = GetComponent<PlayerInput>();
         var result = await networkRunner.StartGame(new StartGameArgs
         {
             GameMode = GameMode.AutoHostOrClient,
@@ -59,7 +62,7 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
 
         // 参加したプレイヤーのアバターを生成する
         var avatar = runner.Spawn(playerAvatarPrefab, spawnPosition, Quaternion.identity, player);
-
+        
         // プレイヤー（PlayerRef）とアバター（NetworkObject）を関連付ける
         runner.SetPlayerObject(player, avatar);
     }
@@ -80,13 +83,68 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
     }
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        //var data = new NetworkInputData();
+        PlayerNetworkInput networkInput = new PlayerNetworkInput();
 
-        //data._moveInput = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
-        //data._buttons.Set(, Input.GetKey(KeyCode.Space));
+        // Move
+        InputAction moveAction = _playerInput.actions["Move"];
+        if (moveAction != null)
+        {
+            networkInput.MoveDirection = moveAction.ReadValue<Vector2>();
+        }
 
-        //input.Set(data);
+        // Dash (Run)
+        InputAction dashAction = _playerInput.actions["Dash"];
+        if (dashAction != null)
+        {
+            networkInput.IsRunning = dashAction.ReadValue<float>() > 0;
+        }
+
+        // Attack Light
+        InputAction attackLightAction = _playerInput.actions["AttackLight"];
+        if (attackLightAction != null)
+        {
+            networkInput.IsAttackLight = attackLightAction.triggered;
+        }
+
+        // Attack Strong
+        InputAction attackStrongAction = _playerInput.actions["AttackStrong"];
+        if (attackStrongAction != null)
+        {
+            networkInput.IsAttackStrong = attackStrongAction.triggered;
+        }
+
+        // Avoidance
+        InputAction avoidanceAction = _playerInput.actions["Avoidance"];
+        if (avoidanceAction != null)
+        {
+            networkInput.IsAvoidance = avoidanceAction.triggered;
+        }
+
+        // Targetting
+        InputAction targetAction = _playerInput.actions["Target"];
+        if (targetAction != null)
+        {
+            networkInput.IsTargetting = targetAction.triggered;
+        }
+
+        // Skill
+        InputAction skillAction = _playerInput.actions["Skill"];
+        if (skillAction != null)
+        {
+            networkInput.IsSkill = skillAction.triggered;
+        }
+
+        // Resurrection
+        InputAction resurrectionAction = _playerInput.actions["Resurrection"];
+        if (resurrectionAction != null)
+        {
+            networkInput.IsResurrection = resurrectionAction.triggered;
+        }
+
+        input.Set(networkInput);
     }
+
+
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
     public void OnConnectedToServer(NetworkRunner runner) { }

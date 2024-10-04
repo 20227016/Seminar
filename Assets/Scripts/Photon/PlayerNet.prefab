@@ -492,6 +492,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3863f3908b78d1343a67887a1f96742d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  WordOffset: 0
+  WordCount: 0
+  _interpolationDataSource: 0
   _characterStatusStruct:
     _walkSpeed: 10
     _runSpeed: 20
@@ -761,6 +764,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 6661349483541277545}
+  - {fileID: 4113924833441406074}
   SimulationBehaviours: []
 --- !u!143 &6010949300993627068
 CharacterController:
