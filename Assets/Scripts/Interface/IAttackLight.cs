@@ -1,8 +1,10 @@
 
+using UnityEngine;
+
 public interface IAttackLight
 {
     /// <summary>
     /// é„çUåÇ
     /// </summary>
-    void AttackLight();
+    void AttackLight(Transform transform, float attackPower);
 }

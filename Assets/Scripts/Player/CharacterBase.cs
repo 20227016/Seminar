@@ -5,6 +5,7 @@ using System.Collections;
 using UnityEngine.InputSystem;
 using UniRx;
 using UniRx.Triggers;
+using Cysharp.Threading.Tasks;
 
 /// <summary>
 /// CharacterBase.cs
@@ -118,6 +119,11 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
             AddTo(this);
     }
 
+    //private void Update()
+    //{
+    //    Debug.Log(_currentState);
+    //}
+
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -206,8 +212,16 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
         {
 
             case InputActionTypeEnum.Move:
-                print("あ");
-                _animation.BoolAnimation(_animator, "Walk", !context.canceled);
+                if (context.canceled)
+                {
+                    _animation.BoolAnimation(_animator, "Walk", false);
+                    _animation.BoolAnimation(_animator, "Run", false);
+                }
+                else
+                {
+                    _animation.BoolAnimation(_animator, "Walk", !_isRun);
+                    _animation.BoolAnimation(_animator, "Run", _isRun);
+                }
                 _inputDirection = context.ReadValue<Vector2>();
                 return;
 
@@ -224,16 +238,16 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
                     _move = _moveProvider.GetWalk();
                     _moveSpeed = _characterStatusStruct._walkSpeed;
                 }
+                
                 return;
 
             case InputActionTypeEnum.AttackLight:
-
                 if (context.canceled) return;
                 AttackLight();
                 return;
 
             case InputActionTypeEnum.AttackStrong:
-
+                
                 if (context.canceled) return;
                 AttackStrong();
                 return;
@@ -268,20 +282,34 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
 
     public virtual void Move(Transform transform, Vector2 moveDirection, float moveSpeed)
     {
+
         _move.Move(transform, moveDirection, moveSpeed);
     }
 
-    public virtual void AttackLight()
+    public virtual async void AttackLight()
     {
-        _animation.TriggerAnimation(_animator, "AttackLight");
-        _playerAttackLight.AttackLight();
-        
+        _currentState = CharacterStateEnum.ATTACK;
+
+        _playerAttackLight.AttackLight(this.transform, _characterStatusStruct._attackMultipiler);
+
+        float delayTime = _animation.TriggerAnimation(_animator, "AttackLight");
+
+        await UniTask.Delay((int)(delayTime * 1000)); // ミリ秒に変換して待機
+
+        _currentState = CharacterStateEnum.IDLE;
     }
 
-    public virtual void AttackStrong()
+    public virtual async void AttackStrong()
     {
-        _animation.TriggerAnimation(_animator, "AttackStrong");
-        _playerAttackStrong.AttackStrong();
+        _currentState = CharacterStateEnum.ATTACK;
+
+        _playerAttackStrong.AttackStrong(this.transform, _characterStatusStruct._attackMultipiler);
+
+        float delayTime = _animation.TriggerAnimation(_animator, "AttackStrong");
+
+        await UniTask.Delay((int)(delayTime * 1000));
+
+        _currentState = CharacterStateEnum.IDLE;
     }
 
     public virtual void Targetting()
@@ -301,22 +329,15 @@ public abstract class CharacterBase : MonoBehaviour, IReceiveDamage
         _resurrection.Resurrection(_characterStatusStruct._ressurectionTime, this.transform);
     }
 
-    public virtual void ReceiveDamage(int damegeValue)
+    public virtual void ReceiveDamage(int damageValue)
     {
-        
-        _currentHP.Value -= damegeValue - _characterStatusStruct._defensePower;
-
-        if (_currentHP.Value <= 0)
-        {
-
-            _currentHP.Value = 0f;
-
-        }
+        _currentHP.Value = Mathf.Clamp(_currentHP.Value - (damageValue - _characterStatusStruct._defensePower), 
+            // 最小値 , 最大値
+            0, _characterStatusStruct._playerStatus.MaxHp);
     }
 
     public virtual void Death()
     {
-        Debug.Log("死んだ");
         _currentState = CharacterStateEnum.DEATH;
         this.gameObject.SetActive(false);
     }
