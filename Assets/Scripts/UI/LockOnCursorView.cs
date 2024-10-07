@@ -26,13 +26,13 @@ public class LockOnCursorView : MonoBehaviour
 
     private void Awake()
     {
-        _camera = Camera.main;
         _lockOnCursor.gameObject.SetActive(false);
 
         this.UpdateAsObservable()
             .Where(_ => _isTargetting)
             .Subscribe(_ =>
             {
+
                 _lockOnCursor.transform.position = _camera.WorldToScreenPoint(_target.position);
             });
 
@@ -46,8 +46,9 @@ public class LockOnCursorView : MonoBehaviour
 
     public void UpdateLockOnCursorTarget(Transform targetTransform)
     {
-        _isTargetting = !_isTargetting;
+        _camera = Camera.main;
         _target = targetTransform;
+        _isTargetting = !_isTargetting;
         _lockOnCursor.gameObject.SetActive(_isTargetting);
     }
 }

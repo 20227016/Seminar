@@ -40,6 +40,8 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     // カメラコントローラー
     protected CameraDirection _cameraDirection = default;
 
+    private Animator _animator = default;
+
     // 移動方向
     protected Vector2 _moveDirection = default;
 
@@ -58,21 +60,15 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     // 各種インターフェース
     protected IMoveProvider _moveProvider = new PlayerMoveProvider();
     protected IMove _move = default;
-
     protected IAvoidance _avoidance = new PlayerAvoidance();
-
     protected IAttackProvider _attackProvider = new PlayerAttackProvider();
     protected IAttackLight _playerAttackLight = default;
     protected IAttackStrong _playerAttackStrong = default;
-    
     protected ITargetting _target = default;
     protected ISkill _skill = default;
     protected IPassive _passive = default;
-
-    private Animator _animator = default;
-    protected IAnimation _animation = new PlayerAnima();
-
     protected IResurrection _resurrection = new PlayerResurrection();
+    protected IAnimation _animation = new PlayerAnima();
 
     #region プロパティ
 
@@ -96,23 +92,24 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
         _currentStamina.Value = _characterStatusStruct._playerStatus.MaxStamina;
         _currentSkillPoint.Value = 0f;
 
-
         _currentHP.
             Where(_ => _ <= 0f).
             Subscribe(_ => Death()).
             AddTo(this);
+
     }
+
 
     public override void FixedUpdateNetwork()
     {
-        base.FixedUpdateNetwork();
-        if (GetInput(out PlayerNetworkInput data))
+        if (Object.HasStateAuthority)
         {
-            ProcessInput(data);
+            if (GetInput(out PlayerNetworkInput data))
+            {
+                ProcessInput(data);
+            }
         }
     }
-
-
 
     /// <summary>
     /// 初期化処理
@@ -136,199 +133,91 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
         _currentState = CharacterStateEnum.IDLE;
         _playerTransform = this.transform;
         _moveSpeed = _characterStatusStruct._walkSpeed;
-        //RegisterInputActions(true);
-
+        
     }
 
-    /// <summary>
-    /// 非アクティブ時処理
-    /// </summary>
-    protected virtual void OnDisable()
-    {
-        // 入力アクション解除
-        //RegisterInputActions(false);
-    }
-
-    ///// <summary>
-    ///// 入力アクションを一元管理して登録/解除する
-    ///// </summary>
-    //private void RegisterInputActions(bool isRegister)
-    //{
-    //    // 一括登録
-    //    if (isRegister)
-    //    {
-
-    //        foreach (InputAction action in _playerInput.actions)
-    //        {
-
-    //            action.performed += HandleInput;
-    //            action.canceled += HandleInput;
-
-    //        }
-
-    //    }
-    //    // 一括解除
-    //    else
-    //    {
-
-    //        foreach (InputAction action in _playerInput.actions)
-    //        {
-
-    //            action.performed -= HandleInput;
-    //            action.canceled -= HandleInput;
-
-    //        }
-
-    //    }
-
-    //}
-
-    ///// <summary>
-    ///// 入力アクション管理
-    ///// </summary>
-    //private void HandleInput(InputAction.CallbackContext context)
-    //{
-    //    // 定義されているアクションを取得
-    //    InputActionTypeEnum? actionType = InputActionManager.GetActionType(context.action.name);
-
-    //    // 定義にないアクションはリターン
-    //    if (actionType == null)
-    //    {
-    //        return;
-    //    }
-
-    //    switch (actionType.Value)
-    //    {
-
-    //        case InputActionTypeEnum.Move:
-    //            if (context.canceled)
-    //            {
-    //                _animation.BoolAnimation(_animator, "Walk", false);
-    //                _animation.BoolAnimation(_animator, "Run", false);
-    //            }
-    //            else
-    //            {
-    //                _animation.BoolAnimation(_animator, "Walk", !_isRun);
-    //                _animation.BoolAnimation(_animator, "Run", _isRun);
-    //            }
-    //            _inputDirection = context.ReadValue<Vector2>();
-    //            return;
-
-    //        case InputActionTypeEnum.Dash:
-
-    //            _isRun = !context.canceled;
-    //            if (_isRun)
-    //            {
-    //                _move = _moveProvider.GetRun();
-    //                _moveSpeed = _characterStatusStruct._runSpeed;
-    //            }
-    //            else
-    //            {
-    //                _move = _moveProvider.GetWalk();
-    //                _moveSpeed = _characterStatusStruct._walkSpeed;
-    //            }
-
-    //            return;
-
-    //        case InputActionTypeEnum.AttackLight:
-    //            if (context.canceled) return;
-    //            AttackLight();
-    //            return;
-
-    //        case InputActionTypeEnum.AttackStrong:
-
-    //            if (context.canceled) return;
-    //            AttackStrong();
-    //            return;
-
-    //        case InputActionTypeEnum.Avoidance:
-
-    //            if (context.canceled) return;
-    //            Avoidance();
-    //            return;
-
-    //        case InputActionTypeEnum.Target:
-
-    //            if (context.canceled) return;
-    //            Targetting();
-    //            return;
-
-    //        case InputActionTypeEnum.Skill:
-
-    //            if (context.canceled) return;
-    //            if (_currentSkillPoint.Value >= _characterStatusStruct._skillPointUpperLimit)
-    //            {
-    //                Skill(this, _characterStatusStruct._skillTime, _characterStatusStruct._skillCoolTime);
-    //            }
-    //            return;
-
-    //        case InputActionTypeEnum.Resurrection:
-
-    //            Resurrection();
-    //            return;
-    //    }
-    //}
 
     public void ProcessInput(PlayerNetworkInput input)
     {
-        // 移動
+        if(_currentState == CharacterStateEnum.ATTACK || _currentState == CharacterStateEnum.AVOIDANCE ||
+            _currentState == CharacterStateEnum.SKILL || _currentState == CharacterStateEnum.DEATH)
+        {
+            return;
+        }
+
+        // 移動処理
         _inputDirection = input.MoveDirection;
 
-        // ダッシュ（ラン）
         _isRun = input.IsRunning;
-        if (_isRun)
+
+        if(_inputDirection == Vector2.zero)
         {
-            _move = _moveProvider.GetRun();
-            _moveSpeed = _characterStatusStruct._runSpeed;
+            _currentState = CharacterStateEnum.IDLE;
+            _animation.BoolAnimation(_animator, "Walk", false);
+            _animation.BoolAnimation(_animator, "Run", false);
+            ;
         }
         else
         {
-            _move = _moveProvider.GetWalk();
-            _moveSpeed = _characterStatusStruct._walkSpeed;
-        }
-        _moveDirection = _cameraDirection.GetCameraRelativeMoveDirection(_inputDirection);
-        Move(_playerTransform, _moveDirection, _moveSpeed);
-
-        // 攻撃
-        if (input.IsAttackLight)
-        {
-            Debug.Log("弱攻撃");
-            AttackLight();
-        }
-
-        if (input.IsAttackStrong)
-        {
-            Debug.Log("強攻撃");
-            AttackStrong();
-        }
-
-        // 回避
-        if (input.IsAvoidance)
-        {
-            Avoidance();
+            if (!_isRun)
+            {
+                _move = _moveProvider.GetWalk();
+                _animation.BoolAnimation(_animator, "Walk", true);
+                _animation.BoolAnimation(_animator, "Run", false);
+                _moveSpeed = _characterStatusStruct._walkSpeed;
+            }
+            else
+            {
+                _move = _moveProvider.GetRun();
+                _animation.BoolAnimation(_animator, "Walk", false);
+                _animation.BoolAnimation(_animator, "Run", true);
+                _moveSpeed = _characterStatusStruct._runSpeed;
+            }
+            Move(_playerTransform, _moveDirection, _moveSpeed);
+            _moveDirection = _cameraDirection.GetCameraRelativeMoveDirection(_inputDirection);
         }
 
-        // ターゲッティング
-        if (input.IsTargetting)
-        {
-            Targetting();
-        }
+        
+        
 
-        // スキル
-        if (input.IsSkill && _currentSkillPoint.Value >= _characterStatusStruct._skillPointUpperLimit)
+        // 入力によるアクションをswitch文で処理
+        switch (input)
         {
-            Skill(this, _characterStatusStruct._skillTime, _characterStatusStruct._skillCoolTime);
-        }
+            case { IsRunning: true }:
+                break;
 
-        // 蘇生
-        if (input.IsResurrection)
-        {
-            Resurrection();
+            case { IsAttackLight: true }:
+                AttackLight();
+                break;
+
+            case { IsAttackStrong: true }:
+                AttackStrong();
+                break;
+
+            case { IsAvoidance: true }:
+                Avoidance();
+                break;
+
+            case { IsTargetting: true }:
+                Targetting();
+                break;
+
+            case { IsSkill: true } when _currentSkillPoint.Value >= _characterStatusStruct._skillPointUpperLimit:
+                Skill(this, _characterStatusStruct._skillTime, _characterStatusStruct._skillCoolTime);
+                break;
+
+            case { IsResurrection: true }:
+                Resurrection();
+                break;
+
+            default:
+                break;
         }
     }
 
     public virtual void Move(Transform transform, Vector2 moveDirection, float moveSpeed)
     {
+        _currentState = CharacterStateEnum.MOVE;
         _move.Move(transform, moveDirection, moveSpeed);
     }
 
@@ -338,24 +227,28 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
 
         _playerAttackLight.AttackLight(this.transform, _characterStatusStruct._attackMultipiler);
 
-        float delayTime = _animation.TriggerAnimation(_animator, "AttackLight");
-
-        await UniTask.Delay((int)(delayTime * 1000)); // ミリ秒に変換して待機
+        _animation.TriggerAnimation(_animator, "AttackLight");
+        ReceiveDamage(10);
+        // ミリ秒に変換して待機
+        await UniTask.Delay((int)(800)); 
 
         _currentState = CharacterStateEnum.IDLE;
+
     }
 
     public virtual async void AttackStrong()
     {
+
         _currentState = CharacterStateEnum.ATTACK;
 
         _playerAttackStrong.AttackStrong(this.transform, _characterStatusStruct._attackMultipiler);
 
-        float delayTime = _animation.TriggerAnimation(_animator, "AttackStrong");
+        _animation.TriggerAnimation(_animator, "AttackStrong");
 
-        await UniTask.Delay((int)(delayTime * 1000));
+        await UniTask.Delay((int)(800));
 
         _currentState = CharacterStateEnum.IDLE;
+
     }
 
     public virtual void Targetting()
@@ -363,9 +256,15 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
         _target.Targetting();
     }
 
-    public virtual void Avoidance()
+    public virtual async void Avoidance()
     {
+        _currentState = CharacterStateEnum.AVOIDANCE;
+
         _avoidance.Avoidance(_playerTransform, _moveDirection, _characterStatusStruct._avoidanceDistance, _characterStatusStruct._avoidanceDuration);
+
+        await UniTask.Delay((int)(500));
+
+        _currentState = CharacterStateEnum.IDLE;
     }
 
     public abstract void Skill(CharacterBase characterBase, float skillTime, float skillCoolTime);
@@ -385,6 +284,7 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     public virtual void Death()
     {
         _currentState = CharacterStateEnum.DEATH;
-        this.gameObject.SetActive(false);
+        _animation.PlayAnimation(_animator, "Death");
+        //this.gameObject.SetActive(false);
     }
 }

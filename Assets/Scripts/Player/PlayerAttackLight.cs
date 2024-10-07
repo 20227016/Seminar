@@ -67,7 +67,6 @@ public class PlayerAttackLight : IAttackLight
                 // 相手にダメージを与える
                 target.ReceiveDamage(damage);
 
-                //Debug.Log($"攻撃がヒットしました: {collider.name}, ダメージ: {damage}");
             }
 
         }

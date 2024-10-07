@@ -9,7 +9,7 @@ public class InputActionManager : MonoBehaviour
         new InputActionMappingStruct(InputActionTypeEnum.AttackLight, "AttackLight"),
         new InputActionMappingStruct(InputActionTypeEnum.AttackStrong, "AttackStrong"),
         new InputActionMappingStruct(InputActionTypeEnum.Avoidance, "Avoidance"),
-        new InputActionMappingStruct(InputActionTypeEnum.Target, "Target"),
+        new InputActionMappingStruct(InputActionTypeEnum.Targetting, "Targetting"),
         new InputActionMappingStruct(InputActionTypeEnum.Skill, "Skill"),
         new InputActionMappingStruct(InputActionTypeEnum.Resurrection, "Resurrection")
     };

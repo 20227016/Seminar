@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Yamada.unity
+    guid: ae2936f2cb54d70428f08eb1f02fbe47
+  - enabled: 1
     path: Assets/Scenes/Takahashi.unity
     guid: d49a4c0da25ffe94fbb13688ebc6af6c
   m_configObjects: {}
