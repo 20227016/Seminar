@@ -18,7 +18,12 @@ public class PlayerAnima : IAnimation
         animator.SetBool(animationName, isPlay);
     }
 
-    public float TriggerAnimation(Animator animator, string animationName)
+    public void PlayAnimation(Animator animator, string animationName)
+    {
+        animator.Play(animationName);
+    }
+
+    public void TriggerAnimation(Animator animator, string animationName)
     {
         // パラメーターを配列に取得
         AnimatorControllerParameter[] parameters = animator.parameters;
@@ -33,10 +38,6 @@ public class PlayerAnima : IAnimation
         }
 
         animator.SetTrigger(animationName);
-
-        AnimatorClipInfo[] clipInfo = animator.GetCurrentAnimatorClipInfo(0);
-        float clipTime = clipInfo[0].clip.length;
-
-        return 1;
     }
+
 }

@@ -24,10 +24,14 @@ public class LockOnCursorPresenter : MonoBehaviour
 
         _lockOnCursorView = GetComponent<LockOnCursorView>();
 
-        _player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerTargetting>();
-
-        _player.LockOnEvent.Subscribe(target => _lockOnCursorView.UpdateLockOnCursorTarget(target));
-
+        GameLauncher.Instance.OnPlayerJoin.Subscribe(_ => SetModel(_));
     }
 
+
+    private void SetModel(GameObject player)
+    {
+        _player = player.GetComponentInChildren<PlayerTargetting>();
+
+        _player.LockOnEvent.Subscribe(target => _lockOnCursorView.UpdateLockOnCursorTarget(target));
+    }
 }

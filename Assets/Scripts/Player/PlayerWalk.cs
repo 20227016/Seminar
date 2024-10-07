@@ -15,7 +15,6 @@ public class PlayerWalk :IMove
     // 移動方向キャッシュ用
     private Vector3 _cachedMoveDirection = default;
 
-    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
     public void Move(Transform transform, Vector2 moveDirection, float moveSpeed)
     {
 

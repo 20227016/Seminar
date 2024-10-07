@@ -24,7 +24,7 @@ public enum InputActionTypeEnum
     /// <summary>
     /// ターゲット
     /// </summary>
-    Target,
+    Targetting,
     /// <summary>
     /// スキル
     /// </summary>

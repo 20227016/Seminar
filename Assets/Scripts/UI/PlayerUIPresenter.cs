@@ -33,10 +33,15 @@ public class PlayerUIPresenter : MonoBehaviour
     /// </summary>
     private void Start()
     {
+        GameLauncher.Instance.OnPlayerJoin.Subscribe(_ => SetModel(_));
+    }
 
+    private void SetModel(GameObject player)
+    {
+        print(player.name);
         try
         {
-            _player = GameObject.FindGameObjectWithTag("Player").GetComponent<CharacterBase>();
+            _player = player.GetComponentInChildren<CharacterBase>();
         }
         catch
         {
@@ -48,8 +53,5 @@ public class PlayerUIPresenter : MonoBehaviour
 
         // スタミナの更新
         _player.CurrentStamina.Subscribe(value => _playerUIViews.UpdateGauge(_staminaGauge, value, _animationSpeed));
-
-
     }
-
 }
