@@ -38,7 +38,6 @@ public class PlayerUIPresenter : MonoBehaviour
 
     private void SetModel(GameObject player)
     {
-        print(player.name);
         try
         {
             _player = player.GetComponentInChildren<CharacterBase>();

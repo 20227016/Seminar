@@ -24,17 +24,19 @@ public class CameraDirection
     /// </summary>
     /// <param name="inputDirection">入力方向</param>
     /// <returns>カメラ基準の移動方向</returns>
+    // カメラ基準の移動方向を取得
     public Vector2 GetCameraRelativeMoveDirection(Vector2 inputDirection)
     {
         Vector3 forward = _cameraTransform.forward;
         Vector3 right = _cameraTransform.right;
 
+        forward.y = 0; // 高さを無視
+        right.y = 0;   // 高さを無視
+
         forward.Normalize();
         right.Normalize();
 
-        // 入力された移動方向をカメラの向きに変換
         Vector3 moveDirection = forward * inputDirection.y + right * inputDirection.x;
-
         return new Vector2(moveDirection.x, moveDirection.z);
     }
 }

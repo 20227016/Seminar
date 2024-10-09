@@ -23,10 +23,8 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
     private const float CameraRotationCorrectionFactor = Mathf.PI * 2;
     private const float DistanceNormalizationFactor = 500f;
 
-    [SerializeField, Tooltip("通常時のカメラ")]
     private CinemachineVirtualCamera _normalCamera = default;
 
-    [SerializeField, Tooltip("ターゲッティング時のカメラ")]
     private CinemachineVirtualCamera _targettingCamera = default;
 
     [SerializeField, Tooltip("ターゲットのレイヤー")]
@@ -52,15 +50,15 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
 
     public IObservable<Transform> LockOnEvent => _lockonEvent;
 
-    /// <summary>
-    /// 起動時処理
-    /// </summary>
     private void Awake()
     {
+
         // キャッシュ
         _mainCamera = Camera.main;
+        _normalCamera = GameObject.Find("NormalCamera").GetComponent<CinemachineVirtualCamera>();
+        _targettingCamera = GameObject.Find("TargettingCamera").GetComponent<CinemachineVirtualCamera>();
         _normalCameraPOV = _normalCamera.GetCinemachineComponent<CinemachinePOV>();
-        _targettingCamera.gameObject.SetActive(false);
+        _targettingCamera.enabled = false;
         _isTargetting = false;
 
         //// 更新処理
@@ -68,6 +66,13 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
             .Where(_ => _isTargetting && !IsTargetVisible(_currentTarget))
             .Subscribe(_ => Targetting());
 
+    }
+
+    public void InitializeSetting()
+    {
+        _normalCamera.Follow = transform;
+        _normalCamera.LookAt = transform;
+        _targettingCamera.Follow = transform;
     }
 
     public void Targetting()
@@ -93,8 +98,8 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
 
         // カメラを切り替える
         _isTargetting = !_isTargetting;
-        _normalCamera.gameObject.SetActive(!_isTargetting);
-        _targettingCamera.gameObject.SetActive(_isTargetting);
+        _normalCamera.enabled = !_isTargetting;
+        _targettingCamera.enabled = _isTargetting;
         _lockonEvent.OnNext(_currentTarget.transform);
     }
 
