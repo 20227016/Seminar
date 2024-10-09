@@ -1,11 +1,9 @@
 
-using UnityEngine;
-using Fusion;
-using System.Collections;
-using UnityEngine.InputSystem;
-using UniRx;
-using UniRx.Triggers;
 using Cysharp.Threading.Tasks;
+using Fusion;
+using UniRx;
+using UnityEngine;
+
 
 /// <summary>
 /// CharacterBase.cs
@@ -41,6 +39,8 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     protected CameraDirection _cameraDirection = default;
 
     private Animator _animator = default;
+
+    private Rigidbody _rigidbody = default;
 
     // 移動方向
     protected Vector2 _moveDirection = default;
@@ -96,18 +96,27 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
             Where(_ => _ <= 0f).
             Subscribe(_ => Death()).
             AddTo(this);
+    }
+
+    public override void Spawned()
+    {
+        if (Object.HasInputAuthority)
+        {
+            // カメラを自分に追従するように初期化
+            _target.InitializeSetting();
+        }
 
     }
 
-
+    /// <summary>
+    /// 同期アップデート
+    /// </summary>
     public override void FixedUpdateNetwork()
     {
-        if (Object.HasStateAuthority)
+        base.FixedUpdateNetwork();
+        if (GetInput(out PlayerNetworkInput data))
         {
-            if (GetInput(out PlayerNetworkInput data))
-            {
-                ProcessInput(data);
-            }
+            ProcessInput(data);
         }
     }
 
@@ -126,14 +135,15 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
         _passive = GetComponent<IPassive>();
         _characterStatusStruct._playerStatus = new WrapperPlayerStatus();
         _cameraDirection = new CameraDirection(Camera.main.transform);
-
         _animator = GetComponent<Animator>();
+
+        _rigidbody = GetComponentInParent<Rigidbody>();
 
         // 初期化
         _currentState = CharacterStateEnum.IDLE;
         _playerTransform = this.transform;
         _moveSpeed = _characterStatusStruct._walkSpeed;
-        
+
     }
 
 
@@ -155,7 +165,6 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
             _currentState = CharacterStateEnum.IDLE;
             _animation.BoolAnimation(_animator, "Walk", false);
             _animation.BoolAnimation(_animator, "Run", false);
-            ;
         }
         else
         {
@@ -173,12 +182,10 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
                 _animation.BoolAnimation(_animator, "Run", true);
                 _moveSpeed = _characterStatusStruct._runSpeed;
             }
-            Move(_playerTransform, _moveDirection, _moveSpeed);
             _moveDirection = _cameraDirection.GetCameraRelativeMoveDirection(_inputDirection);
+            Move(_playerTransform, _moveDirection, _moveSpeed, _rigidbody);
+            
         }
-
-        
-        
 
         // 入力によるアクションをswitch文で処理
         switch (input)
@@ -215,10 +222,10 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
         }
     }
 
-    public virtual void Move(Transform transform, Vector2 moveDirection, float moveSpeed)
+    public virtual void Move(Transform transform, Vector2 moveDirection, float moveSpeed, Rigidbody rigidbody)
     {
         _currentState = CharacterStateEnum.MOVE;
-        _move.Move(transform, moveDirection, moveSpeed);
+        _move.Move(transform, moveDirection, moveSpeed, rigidbody);
     }
 
     public virtual async void AttackLight()
@@ -228,7 +235,9 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
         _playerAttackLight.AttackLight(this.transform, _characterStatusStruct._attackMultipiler);
 
         _animation.TriggerAnimation(_animator, "AttackLight");
+
         ReceiveDamage(10);
+
         // ミリ秒に変換して待機
         await UniTask.Delay((int)(800)); 
 

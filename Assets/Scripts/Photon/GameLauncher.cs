@@ -21,9 +21,6 @@ public class GameLauncher : NetworkBehaviour, INetworkRunnerCallbacks
     [SerializeField, Tooltip("プレイヤーのスポーン位置")]
     private Vector3 _playerSpawnPos = default;
 
-    [SerializeField]
-    private Camera _standbyCamera = default;
-
     private PlayerInput _playerInput;
 
     private PlayerNetworkInput playerNetworkInput;
@@ -172,11 +169,10 @@ public class GameLauncher : NetworkBehaviour, INetworkRunnerCallbacks
             return;
         }
 
-        var spawnPosition = new Vector3(_playerSpawnPos.x, _playerSpawnPos.y, _playerSpawnPos.z);
+        var spawnPosition = new Vector3(_playerSpawnPos.x + UnityEngine.Random.Range(0,10), _playerSpawnPos.y, _playerSpawnPos.z);
         var avatar = runner.Spawn(playerAvatarPrefab, spawnPosition, Quaternion.identity, player);
         runner.SetPlayerObject(player, avatar);
-        print(avatar.gameObject.name);
-        _standbyCamera.gameObject.SetActive(false);
+
         _onPlayerJoin.OnNext(avatar.gameObject);
     }
 
