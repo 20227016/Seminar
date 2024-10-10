@@ -50,11 +50,10 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
 
     public IObservable<Transform> LockOnEvent => _lockonEvent;
 
-    private void Awake()
-    {
 
-        // キャッシュ
-        _mainCamera = Camera.main;
+    public void InitializeSetting(Camera camera)
+    {
+        _mainCamera = camera;
         _normalCamera = GameObject.Find("NormalCamera").GetComponent<CinemachineVirtualCamera>();
         _targettingCamera = GameObject.Find("TargettingCamera").GetComponent<CinemachineVirtualCamera>();
         _normalCameraPOV = _normalCamera.GetCinemachineComponent<CinemachinePOV>();
@@ -66,10 +65,6 @@ public class PlayerTargetting : MonoBehaviour, ITargetting
             .Where(_ => _isTargetting && !IsTargetVisible(_currentTarget))
             .Subscribe(_ => Targetting());
 
-    }
-
-    public void InitializeSetting()
-    {
         _normalCamera.Follow = transform;
         _normalCamera.LookAt = transform;
         _targettingCamera.Follow = transform;

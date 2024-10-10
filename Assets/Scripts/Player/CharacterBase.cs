@@ -85,25 +85,15 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     /// </summary>
     protected virtual void Awake()
     {
-        Initialize();
-
-        // 最大HPと最大スタミナをリアクティブプロパティに設定
-        _currentHP.Value = _characterStatusStruct._playerStatus.MaxHp;
-        _currentStamina.Value = _characterStatusStruct._playerStatus.MaxStamina;
-        _currentSkillPoint.Value = 0f;
-
-        _currentHP.
-            Where(_ => _ <= 0f).
-            Subscribe(_ => Death()).
-            AddTo(this);
+        
     }
 
     public override void Spawned()
     {
         if (Object.HasInputAuthority)
         {
-            // カメラを自分に追従するように初期化
-            _target.InitializeSetting();
+            Initialize();
+            
         }
 
     }
@@ -133,8 +123,7 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
         _target = GetComponent<PlayerTargetting>();
         _skill = GetComponent<ISkill>();
         _passive = GetComponent<IPassive>();
-        _characterStatusStruct._playerStatus = new WrapperPlayerStatus();
-        _cameraDirection = new CameraDirection(Camera.main.transform);
+
         _animator = GetComponent<Animator>();
 
         _rigidbody = GetComponentInParent<Rigidbody>();
@@ -144,6 +133,22 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
         _playerTransform = this.transform;
         _moveSpeed = _characterStatusStruct._walkSpeed;
 
+        // 最大HPと最大スタミナをリアクティブプロパティに設定
+        _characterStatusStruct._playerStatus = new WrapperPlayerStatus();
+        _currentHP.Value = _characterStatusStruct._playerStatus.MaxHp;
+        _currentStamina.Value = _characterStatusStruct._playerStatus.MaxStamina;
+        _currentSkillPoint.Value = 0f;
+        _currentHP.
+            Where(_ => _ <= 0f).
+            Subscribe(_ => Death()).
+            AddTo(this);
+
+        Camera mainCamera = Camera.main;
+
+        _cameraDirection = new CameraDirection(mainCamera.transform);
+
+        // カメラを自分に追従するように初期化
+        _target.InitializeSetting(mainCamera);
     }
 
 
