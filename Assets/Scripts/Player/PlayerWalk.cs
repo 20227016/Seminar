@@ -20,7 +20,7 @@ public class PlayerWalk :IMove
         _cachedMoveDirection.Set(moveDirection.x, 0, moveDirection.y);
 
         // 移動量を計算 
-        Vector3 moveVector = _cachedMoveDirection * moveSpeed * Time.fixedDeltaTime; // 時間に基づいて移動量を計算
+        Vector3 moveVector = _cachedMoveDirection * moveSpeed; // 時間に基づいて移動量を計算
 
         // Rigidbodyを使って移動
         rigidbody.MovePosition(transform.position + moveVector);

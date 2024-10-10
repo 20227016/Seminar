@@ -1,7 +1,9 @@
 
+using UnityEngine;
+
 public interface ITargetting
 {
-    void InitializeSetting();
+    void InitializeSetting(Camera camera);
 
     /// <summary>
     /// ターゲッティング
