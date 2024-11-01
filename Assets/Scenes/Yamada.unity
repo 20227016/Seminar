@@ -67,6 +67,9 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
+    m_FinalGather: 0
+    m_FinalGatherFiltering: 1
+    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 1
@@ -1547,11 +1550,11 @@ PrefabInstance:
       value: 2561
       objectReference: {fileID: 0}
     - target: {fileID: 1864360294751821499, guid: fa3168643202a4a479b1d0ca8344dc1e, type: 3}
-      propertyPath: 'NetworkGuid.RawGuidValue.Array.data[0]'
+      propertyPath: NetworkGuid.RawGuidValue.Array.data[0]
       value: -3364372125742198364
       objectReference: {fileID: 0}
     - target: {fileID: 1864360294751821499, guid: fa3168643202a4a479b1d0ca8344dc1e, type: 3}
-      propertyPath: 'NetworkGuid.RawGuidValue.Array.data[1]'
+      propertyPath: NetworkGuid.RawGuidValue.Array.data[1]
       value: 8348927770283014547
       objectReference: {fileID: 0}
     - target: {fileID: 7372785803486318944, guid: fa3168643202a4a479b1d0ca8344dc1e, type: 3}
@@ -1639,11 +1642,11 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8982669687888003749, guid: fa3168643202a4a479b1d0ca8344dc1e, type: 3}
-      propertyPath: 'playerAvatarPrefab.RawGuidValue.Array.data[0]'
+      propertyPath: playerAvatarPrefab.RawGuidValue.Array.data[0]
       value: 7206961399548128705
       objectReference: {fileID: 0}
     - target: {fileID: 8982669687888003749, guid: fa3168643202a4a479b1d0ca8344dc1e, type: 3}
-      propertyPath: 'playerAvatarPrefab.RawGuidValue.Array.data[1]'
+      propertyPath: playerAvatarPrefab.RawGuidValue.Array.data[1]
       value: 584068067860321705
       objectReference: {fileID: 0}
     - target: {fileID: 8982669687888003749, guid: fa3168643202a4a479b1d0ca8344dc1e, type: 3}

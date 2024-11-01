@@ -1,6 +1,4 @@
 
-using UnityEngine;
-
 /// <summary>
 /// NormalCharacter.cs
 /// クラス説明

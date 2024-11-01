@@ -48,11 +48,9 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
         _instance = this;
         DontDestroyOnLoad(gameObject);
 
-
         _mainCamera = Camera.main;
         _playerInput = GetComponent<PlayerInput>();
         RegisterInputActions(true);
-
 
         NetworkRunner networkRunner = Instantiate(networkRunnerPrefab);
         networkRunner.AddCallbacks(this);
@@ -217,6 +215,7 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
         var avatar = runner.Spawn(playerAvatarPrefab, spawnPosition, Quaternion.identity, player);
         runner.SetPlayerObject(player, avatar);
 
+        Debug.Log(avatar.name);
         _onPlayerJoin.OnNext(avatar.gameObject);
     }
 
