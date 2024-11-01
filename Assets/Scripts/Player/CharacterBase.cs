@@ -38,8 +38,10 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     // カメラコントローラー
     protected CameraDirection _cameraDirection = default;
 
+    // アニメーター
     private Animator _animator = default;
 
+    // リジッドボディ
     private Rigidbody _rigidbody = default;
 
     // 移動方向
@@ -47,6 +49,9 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
 
     // 走るフラグ
     protected bool _isRun = default;
+
+    // 前回のIsRunning状態を記録するフィールド
+    private bool _wasRunningPressed = false;
 
     // 移動速度
     protected float _moveSpeed = default;
@@ -78,27 +83,18 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     #endregion
 
 
+    /// <summary>
+    /// 生成時処理
+    /// </summary>
     public override void Spawned()
     {
-        if (Object.HasInputAuthority)
-        {
-            // キャッシュ
-            _move = _moveProvider.GetWalk();
-            _playerAttackLight = _attackProvider.GetAttackLight();
-            _playerAttackStrong = _attackProvider.GetAttackStrong();
-            _target = GetComponent<PlayerTargetting>();
-            _skill = GetComponent<ISkill>();
-            _passive = GetComponent<IPassive>();
-            _animator = GetComponent<Animator>();
-            _rigidbody = GetComponentInParent<Rigidbody>();
-
-            Initialize();
-        }
-
+        Initialize();
+        SetupCamera();
     }
 
+
     /// <summary>
-    /// 同期アップデート
+    /// ネットワーク同期アップデート
     /// </summary>
     public override void FixedUpdateNetwork()
     {
@@ -108,37 +104,71 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
         }
     }
 
+
+    /// <summary>
+    /// プレイヤー別にカメラを設定する処理
+    /// </summary>
+    private void SetupCamera()
+    {
+        if (Object.HasInputAuthority)
+        {
+            Camera mainCamera = Camera.main;
+            _cameraDirection = new CameraDirection(mainCamera.transform);
+            _target.InitializeSetting(mainCamera);
+        }
+    }
+
+
     /// <summary>
     /// 初期化処理
     /// </summary>
     protected virtual void Initialize()
     {
-        // 初期化
+        CacheComponents();
+        SetupInitialValues();
+    }
+
+
+    /// <summary>
+    /// コンポーネントのキャッシュ
+    /// </summary>
+    private void CacheComponents()
+    {
+        _move = _moveProvider.GetWalk();
+        _playerAttackLight = _attackProvider.GetAttackLight();
+        _playerAttackStrong = _attackProvider.GetAttackStrong();
+        _target = GetComponent<PlayerTargetting>();
+        _skill = GetComponent<ISkill>();
+        _passive = GetComponent<IPassive>();
+        _animator = GetComponent<Animator>();
+        _rigidbody = GetComponentInParent<Rigidbody>();
+    }
+
+
+    /// <summary>
+    /// 初期値設定
+    /// </summary>
+    private void SetupInitialValues()
+    {
         _currentState = CharacterStateEnum.IDLE;
         _playerTransform = this.transform;
         _moveSpeed = _characterStatusStruct._walkSpeed;
-
-        // 最大HPと最大スタミナをリアクティブプロパティに設定
         _characterStatusStruct._playerStatus = new WrapperPlayerStatus();
         _currentHP.Value = _characterStatusStruct._playerStatus.MaxHp;
         _currentStamina.Value = _characterStatusStruct._playerStatus.MaxStamina;
         _currentSkillPoint.Value = 0f;
 
-        _currentHP.
-            Where(_ => _ <= 0f).
-            Subscribe(_ => Death()).
-            AddTo(this);
-
-        Camera mainCamera = Camera.main;
-        _cameraDirection = new CameraDirection(mainCamera.transform);
-        // カメラを自分に追従するように初期化
-        _target.InitializeSetting(mainCamera);
+        // 死亡オブザーバー
+        _currentHP.Where(_ => _ <= 0f)
+                  .Subscribe(_ => Death())
+                  .AddTo(this);
     }
 
 
-    // 前回のIsRunning状態を記録するフィールドを追加
-    private bool _wasRunningPressed = false;
-
+    /// <summary>
+    /// 入力によるアクション処理
+    /// </summary>
+    /// <param name="input">入力情報</param>
     public void ProcessInput(PlayerNetworkInput input)
     {
         if (_currentState == CharacterStateEnum.ATTACK || _currentState == CharacterStateEnum.AVOIDANCE ||
@@ -150,7 +180,7 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
         // 移動処理
         _moveDirection = input.MoveDirection;
 
-        // Run状態のトグル処理
+        // Run状態の切り替え
         if (input.IsRunning && !_wasRunningPressed)
         {
             _isRun = !_isRun;
@@ -182,7 +212,6 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
             Move(_playerTransform, _moveDirection, _moveSpeed, _rigidbody);
         }
 
-        // 入力によるアクションをswitch文で処理
         switch (input)
         {
             case { IsAttackLight: true }:
@@ -214,11 +243,13 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
         }
     }
 
+
     public virtual void Move(Transform transform, Vector2 moveDirection, float moveSpeed, Rigidbody rigidbody)
     {
         _currentState = CharacterStateEnum.MOVE;
         _move.Move(transform, moveDirection, moveSpeed, rigidbody);
     }
+
 
     public virtual async void AttackLight()
     {
@@ -229,13 +260,14 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
         _animation.TriggerAnimation(_animator, "AttackLight");
 
         ReceiveDamage(10);
-
+        Debug.Log(_currentHP.Value);
         // ミリ秒に変換して待機
         await UniTask.Delay((int)(800)); 
 
         _currentState = CharacterStateEnum.IDLE;
 
     }
+
 
     public virtual async void AttackStrong()
     {
@@ -252,10 +284,12 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
 
     }
 
+
     public virtual void Targetting()
     {
         _target.Targetting();
     }
+
 
     public virtual async void Avoidance()
     {
@@ -268,12 +302,15 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
         _currentState = CharacterStateEnum.IDLE;
     }
 
+
     public abstract void Skill(CharacterBase characterBase, float skillTime, float skillCoolTime);
+
 
     public virtual void Resurrection()
     {
         _resurrection.Resurrection(_characterStatusStruct._ressurectionTime, this.transform);
     }
+
 
     public virtual void ReceiveDamage(int damageValue)
     {
@@ -281,6 +318,7 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
             // 最小値 , 最大値
             0, _characterStatusStruct._playerStatus.MaxHp);
     }
+
 
     public virtual void Death()
     {

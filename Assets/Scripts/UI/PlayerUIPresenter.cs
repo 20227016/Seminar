@@ -46,7 +46,7 @@ public class PlayerUIPresenter : MonoBehaviour
         {
             Debug.LogWarning("プレイヤーがおらへん");
         }
-
+        Debug.Log(player.name);
         // HPの更新
         _player.CurrentHP.Subscribe(value => _playerUIViews.UpdateGauge(_hpGauge, value, _animationSpeed));
 
