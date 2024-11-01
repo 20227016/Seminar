@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UniRx;
 
-public class GameLauncher : NetworkBehaviour, INetworkRunnerCallbacks
+public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
 {
     public static GameLauncher _instance;
 
@@ -16,24 +16,24 @@ public class GameLauncher : NetworkBehaviour, INetworkRunnerCallbacks
     [SerializeField]
     private NetworkPrefabRef playerAvatarPrefab;
 
-    private NetworkRunner networkRunner;
-
     [SerializeField, Tooltip("プレイヤーのスポーン位置")]
     private Vector3 _playerSpawnPos = default;
 
-    private PlayerInput _playerInput;
-
-    private PlayerNetworkInput playerNetworkInput;
+    private PlayerInput _playerInput = default;
 
     private Subject<GameObject> _onPlayerJoin = new Subject<GameObject>();
 
     public IObservable<GameObject> OnPlayerJoin => _onPlayerJoin;
 
+    private Vector2 _moveInput = default;
+
+    private Camera _mainCamera = default;
+
+
     public static GameLauncher Instance
     {
         get
         {
-
             return _instance;
         }
     }
@@ -45,21 +45,23 @@ public class GameLauncher : NetworkBehaviour, INetworkRunnerCallbacks
             Destroy(gameObject);
             return;
         }
-
         _instance = this;
         DontDestroyOnLoad(gameObject);
 
-        networkRunner = Instantiate(networkRunnerPrefab);
-        networkRunner.AddCallbacks(this);
-        _playerInput = GetComponent<PlayerInput>();
 
-        var result = await networkRunner.StartGame(new StartGameArgs
+        _mainCamera = Camera.main;
+        _playerInput = GetComponent<PlayerInput>();
+        RegisterInputActions(true);
+
+
+        NetworkRunner networkRunner = Instantiate(networkRunnerPrefab);
+        networkRunner.AddCallbacks(this);
+
+        StartGameResult result = await networkRunner.StartGame(new StartGameArgs
         {
             GameMode = GameMode.AutoHostOrClient,
             SceneManager = networkRunner.GetComponent<NetworkSceneManagerDefault>()
         });
-
-        RegisterInputActions(true);
     }
 
     private void RegisterInputActions(bool isRegister)
@@ -84,81 +86,123 @@ public class GameLauncher : NetworkBehaviour, INetworkRunnerCallbacks
         }
     }
 
+    private readonly Dictionary<string, bool> InputStates = new()
+    {
+        { "Run", false },
+        { "AttackLight", false },
+        { "AttackStrong", false },
+        { "Targetting", false },
+        { "Skill", false },
+        { "Resurrection", false },
+        { "Avoidance", false }
+    };
+
     /// <summary>
-    /// 入力アクション管理
+    /// 入力管理メソッド
     /// </summary>
+    /// <param name="context">入力アクション</param>
     private void HandleInput(InputAction.CallbackContext context)
     {
-        // 定義されているアクションを取得
-        InputActionTypeEnum? actionType = InputActionManager.GetActionType(context.action.name);
 
-        // 定義にないアクションはリターン
-        if (actionType == null)
+        switch (context.action.name)
         {
-            return;
-        }
 
-        switch (actionType.Value)
-        {
-            case InputActionTypeEnum.Move:
-                playerNetworkInput.MoveDirection = context.ReadValue<Vector2>();
+            case "Move":
+                _moveInput = context.ReadValue<Vector2>();
                 break;
 
-            case InputActionTypeEnum.Dash:
-                playerNetworkInput.IsRunning = context.ReadValueAsButton();
+            case "Run":
+                InputStates["Run"] = true;
                 break;
 
-            case InputActionTypeEnum.AttackLight:
-                if (context.canceled) return;
-                playerNetworkInput.IsAttackLight = true; // 発動時にtrue
+            case "AttackLight":
+                InputStates["AttackLight"] = !context.canceled;
                 break;
 
-            case InputActionTypeEnum.AttackStrong:
-                if (context.canceled) return;
-                playerNetworkInput.IsAttackStrong = true; // 発動時にtrue
+            case "AttackStrong":
+                InputStates["AttackStrong"] = !context.canceled;
                 break;
 
-            case InputActionTypeEnum.Avoidance:
-                if (context.canceled) return;
-                playerNetworkInput.IsAvoidance = true; // 発動時にtrue
+            case "Targetting":
+                InputStates["Targetting"] = !context.canceled;
                 break;
 
-            case InputActionTypeEnum.Targetting:
-                if (context.canceled) return;
-                playerNetworkInput.IsTargetting = true; // 発動時にtrue
+            case "Skill":
+                InputStates["Skill"] = !context.canceled;
                 break;
 
-            case InputActionTypeEnum.Skill:
-                if (context.canceled) return;
-                playerNetworkInput.IsSkill = true; // 発動時にtrue
+            case "Resurrection":
+                InputStates["Resurrection"] = !context.canceled;
                 break;
 
-            case InputActionTypeEnum.Resurrection:
-                if (context.canceled) return;
-                playerNetworkInput.IsResurrection = true; // 発動時にtrue
+            case "Avoidance":
+                InputStates["Avoidance"] = !context.canceled;
+                break;
+
+            default:
                 break;
         }
     }
 
-    // 入力処理
+    /// <summary>
+    /// カメラの向きを基準にした移動方向算出メソッド
+    /// </summary>
+    /// <returns>カメラの向きを基準にした移動方向</returns>
+    private Vector3 GetMoveDirectionFromCamera()
+    {
+        // カメラの正面方向と右方向を取得
+        Vector3 cameraForward = _mainCamera.transform.forward;
+        Vector3 cameraRight = _mainCamera.transform.right;
+
+        // 高さ（Y軸）の影響を排除
+        cameraForward.y = 0;
+        cameraRight.y = 0;
+
+        // 正規化
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+
+        // カメラ基準での移動方向を計算
+        Vector3 direction = cameraForward * _moveInput.y + cameraRight * _moveInput.x;
+        return new Vector2(direction.x, direction.z);
+    }
+
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        // 現在の入力データをNetworkInputにセット
-        input.Set(playerNetworkInput);
+        // 入力をインスタンス化
+        PlayerNetworkInput data = new()
+        {
+            MoveDirection = GetMoveDirectionFromCamera(),
+            IsRunning = InputStates["Run"],
+            IsAttackLight = InputStates["AttackLight"],
+            IsAttackStrong = InputStates["AttackStrong"],
+            IsTargetting = InputStates["Targetting"],
+            IsSkill = InputStates["Skill"],
+            IsResurrection = InputStates["Resurrection"],
+            IsAvoidance = InputStates["Avoidance"],
+        };
 
-        // 入力情報をリセット（必要に応じて）
+        // 入力を収集
+        input.Set(data);
+
+        // 入力を初期化
         ResetInput();
     }
 
+    /// <summary>
+    /// 入力初期化メソッド
+    /// </summary>
     private void ResetInput()
     {
-        // 各フラグをリセット
-        playerNetworkInput.IsAttackLight = false;
-        playerNetworkInput.IsAttackStrong = false;
-        playerNetworkInput.IsAvoidance = false;
-        playerNetworkInput.IsTargetting = false;
-        playerNetworkInput.IsSkill = false;
-        playerNetworkInput.IsResurrection = false;
+        // trueの入力を初期化する
+        foreach (string key in new List<string>(InputStates.Keys))
+        {
+
+            if (InputStates[key])
+            {
+                InputStates[key] = false; // 値をリセット
+            }
+        }
     }
 
     // プレイヤーが参加した時の処理

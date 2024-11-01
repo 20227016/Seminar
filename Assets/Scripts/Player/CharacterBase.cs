@@ -45,9 +45,6 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     // 移動方向
     protected Vector2 _moveDirection = default;
 
-    // 入力方向
-    protected Vector2 _inputDirection = default;
-
     // 走るフラグ
     protected bool _isRun = default;
 
@@ -80,20 +77,22 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
 
     #endregion
 
-    /// <summary>
-    /// 起動時処理
-    /// </summary>
-    protected virtual void Awake()
-    {
-        
-    }
 
     public override void Spawned()
     {
         if (Object.HasInputAuthority)
         {
+            // キャッシュ
+            _move = _moveProvider.GetWalk();
+            _playerAttackLight = _attackProvider.GetAttackLight();
+            _playerAttackStrong = _attackProvider.GetAttackStrong();
+            _target = GetComponent<PlayerTargetting>();
+            _skill = GetComponent<ISkill>();
+            _passive = GetComponent<IPassive>();
+            _animator = GetComponent<Animator>();
+            _rigidbody = GetComponentInParent<Rigidbody>();
+
             Initialize();
-            
         }
 
     }
@@ -103,7 +102,6 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     /// </summary>
     public override void FixedUpdateNetwork()
     {
-        base.FixedUpdateNetwork();
         if (GetInput(out PlayerNetworkInput data))
         {
             ProcessInput(data);
@@ -115,19 +113,6 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     /// </summary>
     protected virtual void Initialize()
     {
-        // キャッシュ
-        _move = _moveProvider.GetWalk();
-        _playerAttackLight = _attackProvider.GetAttackLight();
-        _playerAttackStrong = _attackProvider.GetAttackStrong();
-
-        _target = GetComponent<PlayerTargetting>();
-        _skill = GetComponent<ISkill>();
-        _passive = GetComponent<IPassive>();
-
-        _animator = GetComponent<Animator>();
-
-        _rigidbody = GetComponentInParent<Rigidbody>();
-
         // 初期化
         _currentState = CharacterStateEnum.IDLE;
         _playerTransform = this.transform;
@@ -138,34 +123,41 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
         _currentHP.Value = _characterStatusStruct._playerStatus.MaxHp;
         _currentStamina.Value = _characterStatusStruct._playerStatus.MaxStamina;
         _currentSkillPoint.Value = 0f;
+
         _currentHP.
             Where(_ => _ <= 0f).
             Subscribe(_ => Death()).
             AddTo(this);
 
         Camera mainCamera = Camera.main;
-
         _cameraDirection = new CameraDirection(mainCamera.transform);
-
         // カメラを自分に追従するように初期化
         _target.InitializeSetting(mainCamera);
     }
 
 
+    // 前回のIsRunning状態を記録するフィールドを追加
+    private bool _wasRunningPressed = false;
+
     public void ProcessInput(PlayerNetworkInput input)
     {
-        if(_currentState == CharacterStateEnum.ATTACK || _currentState == CharacterStateEnum.AVOIDANCE ||
+        if (_currentState == CharacterStateEnum.ATTACK || _currentState == CharacterStateEnum.AVOIDANCE ||
             _currentState == CharacterStateEnum.SKILL || _currentState == CharacterStateEnum.DEATH)
         {
             return;
         }
 
         // 移動処理
-        _inputDirection = input.MoveDirection;
+        _moveDirection = input.MoveDirection;
 
-        _isRun = input.IsRunning;
+        // Run状態のトグル処理
+        if (input.IsRunning && !_wasRunningPressed)
+        {
+            _isRun = !_isRun;
+        }
+        _wasRunningPressed = input.IsRunning;
 
-        if(_inputDirection == Vector2.zero)
+        if (_moveDirection == Vector2.zero)
         {
             _currentState = CharacterStateEnum.IDLE;
             _animation.BoolAnimation(_animator, "Walk", false);
@@ -187,17 +179,12 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
                 _animation.BoolAnimation(_animator, "Run", true);
                 _moveSpeed = _characterStatusStruct._runSpeed;
             }
-            _moveDirection = _cameraDirection.GetCameraRelativeMoveDirection(_inputDirection);
             Move(_playerTransform, _moveDirection, _moveSpeed, _rigidbody);
-            
         }
 
         // 入力によるアクションをswitch文で処理
         switch (input)
         {
-            case { IsRunning: true }:
-                break;
-
             case { IsAttackLight: true }:
                 AttackLight();
                 break;
