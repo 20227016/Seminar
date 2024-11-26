@@ -21,14 +21,9 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
 
     private PlayerInput _playerInput = default;
 
-    private Subject<GameObject> _onPlayerJoin = new Subject<GameObject>();
-
-    public IObservable<GameObject> OnPlayerJoin => _onPlayerJoin;
-
     private Vector2 _moveInput = default;
 
     private Camera _mainCamera = default;
-
 
     public static GameLauncher Instance
     {
@@ -60,6 +55,7 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
             GameMode = GameMode.AutoHostOrClient,
             SceneManager = networkRunner.GetComponent<NetworkSceneManagerDefault>()
         });
+        
     }
 
     private void RegisterInputActions(bool isRegister)
@@ -214,9 +210,6 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
         var spawnPosition = new Vector3(_playerSpawnPos.x + UnityEngine.Random.Range(0,10), _playerSpawnPos.y, _playerSpawnPos.z);
         var avatar = runner.Spawn(playerAvatarPrefab, spawnPosition, Quaternion.identity, player);
         runner.SetPlayerObject(player, avatar);
-
-        Debug.Log(avatar.name);
-        _onPlayerJoin.OnNext(avatar.gameObject);
     }
 
     // プレイヤーが退出した時の処理

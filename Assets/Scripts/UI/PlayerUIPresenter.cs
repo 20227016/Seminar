@@ -28,12 +28,9 @@ public class PlayerUIPresenter : MonoBehaviour
     [SerializeField]
     private float _animationSpeed = 10f;
 
-    /// <summary>
-    /// 初期化処理
-    /// </summary>
-    private void Start()
+    public void PlayerSet(GameObject player)
     {
-        GameLauncher.Instance.OnPlayerJoin.Subscribe(_ => SetModel(_));
+        SetModel(player);
     }
 
     private void SetModel(GameObject player)

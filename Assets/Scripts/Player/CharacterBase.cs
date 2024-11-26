@@ -26,6 +26,15 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     [HideInInspector]
     public CharacterStateEnum _currentState = default;
 
+    [Networked(OnChanged = nameof(OnNetworkedHPChanged))]
+    private float _networkedHP { get; set; }
+
+    // _networkedHPが変更されたときに呼び出される
+    private static void OnNetworkedHPChanged(Changed<CharacterBase> changed)
+    {
+        changed.Behaviour._currentHP.Value = changed.Behaviour._networkedHP;
+    }
+
     // 現在のHP量
     protected ReactiveProperty<float> _currentHP = new ReactiveProperty<float>();
 
@@ -59,6 +68,8 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     // 自身のトランスフォーム
     protected Transform _playerTransform = default;
 
+    private PlayerUIPresenter canvas = default;
+
     // 各種インターフェース
     protected IMoveProvider _moveProvider = new PlayerMoveProvider();
     protected IMove _move = default;
@@ -90,6 +101,7 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     {
         Initialize();
         SetupCamera();
+        
     }
 
 
@@ -115,6 +127,9 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
             Camera mainCamera = Camera.main;
             _cameraDirection = new CameraDirection(mainCamera.transform);
             _target.InitializeSetting(mainCamera);
+
+            canvas = GameObject.Find("ImmobileCanvas").GetComponent<PlayerUIPresenter>();
+            canvas.PlayerSet(this.gameObject);
         }
     }
 
@@ -124,8 +139,8 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     /// </summary>
     protected virtual void Initialize()
     {
-        CacheComponents();
         SetupInitialValues();
+        CacheComponents();
     }
 
 
@@ -144,19 +159,20 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
         _rigidbody = GetComponentInParent<Rigidbody>();
     }
 
-
-    /// <summary>
-    /// 初期値設定
-    /// </summary>
+    
     private void SetupInitialValues()
     {
         _currentState = CharacterStateEnum.IDLE;
         _playerTransform = this.transform;
         _moveSpeed = _characterStatusStruct._walkSpeed;
         _characterStatusStruct._playerStatus = new WrapperPlayerStatus();
-        _currentHP.Value = _characterStatusStruct._playerStatus.MaxHp;
+
+        _networkedHP = _characterStatusStruct._playerStatus.MaxHp;
+        _currentHP.Value = _networkedHP;
+
         _currentStamina.Value = _characterStatusStruct._playerStatus.MaxStamina;
         _currentSkillPoint.Value = 0f;
+
 
         // 死亡オブザーバー
         _currentHP.Where(_ => _ <= 0f)
@@ -190,23 +206,23 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
         if (_moveDirection == Vector2.zero)
         {
             _currentState = CharacterStateEnum.IDLE;
-            _animation.BoolAnimation(_animator, "Walk", false);
-            _animation.BoolAnimation(_animator, "Run", false);
+            //_animation.BoolAnimation(_animator, "Walk", false);
+            //_animation.BoolAnimation(_animator, "Run", false);
         }
         else
         {
             if (!_isRun)
             {
                 _move = _moveProvider.GetWalk();
-                _animation.BoolAnimation(_animator, "Walk", true);
-                _animation.BoolAnimation(_animator, "Run", false);
+                //_animation.BoolAnimation(_animator, "Walk", true);
+                //_animation.BoolAnimation(_animator, "Run", false);
                 _moveSpeed = _characterStatusStruct._walkSpeed;
             }
             else
             {
                 _move = _moveProvider.GetRun();
-                _animation.BoolAnimation(_animator, "Walk", false);
-                _animation.BoolAnimation(_animator, "Run", true);
+                //_animation.BoolAnimation(_animator, "Walk", false);
+                //_animation.BoolAnimation(_animator, "Run", true);
                 _moveSpeed = _characterStatusStruct._runSpeed;
             }
             Move(_playerTransform, _moveDirection, _moveSpeed, _rigidbody);
@@ -257,10 +273,10 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
 
         _playerAttackLight.AttackLight(this.transform, _characterStatusStruct._attackMultipiler);
 
-        _animation.TriggerAnimation(_animator, "AttackLight");
+        //_animation.TriggerAnimation(_animator, "AttackLight");
 
-        ReceiveDamage(10);
-        Debug.Log(_currentHP.Value);
+        ReceiveDamage(50);
+
         // ミリ秒に変換して待機
         await UniTask.Delay((int)(800)); 
 
@@ -276,7 +292,7 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
 
         _playerAttackStrong.AttackStrong(this.transform, _characterStatusStruct._attackMultipiler);
 
-        _animation.TriggerAnimation(_animator, "AttackStrong");
+        //_animation.TriggerAnimation(_animator, "AttackStrong");
 
         await UniTask.Delay((int)(800));
 
@@ -314,16 +330,20 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
 
     public virtual void ReceiveDamage(int damageValue)
     {
-        _currentHP.Value = Mathf.Clamp(_currentHP.Value - (damageValue - _characterStatusStruct._defensePower), 
-            // 最小値 , 最大値
-            0, _characterStatusStruct._playerStatus.MaxHp);
+        if (!Object.HasStateAuthority) return; // ホストのみがダメージを処理
+
+        _networkedHP = Mathf.Clamp(
+            _networkedHP - (damageValue - _characterStatusStruct._defensePower),
+            0,
+            _characterStatusStruct._playerStatus.MaxHp
+        );
     }
 
 
     public virtual void Death()
     {
         _currentState = CharacterStateEnum.DEATH;
-        _animation.PlayAnimation(_animator, "Death");
-        //this.gameObject.SetActive(false);
+        //_animation.PlayAnimation(_animator, "Death");
+        this.gameObject.SetActive(false);
     }
 }
