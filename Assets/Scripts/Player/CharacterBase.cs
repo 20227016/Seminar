@@ -68,7 +68,7 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     // 自身のトランスフォーム
     protected Transform _playerTransform = default;
 
-    private PlayerUIPresenter canvas = default;
+    private GameObject canvas = default;
 
     // 各種インターフェース
     protected IMoveProvider _moveProvider = new PlayerMoveProvider();
@@ -128,8 +128,12 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
             _cameraDirection = new CameraDirection(mainCamera.transform);
             _target.InitializeSetting(mainCamera);
 
-            canvas = GameObject.Find("ImmobileCanvas").GetComponent<PlayerUIPresenter>();
-            canvas.PlayerSet(this.gameObject);
+            canvas = GameObject.Find("Canvas");
+
+            PlayerUIPresenter playerUIPresenter = canvas.GetComponent<PlayerUIPresenter>();
+            LockOnCursorPresenter lockOnCursorPresenter = canvas.GetComponent<LockOnCursorPresenter>();
+            playerUIPresenter.PlayerSet(this.gameObject);
+            lockOnCursorPresenter.PlayerSet(this.gameObject);
         }
     }
 

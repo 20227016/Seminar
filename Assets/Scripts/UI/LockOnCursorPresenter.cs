@@ -24,9 +24,12 @@ public class LockOnCursorPresenter : MonoBehaviour
 
         _lockOnCursorView = GetComponent<LockOnCursorView>();
 
-        GameLauncher.Instance.OnPlayerJoin.Subscribe(_ => SetModel(_));
     }
 
+    public void PlayerSet(GameObject player)
+    {
+        SetModel(player);
+    }
 
     private void SetModel(GameObject player)
     {
