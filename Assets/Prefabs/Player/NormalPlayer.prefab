@@ -621,6 +621,11 @@ MonoBehaviour:
     _counterTime: 0
     _skillPointUpperLimit: 100
     _ressurectionTime: 10
+    _recoveryStamina: 1
+    _runStamina: 1
+    _attackLightStamina: 10
+    _attackStrongStamina: 20
+    _avoidanceStamina: 20
   _currentState: 0
 --- !u!114 &8383212688525788024
 MonoBehaviour:
