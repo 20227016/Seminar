@@ -1,6 +1,7 @@
 
 using Cysharp.Threading.Tasks;
 using Fusion;
+using System;
 using UniRx;
 using UnityEngine;
 
@@ -26,23 +27,47 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     [HideInInspector]
     public CharacterStateEnum _currentState = default;
 
+
+
     [Networked(OnChanged = nameof(OnNetworkedHPChanged))]
     private float _networkedHP { get; set; }
+    public float NetworkedStamina
+    {
+        get => _networkedStamina;
+        set => _networkedStamina = Mathf.Clamp(value, 0, 100);
+    }
 
-    // _networkedHPが変更されたときに呼び出される
     private static void OnNetworkedHPChanged(Changed<CharacterBase> changed)
     {
         changed.Behaviour._currentHP.Value = changed.Behaviour._networkedHP;
     }
-
     // 現在のHP量
     protected ReactiveProperty<float> _currentHP = new ReactiveProperty<float>();
 
+
+
+    [Networked(OnChanged = nameof(OnNetworkedStaminaChanged))]
+    private float _networkedStamina { get; set; }
+
+    private static void OnNetworkedStaminaChanged(Changed<CharacterBase> changed)
+    {
+        changed.Behaviour._currentStamina.Value = changed.Behaviour._networkedStamina;
+    }
     // 現在のスタミナ量
     protected ReactiveProperty<float> _currentStamina = new ReactiveProperty<float>();
 
+
+
+    [Networked(OnChanged = nameof(OnNetworkedSkillPointChanged))]
+    private float _networkedSkillPoint { get; set; }
+
+    private static void OnNetworkedSkillPointChanged(Changed<CharacterBase> changed)
+    {
+        changed.Behaviour._currentSkillPoint.Value = changed.Behaviour._networkedSkillPoint;
+    }
     // 現在のスキルポイント
     protected ReactiveProperty<float> _currentSkillPoint = new ReactiveProperty<float>();
+
 
     // カメラコントローラー
     protected CameraDirection _cameraDirection = default;
@@ -67,8 +92,6 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
 
     // 自身のトランスフォーム
     protected Transform _playerTransform = default;
-
-    private GameObject canvas = default;
 
     // 各種インターフェース
     protected IMoveProvider _moveProvider = new PlayerMoveProvider();
@@ -99,9 +122,11 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     /// </summary>
     public override void Spawned()
     {
+        // 初期化
         Initialize();
-        SetupCamera();
-        
+
+        // 同期の設定
+        Setup();
     }
 
 
@@ -112,28 +137,31 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     {
         if (GetInput(out PlayerNetworkInput data))
         {
+            // 入力情報収集
             ProcessInput(data);
         }
+
     }
 
 
     /// <summary>
-    /// プレイヤー別にカメラを設定する処理
+    /// プレイヤーごとに設定するもの
     /// </summary>
-    private void SetupCamera()
+    private void Setup()
     {
         if (Object.HasInputAuthority)
         {
+            // カメラを設定
             Camera mainCamera = Camera.main;
             _cameraDirection = new CameraDirection(mainCamera.transform);
             _target.InitializeSetting(mainCamera);
 
-            canvas = GameObject.Find("Canvas");
-
-            PlayerUIPresenter playerUIPresenter = canvas.GetComponent<PlayerUIPresenter>();
+            // UIを設定
+            GameObject canvas = GameObject.FindGameObjectWithTag("Canvas");
+            PlayerUIPresenter playerUIPresenter         = canvas.GetComponent<PlayerUIPresenter>();
             LockOnCursorPresenter lockOnCursorPresenter = canvas.GetComponent<LockOnCursorPresenter>();
-            playerUIPresenter.PlayerSet(this.gameObject);
-            lockOnCursorPresenter.PlayerSet(this.gameObject);
+            playerUIPresenter.SetModel(this.gameObject);
+            lockOnCursorPresenter.SetModel(this.gameObject);
         }
     }
 
@@ -143,7 +171,7 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     /// </summary>
     protected virtual void Initialize()
     {
-        SetupInitialValues();
+        InitialValues();
         CacheComponents();
     }
 
@@ -163,25 +191,50 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
         _rigidbody = GetComponentInParent<Rigidbody>();
     }
 
-    
-    private void SetupInitialValues()
+    /// <summary>
+    /// 数値等の初期設定
+    /// </summary>
+    private void InitialValues()
     {
+        // 初期化
         _currentState = CharacterStateEnum.IDLE;
         _playerTransform = this.transform;
         _moveSpeed = _characterStatusStruct._walkSpeed;
         _characterStatusStruct._playerStatus = new WrapperPlayerStatus();
 
-        _networkedHP = _characterStatusStruct._playerStatus.MaxHp;
-        _currentHP.Value = _networkedHP;
-
+        // HP、スタミナ、スキルポイント変数をネットワーク同期に設定
+        _currentHP.Value = _characterStatusStruct._playerStatus.MaxHp;
+        _networkedHP = _currentHP.Value;
         _currentStamina.Value = _characterStatusStruct._playerStatus.MaxStamina;
+        _networkedStamina = _currentStamina.Value;
         _currentSkillPoint.Value = 0f;
-
+        _networkedSkillPoint = _currentSkillPoint.Value;
 
         // 死亡オブザーバー
-        _currentHP.Where(_ => _ <= 0f)
+        _currentHP.Where(value => value <= 0f)
                   .Subscribe(_ => Death())
                   .AddTo(this);
+
+        // 走った時のスタミナ消費オブザーバー
+        Observable.Interval(TimeSpan.FromSeconds(0.1f))
+           .Where(_ => _isRun && _networkedStamina > 0)
+           .Subscribe(_ =>
+           {
+               _networkedStamina -= _characterStatusStruct._runStamina;
+               _networkedStamina = Mathf.Clamp(_networkedStamina, 0, _characterStatusStruct._playerStatus.MaxStamina);
+           })
+           .AddTo(this);
+
+        // スタミナ自動回復オブザーバー
+        Observable.Interval(TimeSpan.FromSeconds(0.1f))
+            .Where(_ => _networkedStamina < _characterStatusStruct._playerStatus.MaxStamina && _networkedStamina > 0)
+            .Where(_ => _currentState == CharacterStateEnum.IDLE)
+            .Subscribe(_ =>
+            {
+                _networkedStamina += _characterStatusStruct._recoveryStamina;
+                _networkedStamina = Mathf.Clamp(_networkedStamina, 0, _characterStatusStruct._playerStatus.MaxStamina);
+            })
+            .AddTo(this);
     }
 
 
@@ -197,7 +250,7 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
             return;
         }
 
-        // 移動処理
+        // 入力情報を移動方向に格納
         _moveDirection = input.MoveDirection;
 
         // Run状態の切り替え
@@ -229,21 +282,22 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
                 //_animation.BoolAnimation(_animator, "Run", true);
                 _moveSpeed = _characterStatusStruct._runSpeed;
             }
+            
             Move(_playerTransform, _moveDirection, _moveSpeed, _rigidbody);
         }
 
         switch (input)
         {
             case { IsAttackLight: true }:
-                AttackLight();
+                AttackLight(_playerTransform, _characterStatusStruct._attackMultipiler);
                 break;
 
             case { IsAttackStrong: true }:
-                AttackStrong();
+                AttackStrong(_playerTransform, _characterStatusStruct._attackMultipiler);
                 break;
 
             case { IsAvoidance: true }:
-                Avoidance();
+                Avoidance(_playerTransform, _moveDirection, _characterStatusStruct._avoidanceDistance, _characterStatusStruct._avoidanceDuration);
                 break;
 
             case { IsTargetting: true }:
@@ -255,7 +309,7 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
                 break;
 
             case { IsResurrection: true }:
-                Resurrection();
+                Resurrection(_characterStatusStruct._ressurectionTime, this.transform);
                 break;
 
             default:
@@ -271,15 +325,15 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     }
 
 
-    public virtual async void AttackLight()
+    public virtual async void AttackLight(Transform transform, float attackMultipiler)
     {
         _currentState = CharacterStateEnum.ATTACK;
 
-        _playerAttackLight.AttackLight(this.transform, _characterStatusStruct._attackMultipiler);
+        _playerAttackLight.AttackLight(transform, attackMultipiler);
 
         //_animation.TriggerAnimation(_animator, "AttackLight");
 
-        ReceiveDamage(50);
+        ReceiveDamage(10);
 
         // ミリ秒に変換して待機
         await UniTask.Delay((int)(800)); 
@@ -289,12 +343,12 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     }
 
 
-    public virtual async void AttackStrong()
+    public virtual async void AttackStrong(Transform transform, float attackMultipiler)
     {
 
         _currentState = CharacterStateEnum.ATTACK;
 
-        _playerAttackStrong.AttackStrong(this.transform, _characterStatusStruct._attackMultipiler);
+        _playerAttackStrong.AttackStrong(transform, attackMultipiler);
 
         //_animation.TriggerAnimation(_animator, "AttackStrong");
 
@@ -311,11 +365,13 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     }
 
 
-    public virtual async void Avoidance()
+    public virtual async void Avoidance(Transform transform, Vector2 moveDirection, float avoidanceDistance, float avoidanceDuration)
     {
         _currentState = CharacterStateEnum.AVOIDANCE;
 
-        _avoidance.Avoidance(_playerTransform, _moveDirection, _characterStatusStruct._avoidanceDistance, _characterStatusStruct._avoidanceDuration);
+        _networkedStamina -= _characterStatusStruct._avoidanceStamina;
+
+        _avoidance.Avoidance(transform, moveDirection, avoidanceDistance, avoidanceDuration);
 
         await UniTask.Delay((int)(500));
 
@@ -326,15 +382,15 @@ public abstract class CharacterBase : NetworkBehaviour, IReceiveDamage
     public abstract void Skill(CharacterBase characterBase, float skillTime, float skillCoolTime);
 
 
-    public virtual void Resurrection()
+    public virtual void Resurrection(float ressurectionTime, Transform transform)
     {
-        _resurrection.Resurrection(_characterStatusStruct._ressurectionTime, this.transform);
+        _resurrection.Resurrection(ressurectionTime, transform);
     }
 
 
     public virtual void ReceiveDamage(int damageValue)
     {
-        if (!Object.HasStateAuthority) return; // ホストのみがダメージを処理
+        if (!Object.HasStateAuthority) return;
 
         _networkedHP = Mathf.Clamp(
             _networkedHP - (damageValue - _characterStatusStruct._defensePower),

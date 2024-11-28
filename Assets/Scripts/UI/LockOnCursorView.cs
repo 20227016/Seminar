@@ -32,7 +32,6 @@ public class LockOnCursorView : MonoBehaviour
             .Where(_ => _isTargetting)
             .Subscribe(_ =>
             {
-
                 _lockOnCursor.transform.position = _camera.WorldToScreenPoint(_target.position);
             });
 

@@ -13,41 +13,27 @@ using UnityEngine.UI;
 /// </summary>
 public class PlayerUIPresenter : MonoBehaviour
 {
-    // モデルのプレイヤー
-    private CharacterBase _player = default;
-
     // Viewクラス
     private PlayerUIViews _playerUIViews = new PlayerUIViews();
 
-    [SerializeField]
+    [SerializeField, Tooltip("HPゲージ")]
     private Slider _hpGauge = default;
 
-    [SerializeField]
+    [SerializeField, Tooltip("スタミナゲージ")]
     private Slider _staminaGauge = default;
 
-    [SerializeField]
+    [SerializeField, Tooltip("ゲージ変動アニメーション速度")]
     private float _animationSpeed = 10f;
 
-    public void PlayerSet(GameObject player)
+    public void SetModel(GameObject player)
     {
-        SetModel(player);
-    }
 
-    private void SetModel(GameObject player)
-    {
-        try
-        {
-            _player = player.GetComponentInChildren<CharacterBase>();
-        }
-        catch
-        {
-            Debug.LogWarning("プレイヤーがおらへん");
-        }
-        Debug.Log(player.name);
+        CharacterBase thisPlayer = player.GetComponentInChildren<CharacterBase>();
+
         // HPの更新
-        _player.CurrentHP.Subscribe(value => _playerUIViews.UpdateGauge(_hpGauge, value, _animationSpeed));
+        thisPlayer.CurrentHP.Subscribe(value => _playerUIViews.UpdateGauge(_hpGauge, value, _animationSpeed));
 
         // スタミナの更新
-        _player.CurrentStamina.Subscribe(value => _playerUIViews.UpdateGauge(_staminaGauge, value, _animationSpeed));
+        thisPlayer.CurrentStamina.Subscribe(value => _playerUIViews.UpdateGauge(_staminaGauge, value, _animationSpeed));
     }
 }
